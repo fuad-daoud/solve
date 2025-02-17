@@ -16,3 +16,4 @@ problems solved:
 2. [Best Time To Buy And Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
 3. [Best Time To Buy And Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
 4. [Rotate Array](https://leetcode.com/problems/rotate-array/)
+5. [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/)
