@@ -1,16 +1,18 @@
-# py-solve
+# Solve
 
-Repository to have solutions in python for leetcode or any similar platform
+Repo for solving questiosn on leetcode or any similar platform
 
-Python cheet sheet from leetcode idk might be useful
+## Tools
 
-https://leetcode.com/discuss/study-guide/2122306/python-cheat-sheet-for-leetcode
+1. [leetcode-cli](https://github.com/clearloop/leetcode-cli)
+2. [neovim](https://neovim.io/)
+3. [rio](https://raphamorim.io/rio/)
 
-also using leetcode-cli
+## Languages
 
-https://github.com/clearloop/leetcode-cli
+1. Python
 
-problems solved:
+## Problems Solved:
 
 1. [Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
 2. [Best Time To Buy And Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
