@@ -23,3 +23,4 @@ Repo for solving questiosn on leetcode or any similar platform
 7. [Intersection Of Two Arrays II](https://leetcode.com/problems/single-number/)
 8. [Plus One](https://leetcode.com/problems/plus-one/)
 9. [Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion)
+10. [3 Sum](https://leetcode.com/problems/3sum) (file "three_sum.py")
