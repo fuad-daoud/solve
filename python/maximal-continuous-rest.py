@@ -1,3 +1,4 @@
+
 def cin(): return list(map(int, input().strip().split()))
 
 def main():
