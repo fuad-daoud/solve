@@ -25,3 +25,4 @@ Repo for solving questiosn on leetcode or any similar platform
 9. [Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion)
 10. [3 Sum](https://leetcode.com/problems/3sum) (file "three_sum.py")
 11. [B. Maximal Continuous Rest](https://codeforces.com/contest/1141/problem/B)
+12. [Nested Ranges Check](https://cses.fi/problemset/task/2168/)
