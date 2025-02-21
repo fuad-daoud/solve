@@ -28,5 +28,6 @@ Repo for solving questiosn on leetcode or any similar platform
 10. [3 Sum](https://leetcode.com/problems/3sum) (file "three_sum.py")
 11. [B. Maximal Continuous Rest](https://codeforces.com/contest/1141/problem/B)
 12. [Nested Ranges Check](https://cses.fi/problemset/task/2168/)
-13. [A. Shell Game](https://codeforces.com/contest/35/problem/A)
-14. [C. Fire Again](https://codeforces.com/contest/35/problem/C)
+13. [B. Warehouse](https://codeforces.com/contest/35/problem/B)
+14. [A. Shell Game](https://codeforces.com/contest/35/problem/A)
+15. [C. Fire Again](https://codeforces.com/contest/35/problem/C)
