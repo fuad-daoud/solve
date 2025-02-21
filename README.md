@@ -7,10 +7,12 @@ Repo for solving questiosn on leetcode or any similar platform
 1. [leetcode-cli](https://github.com/clearloop/leetcode-cli)
 2. [neovim](https://neovim.io/)
 3. [rio](https://raphamorim.io/rio/)
+4. [zig](https://ziglang.org) (to compile c++)
 
 ## Languages
 
 1. Python
+2. C++
 
 ## Problems Solved:
 
@@ -26,3 +28,4 @@ Repo for solving questiosn on leetcode or any similar platform
 10. [3 Sum](https://leetcode.com/problems/3sum) (file "three_sum.py")
 11. [B. Maximal Continuous Rest](https://codeforces.com/contest/1141/problem/B)
 12. [Nested Ranges Check](https://cses.fi/problemset/task/2168/)
+13. [C. Fire Again](https://codeforces.com/contest/35/problem/C)
