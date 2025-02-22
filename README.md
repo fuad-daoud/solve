@@ -33,3 +33,4 @@ Repo for solving questiosn on leetcode or any similar platform
 15. [C. Fire Again](https://codeforces.com/contest/35/problem/C)
 16. [B. Coins](https://codeforces.com/contest/47/problem/B)
 17. [A. Triangular Numbers](https://codeforces.com/contest/47/problem/A)
+18. [C. Ladder](https://codeforces.com/contest/279/problem/C)
