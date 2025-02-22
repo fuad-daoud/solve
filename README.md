@@ -31,3 +31,4 @@ Repo for solving questiosn on leetcode or any similar platform
 13. [B. Warehouse](https://codeforces.com/contest/35/problem/B)
 14. [A. Shell Game](https://codeforces.com/contest/35/problem/A)
 15. [C. Fire Again](https://codeforces.com/contest/35/problem/C)
+16. [B. Coins](https://codeforces.com/contest/47/problem/B)
