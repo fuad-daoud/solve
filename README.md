@@ -13,8 +13,15 @@ Repo for solving questiosn on leetcode or any similar platform
 
 1. Python
 2. C++
+3. Elixir
 
-## Problems Solved:
+## Platforms
+
+1. [Codeforces](https://codeforces.com/profile/immortalfox)
+2. [Leetcode](https://leetcode.com/u/FuadDaoud)
+3. [AtCoder](https://atcoder.jp/users/Fox_Immortal)
+
+## Problems Solved
 
 1. [Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
 2. [Best Time To Buy And Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/)
@@ -35,3 +42,4 @@ Repo for solving questiosn on leetcode or any similar platform
 17. [A. Triangular Numbers](https://codeforces.com/contest/47/problem/A)
 18. [C. Ladder](https://codeforces.com/contest/279/problem/C)
 19. [B. Books](https://codeforces.com/contest/279/problem/B)
+20. [A. 3.14](https://atcoder.jp/contests/abc314/tasks/abc314_a)
