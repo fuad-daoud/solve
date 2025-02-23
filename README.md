@@ -43,3 +43,4 @@ Repo for solving questiosn on leetcode or any similar platform
 18. [C. Ladder](https://codeforces.com/contest/279/problem/C)
 19. [B. Books](https://codeforces.com/contest/279/problem/B)
 20. [A. 3.14](https://atcoder.jp/contests/abc314/tasks/abc314_a)
+21. [B. Roulette](https://atcoder.jp/contests/abc314/tasks/abc314_b)
