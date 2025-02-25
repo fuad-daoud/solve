@@ -10,5 +10,3 @@ defmodule Main do
     end
   end
 end
-
-Main.main()
