@@ -45,3 +45,4 @@ Repo for solving questiosn on leetcode or any similar platform
 20. [A. 3.14](https://atcoder.jp/contests/abc314/tasks/abc314_a)
 21. [B. Roulette](https://atcoder.jp/contests/abc314/tasks/abc314_b)
 22. [A. Poisonous Oyster](https://atcoder.jp/contests/abc393/tasks/abc393_a)
+23. [B. A..B..C](https://atcoder.jp/contests/abc393/tasks/abc393_b)
