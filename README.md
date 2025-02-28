@@ -46,3 +46,4 @@ Repo for solving questiosn on leetcode or any similar platform
 21. [B. Roulette](https://atcoder.jp/contests/abc314/tasks/abc314_b)
 22. [A. Poisonous Oyster](https://atcoder.jp/contests/abc393/tasks/abc393_a)
 23. [B. A..B..C](https://atcoder.jp/contests/abc393/tasks/abc393_b)
+24. [A - Lucky Direction](https://atcoder.jp/contests/abc391/tasks/abc391_a)

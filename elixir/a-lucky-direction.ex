@@ -12,5 +12,3 @@ defmodule Main do
     |> IO.puts()
   end
 end
-
-Main.main()
