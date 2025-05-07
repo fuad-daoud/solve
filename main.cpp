@@ -1,6 +1,7 @@
+#include <algorithm>
 #include <cassert>
-#include <cmath>
-#include <cstdlib>
+#include <cstdint>
+#include <vector>
 #include <iostream>
 
 using namespace ::std;
@@ -9,43 +10,23 @@ int dx[4] = {-1, 1, 0, 0};
 int dy[4] = {0, 0, -1, 1};
 
 void solve() {
-  string a, b;
-  cin >> a >> b;
-  string tmp = "";
-  int diff = abs(int(a.size() - b.size()));
-  for (int i = 0; i < diff; i++) {
-    tmp.append("0");
-  }
-  if (a.size() < b.size()) {
-    a.insert(0, tmp);
-  } else if (b.size() < a.size()) {
-    b.insert(0, tmp);
-  }
-  int i = 0, j = 0;
-
-  while (i < a.size() && j < b.size()) {
-    if (a[i] > b[j]) {
-      cout << ">" << endl;
-      return;
-    } else if (a[i] < b[j]) {
-      cout << "<" << endl;
-      return;
+  int n, m;
+  cin >> n >> m;
+  vector<vector<int>> data(n, vector<int>(m));
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < m; j++) {
+      cin >> data[i][j];
     }
-    i++, j++;
   }
-  if (i == a.size() && j == b.size()) {
-    cout << "=" << endl;
-    return;
+  for(int i = 0; i < n; i++) {
+    sort(data[i].begin(), data[i].end());
   }
-  if (i == a.size()) {
-    cout << "<" << endl;
-    return;
-  }
+  int answer = INT32_MIN;
 
-  if (j == b.size()) {
-    cout << "<" << endl;
-    return;
+  for(int i = 0; i < n; i++) {
+    answer = max(answer, data[i].front());
   }
+  cout << answer << endl;
 }
 
 int main() {
