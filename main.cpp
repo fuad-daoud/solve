@@ -1,5 +1,6 @@
-#include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <cstdio>
 #include <iostream>
 
 using namespace ::std;
@@ -10,31 +11,34 @@ int dy[4] = {0, 0, -1, 1};
 const int N = 1001, M = 1001;
 
 void solve() {
-  int n;
-  cin >> n;
-  long long arr[n];
-
+  int n, q;
+  scanf("%d %d", &n, &q);
+  int l = int(log(n));
+  pair<int, int> arr[n];
   for (int i = 0; i < n; i++) {
-    cin >> arr[i];
+    scanf("%d", &arr[i].first);
+    arr[i].second = 1;
+  }
+  for (int i = n - 2; i >= 0; i--) {
+    if (arr[i].first == arr[i + 1].first) {
+      arr[i].second = arr[i + 1].second + 1;
+    }
   }
 
-  long long cm[n + 1];
-  cm[n] = 0l;
-  for(int i = n - 1; i >= 0; i--) {
-    cm[i] = cm[i + 1] + arr[i];
+  while (q--) {
+    int l, r, x;
+    scanf("%d %d %d", &l, &r, &x);
+    l--, r--;
+    if (arr[l].first == x) {
+      l += arr[l].second;
+    }
+
+    if (l > r) {
+      printf("-1\n");
+      continue;
+    }
+    printf("%d\n", l + 1);
   }
-  long long mx[n];
-  mx[0] = arr[0];
-  for(int i = 1; i < n; i++) {
-    mx[i] = max(mx[i - 1], arr[i]);
-  }
-  for (int i = 1; i <= n; i++) {
-    int last_index = n - i;
-    long long last = mx[last_index];
-    last += cm[last_index + 1];
-    cout << last << ' ';
-  }
-  cout << endl;
 }
 
 int main() {
@@ -43,7 +47,7 @@ int main() {
 // freopen("output.txt", "w", stdout);
 #endif
   int cases = 1;
-  cin >> cases;
+  // cin >> cases;
   while (cases--) {
     solve();
   }
