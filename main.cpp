@@ -1,5 +1,4 @@
 #include <cassert>
-#include <cmath>
 #include <cstdio>
 #include <iostream>
 
@@ -11,33 +10,18 @@ int dy[4] = {0, 0, -1, 1};
 const int N = 1001, M = 1001;
 
 void solve() {
-  int n, q;
-  scanf("%d %d", &n, &q);
-  int l = int(log(n));
-  pair<int, int> arr[n];
+  int n, k;
+  cin >> n >> k;
   for (int i = 0; i < n; i++) {
-    scanf("%d", &arr[i].first);
-    arr[i].second = 1;
-  }
-  for (int i = n - 2; i >= 0; i--) {
-    if (arr[i].first == arr[i + 1].first) {
-      arr[i].second = arr[i + 1].second + 1;
+    if (i > 0) {
+      cout << ' ';
     }
-  }
-
-  while (q--) {
-    int l, r, x;
-    scanf("%d %d %d", &l, &r, &x);
-    l--, r--;
-    if (arr[l].first == x) {
-      l += arr[l].second;
+    if (k > 0) {
+      cout << i * 2 + 2 << ' ' << i * 2 + 1;
+    } else {
+      cout << i * 2 + 1 << ' ' << i * 2 + 2;
     }
-
-    if (l > r) {
-      printf("-1\n");
-      continue;
-    }
-    printf("%d\n", l + 1);
+    k--;
   }
 }
 
