@@ -1,10 +1,9 @@
-// looked up the solution from geeksforgeeks, I need to learn when to use heaps
+// lookedup the solution from usaco, need to rememeber when to use binary search
 #include <algorithm>
 #include <cassert>
+#include <climits>
 #include <cstdio>
 #include <iostream>
-#include <queue>
-#include <vector>
 
 using namespace ::std;
 
@@ -13,59 +12,37 @@ int dy[4] = {0, 0, -1, 1};
 
 const int N = 1001, M = 1001;
 
-struct customer {
-  int id;
-  bool status; // 0 means leaving, 1 means coming
-  int room;
-  int prev;
-};
-
 void solve() {
   int n;
-  cin >> n;
-  pair<int, int> ranges[n];
+  long long t;
+  cin >> n >> t;
+  int arr[n];
+  int mn = INT_MAX;
   for (int i = 0; i < n; i++) {
-    cin >> ranges[i].first >> ranges[i].second;
+    cin >> arr[i];
+    mn = min(mn, arr[i]);
   }
 
-  vector<vector<int>> vec(n, vector<int>(3));
-  for (int i = 0; i < n; i++) {
-    vec[i][0] = ranges[i].first;
-    vec[i][1] = ranges[i].second;
-    vec[i][2] = i;
-  }
-
-  sort(vec.begin(), vec.end());
-
-  priority_queue<pair<int, int>, vector<pair<int, int>>,
-                 greater<pair<int, int>>>
-      occupied_rooms;
-
-  int room_count = 0;
-
-  vector<int> answer(n);
-
-  for (int i = 0; i < n; i++) {
-    int arrivalTime = vec[i][0];
-    int departureTime = vec[i][1];
-    int index = vec[i][2];
-
-    if (occupied_rooms.empty() || occupied_rooms.top().first >= arrivalTime) {
-      room_count += 1;
-      occupied_rooms.push({departureTime, room_count});
-      answer[index] = room_count;
+  long long left = 0;
+  long long right = mn * t;
+  long long res = 0;
+  while (left <= right) {
+    long long mid = (left + right) / 2;
+    long long sum = 0;
+    for (int i = 0; i < n; i++) {
+      sum += (mid / arr[i]);
+      if (sum >= t) {
+        break;
+      }
+    }
+    if (sum >= t) {
+      res = mid;
+      right = mid - 1;
     } else {
-      int vacantRoom = occupied_rooms.top().second;
-      occupied_rooms.pop();
-      occupied_rooms.push({departureTime, vacantRoom});
-      answer[index] = vacantRoom;
+      left = mid + 1;
     }
   }
-
-  cout << room_count << "\n";
-  for (int i = 0; i < answer.size(); i++)
-    cout << answer[i] << " ";
-  cout << endl;
+  cout << res << endl;
 }
 
 int main() {
