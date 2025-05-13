@@ -1,8 +1,7 @@
-#include <algorithm>
+// I lookedup the tutorial
 #include <cassert>
 #include <cstdio>
 #include <iostream>
-#include <numeric>
 
 using namespace ::std;
 
@@ -11,23 +10,41 @@ int dy[4] = {0, 0, -1, 1};
 
 const int N = 1001, M = 1001;
 
+bool beats(int n, int j, int i) {
+  if (j == 0) {
+    return i == n - 1;
+  }
+  if (j == n - 1) {
+    return i != 0;
+  }
+  return j > i;
+}
+
 void solve() {
   int n;
   cin >> n;
-  long long arr[n];
+  string s;
+  cin >> s;
+  bool good = false;
   for (int i = 0; i < n; i++) {
-    cin >> arr[i];
+    if (s[i] != 'A') {
+      continue;
+    }
+    bool good_move = true;
+    for (int j = 0; j < n; j++) {
+      if (s[j] == 'B' && beats(n, j, i)) {
+        good_move = false;
+      }
+    }
+    if (good_move) {
+      good = true;
+    }
   }
-  sort(arr, arr + n);
-
-  long long mx = arr[n - 1];
-
-  long long sm = accumulate(arr, arr + n - 1, 0ll);
-  if (mx <= sm) {
-    cout << sm + mx << endl;
+  if (good) {
+    cout << "Alice" << endl;
     return;
   }
-  cout << mx * 2 << endl;
+  cout << "Bob" << endl;
 }
 
 int main() {
@@ -36,7 +53,7 @@ int main() {
 // freopen("output.txt", "w", stdout);
 #endif
   int cases = 1;
-  // cin >> cases;
+  cin >> cases;
   while (cases--) {
     solve();
   }
