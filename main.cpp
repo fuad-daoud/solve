@@ -1,9 +1,8 @@
-// lookedup the solution from usaco, need to rememeber when to use binary search
 #include <algorithm>
 #include <cassert>
-#include <climits>
 #include <cstdio>
 #include <iostream>
+#include <queue>
 
 using namespace ::std;
 
@@ -14,35 +13,91 @@ const int N = 1001, M = 1001;
 
 void solve() {
   int n;
-  long long t;
-  cin >> n >> t;
-  int arr[n];
-  int mn = INT_MAX;
+  cin >> n;
+  pair<long long , int> arr[n];
+  queue<pair<long long, int>> k_books;
+  queue<pair<long long , int>> j_books;
   for (int i = 0; i < n; i++) {
-    cin >> arr[i];
-    mn = min(mn, arr[i]);
+    cin >> arr[i].first;
+    arr[i].second = i;
+  }
+  sort(arr, arr + n);
+  for (int i = 0; i < n; i++) {
+    k_books.push(arr[i]);
+  }
+  reverse(arr, arr + n);
+  for (int i = 0; i < n; i++) {
+    j_books.push(arr[i]);
   }
 
-  long long left = 0;
-  long long right = mn * t;
-  long long res = 0;
-  while (left <= right) {
-    long long mid = (left + right) / 2;
-    long long sum = 0;
-    for (int i = 0; i < n; i++) {
-      sum += (mid / arr[i]);
-      if (sum >= t) {
-        break;
+  long long answer = 0;
+  int locked[n];
+
+  while (!k_books.empty() && !j_books.empty()) {
+
+    if (k_books.front().second == j_books.front().second) {
+      // TODO: create a heap for both to solve such cases
+      if (locked[k_books.front().second] == 1) {
+        pair<int, int> tmp = j_books.front();
+        j_books.pop();
+        j_books.push(tmp);
+      } else {
+        pair<int, int> tmp = k_books.front();
+        k_books.pop();
+        k_books.push(tmp);
       }
+      if (k_books.front().second == j_books.front().second) {
+        if (locked[k_books.front().second] == 1) {
+          answer += k_books.front().first;
+          locked[k_books.front().second] = 0;
+          k_books.pop();
+          if (!k_books.empty() && !locked[k_books.front().second]) {
+            locked[k_books.front().second] = 1;
+          }
+        } else {
+          answer += j_books.front().first;
+          locked[j_books.front().second] = 0;
+          j_books.pop();
+          if (!j_books.empty() && !locked[j_books.front().second]) {
+            locked[j_books.front().second] = 2;
+          }
+        }
+      }
+      continue;
     }
-    if (sum >= t) {
-      res = mid;
-      right = mid - 1;
+
+    if (k_books.front().first < j_books.front().first) {
+      answer += k_books.front().first;
+      j_books.front().first -= k_books.front().first;
+      locked[k_books.front().second] = 0;
+      k_books.pop();
+      if (!k_books.empty() && !locked[k_books.front().second]) {
+        locked[k_books.front().second] = 1;
+      }
+    } else if (k_books.front().first > j_books.front().first) {
+      answer += j_books.front().first;
+      k_books.front().first -= j_books.front().first;
+      locked[j_books.front().second] = 0;
+      j_books.pop();
+      if (!j_books.empty() && !locked[j_books.front().second]) {
+        locked[j_books.front().second] = 2;
+      }
     } else {
-      left = mid + 1;
+      answer += j_books.front().first;
+      j_books.pop();
+      k_books.pop();
     }
   }
-  cout << res << endl;
+
+  while (!k_books.empty()) {
+    answer += k_books.front().first;
+    k_books.pop();
+  }
+  while (!j_books.empty()) {
+    answer += j_books.front().first;
+    j_books.pop();
+  }
+  cout << answer << endl;
 }
 
 int main() {
