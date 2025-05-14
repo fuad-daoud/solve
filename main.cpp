@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
+#include <vector>
 
 using namespace ::std;
 
@@ -10,41 +11,32 @@ int dy[4] = {0, 0, -1, 1};
 
 const int N = 1001, M = 1001;
 
-bool beats(int n, int j, int i) {
-  if (j == 0) {
-    return i == n - 1;
-  }
-  if (j == n - 1) {
-    return i != 0;
-  }
-  return j > i;
-}
-
 void solve() {
   int n;
   cin >> n;
-  string s;
-  cin >> s;
-  bool good = false;
+  int arr[n];
   for (int i = 0; i < n; i++) {
-    if (s[i] != 'A') {
-      continue;
-    }
-    bool good_move = true;
-    for (int j = 0; j < n; j++) {
-      if (s[j] == 'B' && beats(n, j, i)) {
-        good_move = false;
+    cin >> arr[i];
+  }
+
+  vector<int> tails;
+  for (int i = 0; i < n; i++) {
+    int left = 0, right = tails.size();
+    while (left < right) {
+      int mid = (left + right) / 2;
+      if (tails[mid] < arr[i]) {
+        left = mid + 1;
+      } else {
+        right = mid;
       }
     }
-    if (good_move) {
-      good = true;
+    if(left == tails.size()) {
+      tails.push_back(arr[i]);
+    } else {
+      tails[left] = arr[i];
     }
   }
-  if (good) {
-    cout << "Alice" << endl;
-    return;
-  }
-  cout << "Bob" << endl;
+  cout << tails.size() << endl;
 }
 
 int main() {
@@ -53,7 +45,7 @@ int main() {
 // freopen("output.txt", "w", stdout);
 #endif
   int cases = 1;
-  cin >> cases;
+  // cin >> cases;
   while (cases--) {
     solve();
   }
