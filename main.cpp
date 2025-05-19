@@ -22,17 +22,25 @@ void go(int column = 0, int row = 0) {
   if (vis[row][column]) {
     return;
   }
+
+  // top and bottom walls
+  if ((column >= 1 && column <= 5 && !vis[row][column - 1] && !vis[row][column + 1]) && ((row == 0 && vis[row + 1][column]) || (row == N - 1 && vis[row - 1][column]))){
+    return;
+  }
+  // right and left walls
+  if ((row >= 1 && row <= 5 && !vis[row - 1][column] && !vis[row + 1][column]) && ((column == 0 && vis[row][column + 1]) || (column == N - 1 && vis[row][column - 1]))){
+    return;
+  }
   if (row == N - 1 && column == 0) {
     if (steps == 48) {
       paths++;
-      cout << paths << endl;
     }
     return;
   }
   for (int i = 0; i < 4; i++) {
     vis[row][column] = true;
     steps++;
-    go(row + dy[i], column + dx[i]);
+    go(column + dx[i], row + dy[i]);
     steps--;
     vis[row][column] = false;
   }
@@ -41,6 +49,7 @@ void go(int column = 0, int row = 0) {
 void solve() {
   cin >> s;
   go(0, 0);
+  cout << paths << endl;
 }
 
 int main() {
