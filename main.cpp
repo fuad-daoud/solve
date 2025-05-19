@@ -31,6 +31,14 @@ void go(int column = 0, int row = 0) {
   if ((row >= 1 && row <= 5 && !vis[row - 1][column] && !vis[row + 1][column]) && ((column == 0 && vis[row][column + 1]) || (column == N - 1 && vis[row][column - 1]))){
     return;
   }
+  if (column >= 1 && column <= 5 && row >= 1 && row <= 5) {
+    if (!vis[row - 1][column] && !vis[row + 1][column] && vis[row][column - 1] && vis[row][column + 1]){
+      return;
+    }
+    if (!vis[row][column - 1] && !vis[row][column + 1] && vis[row - 1][column] && vis[row + 1][column]){
+      return;
+    }
+  }
   if (row == N - 1 && column == 0) {
     if (steps == 48) {
       paths++;
