@@ -1,42 +1,46 @@
-// I lookedup the tutorial
 #include <cassert>
 #include <cstdio>
 #include <iostream>
-#include <vector>
 
 using namespace ::std;
 
 int dx[4] = {-1, 1, 0, 0};
 int dy[4] = {0, 0, -1, 1};
 
-const int N = 1001, M = 1001;
+const int N = 7, M = 48;
+#define in(i, j) i >= 0 || i < j
+#define not_in(i, j) !(in(i, j))
+
+string s;
+bool vis[N][N];
+int steps = 0, paths = 0;
+
+void go(int column = 0, int row = 0) {
+  if ((row < 0 || row > N - 1) || (column < 0 || column > N - 1)) {
+    return;
+  }
+  if (vis[row][column]) {
+    return;
+  }
+  if (row == N - 1 && column == 0) {
+    if (steps == 48) {
+      paths++;
+      cout << paths << endl;
+    }
+    return;
+  }
+  for (int i = 0; i < 4; i++) {
+    vis[row][column] = true;
+    steps++;
+    go(row + dy[i], column + dx[i]);
+    steps--;
+    vis[row][column] = false;
+  }
+}
 
 void solve() {
-  int n;
-  cin >> n;
-  int arr[n];
-  for (int i = 0; i < n; i++) {
-    cin >> arr[i];
-  }
-
-  vector<int> tails;
-  for (int i = 0; i < n; i++) {
-    int left = 0, right = tails.size();
-    while (left < right) {
-      int mid = (left + right) / 2;
-      if (tails[mid] < arr[i]) {
-        left = mid + 1;
-      } else {
-        right = mid;
-      }
-    }
-    if(left == tails.size()) {
-      tails.push_back(arr[i]);
-    } else {
-      tails[left] = arr[i];
-    }
-  }
-  cout << tails.size() << endl;
+  cin >> s;
+  go(0, 0);
 }
 
 int main() {
