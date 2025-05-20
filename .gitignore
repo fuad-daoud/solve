@@ -176,3 +176,7 @@ cython_debug/
 # ignore txt input/output files
 input.txt
 output.txt
+
+.zig-cache
+zig-out
+main
