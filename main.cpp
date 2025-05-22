@@ -1,7 +1,7 @@
 #include <cassert>
 #include <cstdio>
-#include <cstdlib>
 #include <iostream>
+#include <string>
 
 using namespace ::std;
 
@@ -16,48 +16,32 @@ string grid[N];
 int dp[N][N];
 
 void solve() {
-  cin >> n >> m;
-  // cout << m << endl;
-  char s[n];
-  scanf("%s", s);
-  string answer;
-  for (int i = 0; i < n; i++) {
-    if (!m) {
-      answer.push_back(s[i]);
-      continue;
-    }
-    if (s[i] - 'a' > 'z' - s[i] && s[i] - 'a' <= m) {
-      answer.push_back('a');
-      m -= s[i] - 'a';
-      continue;
-    }
-    if ('z' - s[i] > s[i] - 'a' && 'z' - s[i] <= m) {
-      answer.push_back('z');
-      m -= 'z' - s[i];
-      continue;
-    }
-    if (s[i] + m < 'z') {
-      answer.push_back(s[i] + m);
-      m = 0;
-      continue;
-    }
-    if (s[i] - m > 'a') {
-      answer.push_back(s[i] - m);
-      m = 0;
-      continue;
+  string s;
+  cin >> s;
+  long long answer = 0;
+  for (int i = s.size() - 1; i >= 1; i--) {
+    string str = "";
+    str += s[i - 1];
+    str += s[i];
+    int num;
+
+    sscanf(str.c_str(), "%d", &num);
+    if (num % 4 == 0) {
+      answer += i;
     }
   }
-  if (m) {
-    cout << -1 << endl;
-    return;
-; }
+
+  for (int i = 0; i < s.size(); i++) {
+    string str = "";
+    str += s[i];
+    int num;
+    sscanf(str.c_str(), "%d", &num);
+
+    if (num % 4 == 0) {
+      answer++;
+    }
+  }
   cout << answer << endl;
-  // int test = 0;
-  //
-  // for (int i = 0; i < n; i++) {
-  //   test += abs(s[i] - answer[i]);
-  // }
-  // cout << test << endl;
 }
 
 int main() {
