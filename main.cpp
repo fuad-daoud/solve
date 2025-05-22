@@ -1,6 +1,6 @@
 #include <cassert>
 #include <cstdio>
-#include <cstring>
+#include <cstdlib>
 #include <iostream>
 
 using namespace ::std;
@@ -11,40 +11,53 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 const int N = 1000, M = 48, mod = 1e9 + 7;
 #define in(i, j) i >= 0 && i < j
 #define not_in(i, j) !(in(i, j))
-int n;
+int n, m;
 string grid[N];
 int dp[N][N];
 
-int go(int row = 0, int column = 0) {
-  if (dp[row][column] != -1) {
-    return dp[row][column];
-  }
-  if (grid[row][column] == '*') {
-    return 0;
-  }
-  if (row == n - 1 && column == n - 1) {
-    return 1;
-  }
-  int result = 0;
-
-  if (in(row + 1, n) && in(column, n)) {
-    result = (result + go(row + 1, column)) % mod;
-  }
-  if (in(row, n) && in(column + 1, n)) {
-    result = (result + go(row, column + 1))% mod;
-  }
-  dp[row][column] = result % mod;
-  return result;
-}
-
 void solve() {
-  cin >> n;
-  memset(dp, -1, sizeof(dp));
+  cin >> n >> m;
+  // cout << m << endl;
+  char s[n];
+  scanf("%s", s);
+  string answer;
   for (int i = 0; i < n; i++) {
-    cin >> grid[i];
+    if (!m) {
+      answer.push_back(s[i]);
+      continue;
+    }
+    if (s[i] - 'a' > 'z' - s[i] && s[i] - 'a' <= m) {
+      answer.push_back('a');
+      m -= s[i] - 'a';
+      continue;
+    }
+    if ('z' - s[i] > s[i] - 'a' && 'z' - s[i] <= m) {
+      answer.push_back('z');
+      m -= 'z' - s[i];
+      continue;
+    }
+    if (s[i] + m < 'z') {
+      answer.push_back(s[i] + m);
+      m = 0;
+      continue;
+    }
+    if (s[i] - m > 'a') {
+      answer.push_back(s[i] - m);
+      m = 0;
+      continue;
+    }
   }
-  dp[0][0] = go();
-  cout << dp[0][0] << endl;
+  if (m) {
+    cout << -1 << endl;
+    return;
+; }
+  cout << answer << endl;
+  // int test = 0;
+  //
+  // for (int i = 0; i < n; i++) {
+  //   test += abs(s[i] - answer[i]);
+  // }
+  // cout << test << endl;
 }
 
 int main() {
