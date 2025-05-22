@@ -1,3 +1,4 @@
+// lookedup the solution 
 #include <cassert>
 #include <cstdio>
 #include <iostream>
@@ -16,32 +17,19 @@ string grid[N];
 int dp[N][N];
 
 void solve() {
-  string s;
-  cin >> s;
-  long long answer = 0;
-  for (int i = s.size() - 1; i >= 1; i--) {
-    string str = "";
-    str += s[i - 1];
-    str += s[i];
-    int num;
-
-    sscanf(str.c_str(), "%d", &num);
-    if (num % 4 == 0) {
-      answer += i;
+  int b, p;
+  cin >> n >> b >> p;
+  int t = n * p;
+  int x = 0;
+  while (n > 1) {
+    int k = 1;
+    while (k * 2 <= n) {
+      k *= 2;
     }
+    x += (k / 2) * (2 * b + 1);
+    n -= k / 2;
   }
-
-  for (int i = 0; i < s.size(); i++) {
-    string str = "";
-    str += s[i];
-    int num;
-    sscanf(str.c_str(), "%d", &num);
-
-    if (num % 4 == 0) {
-      answer++;
-    }
-  }
-  cout << answer << endl;
+  cout << x << ' ' << t << endl;
 }
 
 int main() {
