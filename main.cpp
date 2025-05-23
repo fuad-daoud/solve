@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <string>
 
@@ -17,57 +16,19 @@ int n, m;
 string grid[N];
 int dp[N][N];
 
+bool compare(string a, string b) { return a + b < b + a; }
+
 void solve() {
   cin >> n;
-  long long arr[n];
-  for (long long i = 0; i < n; i++) {
-    cin >> arr[i];
+  string s[n];
+  for (int i = 0; i < n; i++) {
+    cin >> s[i];
   }
-  string s;
-  cin >> s;
-  long long answer = -1;
-  long long prefix[n + 1];
-  memset(prefix, 0, sizeof(prefix));
+  sort(s, s + n, compare);
 
-  for (long long i = 1; i < n + 1; i++) {
-    if (s[i - 1] == 'B') {
-      prefix[i] = prefix[i - 1] + arr[i - 1];
-    } else {
-      prefix[i] = prefix[i - 1];
-    }
+  for (int i = 0; i < n; i++) {
+    cout << s[i];
   }
-
-  long long suffix[n + 1];
-  memset(suffix, 0, sizeof(suffix));
-
-  for (long long i = n - 1; i >= 0; i--) {
-    if (s[i] == 'B') {
-      suffix[i] = suffix[i + 1] + arr[i];
-    } else {
-      suffix[i] = suffix[i + 1];
-    }
-  }
-
-  long long sum = 0;
-  for (long long i = 0; i < n; i++) {
-    if (s[i] == 'A') {
-      sum += arr[i];
-    }
-    if (i == n - 1) {
-      answer = max(answer, sum);
-      continue;
-    }
-    answer = max(answer, sum + suffix[i + 1]);
-  }
-  sum = 0;
-  for (long long i = n - 1; i >= 0; i--) {
-    if (s[i] == 'A') {
-      sum += arr[i];
-    }
-    answer = max(answer, sum + prefix[i]);
-  }
-  answer = max(answer, suffix[0]);
-  cout << answer << endl;
 }
 
 int main() {
