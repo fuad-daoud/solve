@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <vector>
 #ifndef ONLINE_JUDGE
 #include "util.h"
 #endif
@@ -19,30 +21,40 @@ int n, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
-void solve() {
-  string s;
-  cin >> s;
-  int n = s.size();
-  for (int i = 0; i < n - 2; i++) {
-    if (s[i] == s[i + 1]) {
-      for (auto c : chars) {
-        if (s[i] != c && s[i + 2] != c) {
-          s[i + 1] = c;
-          break;
-        }
-      }
-    }
+int gcd(int a, int b) {
+  if (a == 0) {
+    return b;
   }
-  if (s[n - 2] == s[n - 1]) {
-    for (auto c : chars) {
-      if (s[n - 2] != c) {
-        s[n - 1] = c;
-        break;
-      }
-    }
-  }
+  return gcd(b % a, a);
+}
 
-  cout << s << endl;
+void solve() {
+  cin >> n;
+  int arr[n];
+  for (int i = 0; i < n; i++) {
+    cin >> arr[i];
+  }
+  vector<pair<int, int>> answer;
+  for (int i = 0; i < n - 1; i++) {
+    int mx = max(arr[i], arr[i + 1]);
+    int x = gcd(arr[i], arr[i + 1]);
+    if (x > 1) {
+      if (arr[i] == 1) {
+        answer.push_back({i, 999983});
+      } else {
+        answer.push_back({i, 1});
+      }
+    }
+  }
+  cout << answer.size() << endl;
+  for (int i = 0, j = 0; i < n; i++) {
+    cout << arr[i] << ' ';
+    if (j < answer.size() && answer[j].first == i) {
+      cout << answer[j].second << ' ';
+      j++;
+    }
+  }
+  cout << endl;
 }
 
 int main() {
