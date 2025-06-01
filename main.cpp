@@ -36,7 +36,7 @@ public:
         break;
       } else {
         left = min(left, current.first);
-        right = min(right, current.second);
+        right = max(right, current.second);
       }
       i++;
     }
