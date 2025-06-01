@@ -1,7 +1,6 @@
+#include "util.h"
 #include <cassert>
 #include <cstdio>
-#include <cstring>
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -17,66 +16,82 @@ int n, m;
 string grid[N];
 int dp[N][N];
 
-vector<vector<int>> merge(vector<vector<int>> &intervals) {
-  // int mx = -1;
-  int n = intervals.size();
-  int arr[N][2];
-  memset(arr, 0, sizeof(arr));
-  for (int i = 0; i < n; i++) {
+#define interval pair<int, int>
 
-    arr[intervals[i][0]][0]++;
-    arr[intervals[i][1]][1]++;
-    // mx = max(mx, max(intervals[i][1], intervals[i][0]));
-  }
+class RangeModule {
+  vector<interval> intervals;
 
-  // for (int i = 0; i < mx; i++) {
-  //   cout << arr[i][0] << ' ';
-  // }
-  // cout << endl;
-  // for (int i = 0; i < mx; i++) {
-  //   cout << arr[i][1] << ' ';
-  // }
-  // cout << endl;
-
-  vector<vector<int>> answer;
-
-  int opened = 0, closed = 0;
-
-  vector<int> current(2);
-
-  for (int i = 0; i < N; i++) {
-    if (arr[i][0] > 0) {
-      if (!opened) {
-        current[0] = i;
+public:
+  void addRange(int left, int right) {
+    vector<interval> result;
+    interval tmp = {0, 0};
+    int n = intervals.size();
+    int i = 0;
+    while (i < n) {
+      interval current = intervals[i];
+      if (current.second < left) {
+        result.push_back(current);
+      } else if (current.first > right) {
+        tmp = {left, right};
+        break;
+      } else {
+        left = min(left, current.first);
+        right = min(right, current.second);
       }
-      opened += arr[i][0];
+      i++;
     }
-    if (arr[i][1] > 0) {
-      closed += arr[i][1];
-      if (closed == opened) {
-        current[1] = i;
-        answer.push_back(current);
-        current = vector<int>(2);
-        closed = 0;
-        opened = 0;
+    if (i == n) {
+      result.push_back({left, right});
+    } else {
+      result.push_back(tmp);
+    }
+    while (i < n) {
+      interval current = intervals[i];
+      result.push_back(current);
+      i++;
+    }
+    intervals = result;
+  }
+  bool queryRange(int left, int right) {
+    int l = 0, r = intervals.size() - 1;
+    while (l <= r) {
+      int mid = l + (r - l) / 2;
+      interval current = intervals[mid];
+      if (current.first >= right) {
+        r = mid - 1;
+      } else if (current.second <= left) {
+        l = mid + 1;
+      } else {
+        return current.first <= left && current.second >= right;
       }
     }
+    return false;
   }
-  return answer;
-}
-
-void solve() {
-  cin >> n;
-  vector<vector<int>> intervals(n, vector<int>(2));
-  for (int i = 0; i < n; i++) {
-    cin >> intervals[i][0] >> intervals[i][1];
+  void removeRange(int left, int right) {
+    vector<interval> result;
+    int n = intervals.size();
+    int i = 0;
+    while (i < n) {
+      interval current = intervals[i];
+      if (current.second <= left) {
+        result.push_back(current);
+      } else if (current.first >= right) {
+        result.push_back(current);
+      } else {
+        if (current.first < left) {
+          result.push_back({current.first, left});
+        }
+        if (intervals[i].second > right) {
+          result.push_back({right, current.second});
+        }
+      }
+      i++;
+    }
+    intervals = result;
   }
-  vector<vector<int>> answer = merge(intervals);
+};
 
-  // for (int i = 0; i < answer.size(); i++) {
-  //   cout << answer[i][0] << ' ' << answer[i][1] << endl;
-  // }
-}
+void solve() {}
 
 int main() {
 #ifndef ONLINE_JUDGE
