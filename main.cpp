@@ -1,12 +1,13 @@
 #include <algorithm>
 #include <vector>
-#ifndef ONLINE_JUDGE
-#include "util.h"
-#endif
 #include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <stdio.h>
+
+#ifndef ONLINE_JUDGE
+#include "util.h"
+#endif
 
 using namespace ::std;
 
@@ -21,51 +22,48 @@ int n, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
-int gcd(int a, int b) {
-  if (a == 0) {
-    return b;
-  }
-  return gcd(b % a, a);
-}
 
 void solve() {
-  cin >> n;
-  int arr[n];
-  for (int i = 0; i < n; i++) {
-    cin >> arr[i];
-  }
-  vector<pair<int, int>> answer;
-  for (int i = 0; i < n - 1; i++) {
-    int mx = max(arr[i], arr[i + 1]);
-    int x = gcd(arr[i], arr[i + 1]);
-    if (x > 1) {
-      if (arr[i] == 1) {
-        answer.push_back({i, 999983});
-      } else {
-        answer.push_back({i, 1});
-      }
+    int n;
+    cin >> n;
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
     }
-  }
-  cout << answer.size() << endl;
-  for (int i = 0, j = 0; i < n; i++) {
-    cout << arr[i] << ' ';
-    if (j < answer.size() && answer[j].first == i) {
-      cout << answer[j].second << ' ';
-      j++;
+
+
+
+    vector<pair<int, int>> answer;
+
+    for (int i = 0; i < n; i++) {
+        int current = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[current] > arr[j]) {
+                current = j;
+            }
+        }
+        if (i != current) {
+            answer.emplace_back(i, current);
+        }
+        swap(arr[i], arr[current]);
     }
-  }
-  cout << endl;
+
+    cout << answer.size() << endl;
+    for (auto p : answer) {
+        cout << p.first << ' ' << p.second << endl;
+    }
+
 }
 
 int main() {
 #ifndef ONLINE_JUDGE
-  assert(freopen("input.txt", "rt", stdin));
-// freopen("output.txt", "w", stdout);
+    assert(freopen("input.txt", "rt", stdin));
+    // freopen("output.txt", "w", stdout);
 #endif
-  int cases = 1;
-  // cin >> cases;
-  while (cases--) {
-    solve();
-  }
-  return 0;
+    int cases = 1;
+    // cin >> cases;
+    while (cases--) {
+        solve();
+    }
+    return 0;
 }
