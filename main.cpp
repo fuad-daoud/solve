@@ -24,35 +24,46 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int n;
+    int n, m;
     cin >> n;
-    int arr[n];
+    int boys[102] = {};
     for (int i = 0; i < n; i++) {
-        cin >> arr[i];
+        int boy;
+        cin >> boy;
+        boys[boy]++;
     }
+    cin >> m;
+    int gals[102] = {};
 
-
-
-    vector<pair<int, int>> answer;
-
-    for (int i = 0; i < n; i++) {
-        int current = i;
-        for (int j = i + 1; j < n; j++) {
-            if (arr[current] > arr[j]) {
-                current = j;
+    for (int i = 0; i < m; i++) {
+        int gal;
+        cin >> gal;
+        gals[gal]++;
+    }
+    int answer = 0;
+    for (int i = 1; i < 101; i++) {
+        for (int j = i - 1; j < i + 2; j++) {
+            const int current = min(gals[j], boys[i]);
+            if (current == 0) {
+                continue;
             }
+            gals[j] -= current;
+            boys[i] -= current;
+            answer += current;
         }
-        if (i != current) {
-            answer.emplace_back(i, current);
+
+        for (int j = i - 1; j < i + 2; j++) {
+            const int current = min(gals[i], boys[j]);
+            if (current == 0) {
+                continue;
+            }
+            gals[i] -= current;
+            boys[j] -= current;
+            answer += current;
         }
-        swap(arr[i], arr[current]);
     }
 
-    cout << answer.size() << endl;
-    for (auto p : answer) {
-        cout << p.first << ' ' << p.second << endl;
-    }
-
+    cout << answer << endl;
 }
 
 int main() {

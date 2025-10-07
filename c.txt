@@ -90,7 +90,7 @@
 #90 https://codeforces.com/contest/275 : 
 #91 https://codeforces.com/contest/276 : 
 #92 https://codeforces.com/contest/278 : 
-#93 https://codeforces.com/contest/279 : 
+#93 https://codeforces.com/contest/279 : You solved C! 
 #94 https://codeforces.com/contest/281 : 
 #95 https://codeforces.com/contest/282 : 
 #96 https://codeforces.com/contest/284 : 
@@ -678,3 +678,4 @@
 #678 https://codeforces.com/contest/2067 : 
 #679 https://codeforces.com/contest/2064 : 
 #680 https://codeforces.com/contest/2071 : 
+#681 https://codeforces.com/contest/2078 : 
