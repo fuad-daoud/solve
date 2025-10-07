@@ -24,46 +24,47 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int n, m;
-    cin >> n;
-    int boys[102] = {};
-    for (int i = 0; i < n; i++) {
-        int boy;
-        cin >> boy;
-        boys[boy]++;
-    }
-    cin >> m;
-    int gals[102] = {};
-
-    for (int i = 0; i < m; i++) {
-        int gal;
-        cin >> gal;
-        gals[gal]++;
-    }
-    int answer = 0;
-    for (int i = 1; i < 101; i++) {
-        for (int j = i - 1; j < i + 2; j++) {
-            const int current = min(gals[j], boys[i]);
-            if (current == 0) {
-                continue;
-            }
-            gals[j] -= current;
-            boys[i] -= current;
-            answer += current;
+    int m, s;
+    cin >> m >> s;
+    if (s == 0) {
+        if (m == 1) {
+            cout << "0 0" << endl;
+            return;
         }
-
-        for (int j = i - 1; j < i + 2; j++) {
-            const int current = min(gals[i], boys[j]);
-            if (current == 0) {
-                continue;
-            }
-            gals[i] -= current;
-            boys[j] -= current;
-            answer += current;
-        }
+        cout << "-1 -1" << endl;
+        return;
+    }
+    if (m * 9 < s) {
+        cout << "-1 -1" << endl;
+        return;
     }
 
-    cout << answer << endl;
+    if (m == 1) {
+        cout << s << " " << s << endl;
+        return;
+    }
+    string maximos;
+    while (s > 0) {
+        const int current = min(9, s);
+        maximos += to_string(current);
+        s -= current;
+    }
+    string minimos = maximos;
+    reverse(minimos.begin(), minimos.end());
+    if (minimos.size() < m) {
+        minimos[0]--;
+    }
+    while (maximos.size() < m) {
+        maximos += "0";
+    }
+    while (minimos.size() < m - 1) {
+        minimos.insert(0, "0");
+    }
+
+    if (minimos.size() < m) {
+        minimos.insert(0, "1");
+    }
+    cout << minimos << " " << maximos << endl;
 }
 
 int main() {
