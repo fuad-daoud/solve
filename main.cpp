@@ -2,7 +2,9 @@
 #include <vector>
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 #include <iostream>
+#include <set>
 #include <stdio.h>
 
 #ifndef ONLINE_JUDGE
@@ -24,47 +26,37 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int m, s;
-    cin >> m >> s;
-    if (s == 0) {
-        if (m == 1) {
-            cout << "0 0" << endl;
-            return;
+    int n, m;
+    cin >> n >> m;
+    vector<int> intersections[n + 1];
+    vector<vector<bool>> ok(n + 1, vector<bool>(n + 1, false));
+    for (int i = 0; i < m; i++) {
+        int nodeA, nodeB;
+        cin >> nodeA >> nodeB;
+        ok[nodeA][nodeB] = true;
+        intersections[nodeA].emplace_back(nodeB);
+    }
+
+    int answer = 0;
+    for (int a = 1; a <= n; a++) {
+        for (int d = 1; d <= n; d++) {
+            if (d == a) {
+                continue;
+            }
+            int r = 0;
+            // count is d valid and count the intersections that lead to (d) from (a) being b
+            for (const int b: intersections[a]) {
+                if (b == d) {
+                    continue;
+                }
+                if (ok[b][d]) {
+                    r++;
+                }
+            }
+            answer += r * (r - 1) / 2;
         }
-        cout << "-1 -1" << endl;
-        return;
     }
-    if (m * 9 < s) {
-        cout << "-1 -1" << endl;
-        return;
-    }
-
-    if (m == 1) {
-        cout << s << " " << s << endl;
-        return;
-    }
-    string maximos;
-    while (s > 0) {
-        const int current = min(9, s);
-        maximos += to_string(current);
-        s -= current;
-    }
-    string minimos = maximos;
-    reverse(minimos.begin(), minimos.end());
-    if (minimos.size() < m) {
-        minimos[0]--;
-    }
-    while (maximos.size() < m) {
-        maximos += "0";
-    }
-    while (minimos.size() < m - 1) {
-        minimos.insert(0, "0");
-    }
-
-    if (minimos.size() < m) {
-        minimos.insert(0, "1");
-    }
-    cout << minimos << " " << maximos << endl;
+    cout << answer << endl;
 }
 
 int main() {
