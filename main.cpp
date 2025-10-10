@@ -29,7 +29,7 @@ void solve() {
     int n, m;
     cin >> n >> m;
     vector<int> intersections[n + 1];
-    vector<vector<bool>> ok(n + 1, vector<bool>(n + 1, false));
+    vector ok(n + 1, vector(n + 1, false));
     for (int i = 0; i < m; i++) {
         int nodeA, nodeB;
         cin >> nodeA >> nodeB;
