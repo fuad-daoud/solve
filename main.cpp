@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iostream>
 #include <set>
+#include <stack>
 #include <stdio.h>
 
 #ifndef ONLINE_JUDGE
@@ -26,37 +27,30 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    vector<int> intersections[n + 1];
-    vector ok(n + 1, vector(n + 1, false));
-    for (int i = 0; i < m; i++) {
-        int nodeA, nodeB;
-        cin >> nodeA >> nodeB;
-        ok[nodeA][nodeB] = true;
-        intersections[nodeA].emplace_back(nodeB);
+    int n;
+    cin >> n;
+    stack<int> teams[3];
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        x--;
+        teams[x].push(i + 1);
     }
 
-    int answer = 0;
-    for (int a = 1; a <= n; a++) {
-        for (int d = 1; d <= n; d++) {
-            if (d == a) {
-                continue;
+    cout << min(teams[0].size(), min(teams[1].size(), teams[2].size())) << endl;
+    while (true) {
+        for (const auto & team : teams) {
+            if (team.empty()) {
+                return;
             }
-            int r = 0;
-            // count is d valid and count the intersections that lead to (d) from (a) being b
-            for (const int b: intersections[a]) {
-                if (b == d) {
-                    continue;
-                }
-                if (ok[b][d]) {
-                    r++;
-                }
-            }
-            answer += r * (r - 1) / 2;
         }
+
+        for (auto & team : teams) {
+            cout << team.top() << " ";
+            team.pop();
+        }
+        cout << endl;
     }
-    cout << answer << endl;
 }
 
 int main() {
