@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <set>
 #include <stack>
 #include <stdio.h>
@@ -29,27 +30,41 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    stack<int> teams[3];
+    vector<int> next(1e6 + 1, -1), prev(1e6 + 1, -1);
+    vector<int> numbers;
     for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        x--;
-        teams[x].push(i + 1);
+        int a, b;
+        cin >> a >> b;
+        next[a] = b;
+        prev[b] = a;
+        numbers.push_back(a);
+    }
+    vector<int> answer1;
+    for (int x = next[0]; x > 0; x = next[x]) {
+        answer1.push_back(x);
     }
 
-    cout << min(teams[0].size(), min(teams[1].size(), teams[2].size())) << endl;
-    while (true) {
-        for (const auto & team : teams) {
-            if (team.empty()) {
-                return;
-            }
+    int start = 0;
+    for (const int number : numbers) {
+        if (prev[number] == -1) {
+            start = number;
+            break;
         }
-
-        for (auto & team : teams) {
-            cout << team.top() << " ";
-            team.pop();
-        }
-        cout << endl;
+    }
+    vector<int> answer2;
+    for (int x = start; x > 0; x = next[x]) {
+        answer2.push_back(x);
+    }
+    vector<int> answer;
+    for (int i = 0; i < n/2; i++) {
+        answer.push_back(answer2[i]);
+        answer.push_back(answer1[i]);
+    }
+    if (n % 2 == 1) {
+        answer.push_back(answer2[n/2]);
+    }
+    for (const int number : answer) {
+        cout << number << ' ';
     }
 }
 
