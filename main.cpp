@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstdio>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <set>
@@ -28,17 +29,22 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int n;
-    cin >> n;
-    int number = 1;
-    int answer = 0;
-    while (n >= 0) {
-        n -= number * (number + 1) / 2;
-        number++;
-        answer++;
+    int n, l;
+    cin >> n >> l;
+    double lights[n];
+    for (int i = 0; i < n; i++) {
+        cin >> lights[i];
     }
-    answer--;
-    cout << answer << endl;
+    double answer = 0;
+    sort(lights, lights + n);
+    double prev = lights[0];
+    answer = max(answer, lights[0]);
+    for (int i = 0; i < n; i++) {
+        answer = max(answer, (lights[i] - prev) / 2.0);
+        prev = lights[i];
+    }
+    answer = max(answer, (l - prev));
+    cout << fixed << setprecision(10) << answer << endl;
 }
 
 int main() {
