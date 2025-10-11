@@ -30,42 +30,15 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    vector<int> next(1e6 + 1, -1), prev(1e6 + 1, -1);
-    vector<int> numbers;
-    for (int i = 0; i < n; i++) {
-        int a, b;
-        cin >> a >> b;
-        next[a] = b;
-        prev[b] = a;
-        numbers.push_back(a);
+    int number = 1;
+    int answer = 0;
+    while (n >= 0) {
+        n -= number * (number + 1) / 2;
+        number++;
+        answer++;
     }
-    vector<int> answer1;
-    for (int x = next[0]; x > 0; x = next[x]) {
-        answer1.push_back(x);
-    }
-
-    int start = 0;
-    for (const int number : numbers) {
-        if (prev[number] == -1) {
-            start = number;
-            break;
-        }
-    }
-    vector<int> answer2;
-    for (int x = start; x > 0; x = next[x]) {
-        answer2.push_back(x);
-    }
-    vector<int> answer;
-    for (int i = 0; i < n/2; i++) {
-        answer.push_back(answer2[i]);
-        answer.push_back(answer1[i]);
-    }
-    if (n % 2 == 1) {
-        answer.push_back(answer2[n/2]);
-    }
-    for (const int number : answer) {
-        cout << number << ' ';
-    }
+    answer--;
+    cout << answer << endl;
 }
 
 int main() {
