@@ -29,22 +29,30 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    int n, l;
-    cin >> n >> l;
-    double lights[n];
+    long long n, r, avg;
+    cin >> n >> r >> avg;
+    long long goal_sum = n * avg;
+    pair<long long, long long> exams[n];
+    long long current_sum = 0;
     for (int i = 0; i < n; i++) {
-        cin >> lights[i];
+        long long a, b;
+        cin >> a >> b;
+        current_sum += a;
+        exams[i] = {b, a};
     }
-    double answer = 0;
-    sort(lights, lights + n);
-    double prev = lights[0];
-    answer = max(answer, lights[0]);
+
+
+    sort(exams, exams + n);
+    long long answer = 0;
     for (int i = 0; i < n; i++) {
-        answer = max(answer, (lights[i] - prev) / 2.0);
-        prev = lights[i];
+        if (current_sum >= goal_sum) {
+            break;
+        }
+        long long grades = min(goal_sum - current_sum, r - exams[i].second);
+        current_sum += grades;
+        answer += grades * exams[i].first;
     }
-    answer = max(answer, (l - prev));
-    cout << fixed << setprecision(10) << answer << endl;
+    cout << answer << endl;
 }
 
 int main() {
