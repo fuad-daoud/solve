@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <set>
 #include <stack>
 #include <stdio.h>
@@ -29,30 +30,36 @@ char chars[] = {'a', 'b', 'c'};
 
 
 void solve() {
-    long long n, r, avg;
-    cin >> n >> r >> avg;
-    long long goal_sum = n * avg;
-    pair<long long, long long> exams[n];
-    long long current_sum = 0;
-    for (int i = 0; i < n; i++) {
-        long long a, b;
-        cin >> a >> b;
-        current_sum += a;
-        exams[i] = {b, a};
-    }
+    int n, x, y;
+    cin >> n >> x >> y;
+    vector<string> answers;
+    double dx = x, dy = y;
 
+    int countx = 0, county = 0;
 
-    sort(exams, exams + n);
-    long long answer = 0;
-    for (int i = 0; i < n; i++) {
-        if (current_sum >= goal_sum) {
-            break;
+    while (countx < x || county < y) {
+        if ((countx + 1) / dx < (county + 1) / dy) {
+            countx++;
+            answers.emplace_back("Vanya");
+            continue;
         }
-        long long grades = min(goal_sum - current_sum, r - exams[i].second);
-        current_sum += grades;
-        answer += grades * exams[i].first;
+        if ((county + 1) / dy < (countx + 1) / dx) {
+            county++;
+            answers.emplace_back("Vova");
+            continue;
+        }
+        if ((countx + 1) / dx == (county + 1) / dy) {
+            countx++;
+            county++;
+            answers.emplace_back("Both");
+            answers.emplace_back("Both");
+        }
     }
-    cout << answer << endl;
+    for (int i = 0; i < n; i++) {
+        int monster;
+        cin >> monster;
+        cout << answers[(monster - 1) % (x + y)] << endl;
+    }
 }
 
 int main() {
