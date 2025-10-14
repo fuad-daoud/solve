@@ -28,37 +28,42 @@ int n, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
+struct state {
+    string place;
+    int cards;
+    int player;
+};
 
 void solve() {
-    int n, x, y;
-    cin >> n >> x >> y;
-    vector<string> answers;
-    double dx = x, dy = y;
-
-    int countx = 0, county = 0;
-
-    while (countx < x || county < y) {
-        if ((countx + 1) / dx < (county + 1) / dy) {
-            countx++;
-            answers.emplace_back("Vanya");
-            continue;
-        }
-        if ((county + 1) / dy < (countx + 1) / dx) {
-            county++;
-            answers.emplace_back("Vova");
-            continue;
-        }
-        if ((countx + 1) / dx == (county + 1) / dy) {
-            countx++;
-            county++;
-            answers.emplace_back("Both");
-            answers.emplace_back("Both");
+    string home, away;
+    int n;
+    cin >> home >> away;
+    cin >> n;
+    state timeline[91] = {};
+    map<char, int[100]> trace = {};
+    for (int i = 0; i < n; i++) {
+        int time, player;
+        char place, card;
+        cin >> time >> place >> player >> card;
+        timeline[time] = {
+            home,
+            card == 'r' ? 2 : 1 + timeline[trace[place][player]].cards,
+            player,
+        };
+        trace[place][player] = time;
+        if (place == 'a') {
+            timeline[time].place = away;
         }
     }
-    for (int i = 0; i < n; i++) {
-        int monster;
-        cin >> monster;
-        cout << answers[(monster - 1) % (x + y)] << endl;
+    map<string, set<int>> seen;
+    for (int i = 0; i < 91; i++) {
+        if (const auto [place, cards, player] = timeline[i]; cards >= 2) {
+            if (seen[place].count(player) == 1) {
+                continue;
+            }
+            seen[place].insert(player);
+            cout << place << ' ' << player << ' ' << i << endl;
+        }
     }
 }
 
