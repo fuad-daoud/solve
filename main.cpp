@@ -35,36 +35,55 @@ struct state {
 };
 
 void solve() {
-    string home, away;
     int n;
-    cin >> home >> away;
     cin >> n;
-    state timeline[91] = {};
-    map<char, int[100]> trace = {};
+    vector<long long> first_player, second_player;
+    long long first_sum = 0, second_sum = 0;
+    long long last = 0;
+
     for (int i = 0; i < n; i++) {
-        int time, player;
-        char place, card;
-        cin >> time >> place >> player >> card;
-        timeline[time] = {
-            home,
-            card == 'r' ? 2 : 1 + timeline[trace[place][player]].cards,
-            player,
-        };
-        trace[place][player] = time;
-        if (place == 'a') {
-            timeline[time].place = away;
+        long long x;
+        cin >> x;
+        if (x > 0) {
+            first_player.emplace_back(x);
+            first_sum += x;
+        } else {
+            second_player.emplace_back(x * -1);
+            second_sum += x * -1;
+        }
+        last = x;
+    }
+    if (first_sum > second_sum) {
+        cout << "first" << endl;
+        return;
+    }
+    if (second_sum > first_sum) {
+        cout << "second" << endl;
+        return;
+    }
+    // if (first_player.size() > second_player.size()) {
+    //     cout << "first" << endl;
+    //     return;
+    // }
+    // if (second_player.size() > first_player.size()) {
+    //     cout << "second" << endl;
+    //     return;
+    // }
+    for (int i = 0; i < min(first_player.size(), second_player.size()); i++) {
+        if (first_player[i] > second_player[i]) {
+            cout << "first" << endl;
+            return;
+        }
+        if (second_player[i] > first_player[i]) {
+            cout << "second" << endl;
+            return;
         }
     }
-    map<string, set<int>> seen;
-    for (int i = 0; i < 91; i++) {
-        if (const auto [place, cards, player] = timeline[i]; cards >= 2) {
-            if (seen[place].count(player) == 1) {
-                continue;
-            }
-            seen[place].insert(player);
-            cout << place << ' ' << player << ' ' << i << endl;
-        }
+    if (last > 0) {
+        cout << "first" << endl;
+        return;
     }
+    cout << "second" << endl;
 }
 
 int main() {
