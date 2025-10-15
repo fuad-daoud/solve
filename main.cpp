@@ -29,37 +29,55 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int all_values[2 * N];
-    int n, m, k = 0;
+    string n;
     cin >> n;
-    int a[n];
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        all_values[k++] = a[i];
+    int answer1 = 1;
+    switch (n[0]) {
+        case '0': answer1++;
+            break;
+        case '1': answer1 += 6;
+            break;
+        case '2': answer1++;
+            break;
+        case '3': answer1 += 2;
+            break;
+        case '4': answer1 += 2;
+            break;
+        case '5': answer1 += 3;
+            break;
+        case '6': answer1++;
+            break;
+        case '7': answer1 += 4;
+            break;
+        case '8': break;
+        case '9': answer1++;
+            break;
     }
-    cin >> m;
-    int b[m];
-    for (int i = 0; i < m; i++) {
-        cin >> b[i];
-        all_values[k++] = b[i];
+
+    int answer2 = 1;
+    switch (n[1]) {
+        case '0': answer2++;
+            break;
+        case '1': answer2 += 6;
+            break;
+        case '2': answer2++;
+            break;
+        case '3': answer2 += 2;
+            break;
+        case '4': answer2 += 2;
+            break;
+        case '5': answer2 += 3;
+            break;
+        case '6': answer2++;
+            break;
+        case '7': answer2 += 4;
+            break;
+        case '8': break;
+        case '9': answer2++;
+            break;
     }
-    sort(a, a + n);
-    sort(b, b + m);
-    pair answer(3 * n, 3 * m);
-    for (int i = 0; i < k; i++) {
-        int a_position = upper_bound(a, a + n, all_values[i]) - a;
-        int b_position = upper_bound(b, b + m, all_values[i]) - b;
-        int a_score = a_position * 2 + (n - a_position) * 3;
-        int b_score = b_position * 2 + (m - b_position) * 3;
-        int current_score = answer.first - answer.second;
-        int new_score = a_score - b_score;
-        if (new_score == current_score) {
-            answer = max(answer, {a_score, b_score});
-        } else if (new_score > current_score) {
-            answer = {a_score, b_score};
-        }
-    }
-    cout << answer.first << ":" << answer.second << endl;
+
+    cout << answer1 * answer2 << endl;
 }
 
 int main() {
