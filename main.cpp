@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <vector>
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <iomanip>
@@ -29,55 +30,29 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    string n;
-    cin >> n;
-    int answer1 = 1;
-    switch (n[0]) {
-        case '0': answer1++;
-            break;
-        case '1': answer1 += 6;
-            break;
-        case '2': answer1++;
-            break;
-        case '3': answer1 += 2;
-            break;
-        case '4': answer1 += 2;
-            break;
-        case '5': answer1 += 3;
-            break;
-        case '6': answer1++;
-            break;
-        case '7': answer1 += 4;
-            break;
-        case '8': break;
-        case '9': answer1++;
-            break;
+    int a, b;
+    cin >> a >> b;
+    if (a == b) {
+        cout << "infinity" << endl;
+        return;
     }
-
-    int answer2 = 1;
-    switch (n[1]) {
-        case '0': answer2++;
-            break;
-        case '1': answer2 += 6;
-            break;
-        case '2': answer2++;
-            break;
-        case '3': answer2 += 2;
-            break;
-        case '4': answer2 += 2;
-            break;
-        case '5': answer2 += 3;
-            break;
-        case '6': answer2++;
-            break;
-        case '7': answer2 += 4;
-            break;
-        case '8': break;
-        case '9': answer2++;
-            break;
+    if (a < b) {
+        cout << 0 << endl;
+        return;
     }
-
-    cout << answer1 * answer2 << endl;
+    int answer = 0;
+    for (int i = 1; i * i <= a - b; i++) {
+        if ((a - b) % i == 0) {
+            if (a % i == b) {
+                answer++;
+            }
+            int j = (a - b) / i;
+            if (j != i && a % j == b) {
+                answer++;
+            }
+        }
+    }
+    cout << answer << endl;
 }
 
 int main() {
