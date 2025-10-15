@@ -20,7 +20,7 @@ using namespace ::std;
 int dx[4] = {0, 0, 1, -1}; // Up, Down, Right, Left
 int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 
-// const int N = 1e4 + 1, M = 48, mod = 1e9 + 7;
+const int N = 2e5 + 1, M = 48, mod = 1e9 + 7;
 #define in(i, j) i >= 0 && i < j
 #define not_in(i, j) !(in(i, j))
 int n, m;
@@ -28,62 +28,38 @@ int n, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
-struct state {
-    string place;
-    int cards;
-    int player;
-};
-
 void solve() {
-    int n;
+    int all_values[2 * N];
+    int n, m, k = 0;
     cin >> n;
-    vector<long long> first_player, second_player;
-    long long first_sum = 0, second_sum = 0;
-    long long last = 0;
-
+    int a[n];
     for (int i = 0; i < n; i++) {
-        long long x;
-        cin >> x;
-        if (x > 0) {
-            first_player.emplace_back(x);
-            first_sum += x;
-        } else {
-            second_player.emplace_back(x * -1);
-            second_sum += x * -1;
-        }
-        last = x;
+        cin >> a[i];
+        all_values[k++] = a[i];
     }
-    if (first_sum > second_sum) {
-        cout << "first" << endl;
-        return;
+    cin >> m;
+    int b[m];
+    for (int i = 0; i < m; i++) {
+        cin >> b[i];
+        all_values[k++] = b[i];
     }
-    if (second_sum > first_sum) {
-        cout << "second" << endl;
-        return;
-    }
-    // if (first_player.size() > second_player.size()) {
-    //     cout << "first" << endl;
-    //     return;
-    // }
-    // if (second_player.size() > first_player.size()) {
-    //     cout << "second" << endl;
-    //     return;
-    // }
-    for (int i = 0; i < min(first_player.size(), second_player.size()); i++) {
-        if (first_player[i] > second_player[i]) {
-            cout << "first" << endl;
-            return;
-        }
-        if (second_player[i] > first_player[i]) {
-            cout << "second" << endl;
-            return;
+    sort(a, a + n);
+    sort(b, b + m);
+    pair answer(3 * n, 3 * m);
+    for (int i = 0; i < k; i++) {
+        int a_position = upper_bound(a, a + n, all_values[i]) - a;
+        int b_position = upper_bound(b, b + m, all_values[i]) - b;
+        int a_score = a_position * 2 + (n - a_position) * 3;
+        int b_score = b_position * 2 + (m - b_position) * 3;
+        int current_score = answer.first - answer.second;
+        int new_score = a_score - b_score;
+        if (new_score == current_score) {
+            answer = max(answer, {a_score, b_score});
+        } else if (new_score > current_score) {
+            answer = {a_score, b_score};
         }
     }
-    if (last > 0) {
-        cout << "first" << endl;
-        return;
-    }
-    cout << "second" << endl;
+    cout << answer.first << ":" << answer.second << endl;
 }
 
 int main() {
