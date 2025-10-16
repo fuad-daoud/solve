@@ -30,29 +30,59 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int a, b;
-    cin >> a >> b;
-    if (a == b) {
-        cout << "infinity" << endl;
-        return;
-    }
-    if (a < b) {
-        cout << 0 << endl;
-        return;
-    }
-    int answer = 0;
-    for (int i = 1; i * i <= a - b; i++) {
-        if ((a - b) % i == 0) {
-            if (a % i == b) {
-                answer++;
-            }
-            int j = (a - b) / i;
-            if (j != i && a % j == b) {
-                answer++;
-            }
+    string s;
+    cin >> s;
+    int counter = 0;
+
+    for (const char i: s) {
+        switch (i) {
+            case '(': counter++;
+                break;
+            case ')': counter--;
+                break;
+            case '#': counter--;
+            default: ;
+        }
+        if (counter < 0) {
+            cout << -1 << endl;
+            return;
         }
     }
-    cout << answer << endl;
+    counter = 0;
+    vector<int> answer;
+    for (const char i: s) {
+        switch (i) {
+            case '(': counter++;
+                break;
+            case ')': counter--;
+                break;
+            case '#': counter--;
+                answer.emplace_back(1);
+                break;
+            default: ;
+        }
+    }
+    answer.back() += counter;
+    counter = 0;
+    int index = 0;
+
+    for (const char i: s) {
+        switch (i) {
+            case '(': counter++;
+                break;
+            case ')': counter--;
+                break;
+            case '#': counter -= answer[index++];
+            default: ;
+        }
+        if (counter < 0) {
+            cout << -1 << endl;
+            return;
+        }
+    }
+    for (const int i: answer) {
+        cout << i << endl;
+    }
 }
 
 int main() {
