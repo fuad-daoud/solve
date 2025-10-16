@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <limits.h>
 #include <map>
 #include <numeric>
 #include <set>
@@ -30,59 +31,20 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    string s;
-    cin >> s;
-    int counter = 0;
-
-    for (const char i: s) {
-        switch (i) {
-            case '(': counter++;
-                break;
-            case ')': counter--;
-                break;
-            case '#': counter--;
-            default: ;
-        }
-        if (counter < 0) {
-            cout << -1 << endl;
-            return;
-        }
+    int n;
+    cin >> n;
+    int holds[n];
+    for (int &x: holds) {
+        cin >> x;
     }
-    counter = 0;
-    vector<int> answer;
-    for (const char i: s) {
-        switch (i) {
-            case '(': counter++;
-                break;
-            case ')': counter--;
-                break;
-            case '#': counter--;
-                answer.emplace_back(1);
-                break;
-            default: ;
-        }
+    int answer = INT_MAX;
+    for (int i = 1; i < n - 1; i++) {
+        answer = min(answer, holds[i + 1] - holds[i - 1]);
     }
-    answer.back() += counter;
-    counter = 0;
-    int index = 0;
-
-    for (const char i: s) {
-        switch (i) {
-            case '(': counter++;
-                break;
-            case ')': counter--;
-                break;
-            case '#': counter -= answer[index++];
-            default: ;
-        }
-        if (counter < 0) {
-            cout << -1 << endl;
-            return;
-        }
+    for (int i = 1; i < n; i++) {
+        answer = max(answer, holds[i] - holds[i - 1]);
     }
-    for (const int i: answer) {
-        cout << i << endl;
-    }
+    cout << answer << endl;
 }
 
 int main() {
