@@ -33,16 +33,42 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    int holds[n];
-    for (int &x: holds) {
-        cin >> x;
+    string s;
+    cin >> s;
+    deque<char> ds;
+    string answer = s;
+    for (char c: s) {
+        ds.emplace_back(c);
     }
-    int answer = INT_MAX;
-    for (int i = 1; i < n - 1; i++) {
-        answer = min(answer, holds[i + 1] - holds[i - 1]);
-    }
-    for (int i = 1; i < n; i++) {
-        answer = max(answer, holds[i] - holds[i - 1]);
+    for (int x = 0; x < 10; x++) {
+        for (char &c : ds) {
+            if (c == '9') {
+                c = '0';
+                continue;
+            }
+            c++;
+        }
+
+        for (int i = 0; i < n; i++) {
+            char tmp = ds.front();
+            ds.pop_front();
+            ds.emplace_back(tmp);
+
+            int index = 0;
+            for (const char c: ds) {
+                if (c < answer[index]) {
+                    answer = "";
+                    for (const char cc: ds) {
+                        answer.push_back(cc);
+                    }
+                    break;
+                }
+                if (c > answer[index]) {
+                    break;
+                }
+                index++;
+            }
+        }
     }
     cout << answer << endl;
 }
