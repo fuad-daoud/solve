@@ -31,42 +31,35 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    deque<char> ds;
-    string answer = s;
-    for (char c: s) {
-        ds.emplace_back(c);
+    int n, m;
+    cin >> n >> m;
+    string grid[n];
+    for (int i = 0; i < n; i++) {
+        cin >> grid[i];
     }
-    for (int x = 0; x < 10; x++) {
-        for (char &c : ds) {
-            if (c == '9') {
-                c = '0';
-                continue;
-            }
-            c++;
-        }
-
-        for (int i = 0; i < n; i++) {
-            char tmp = ds.front();
-            ds.pop_front();
-            ds.emplace_back(tmp);
-
-            int index = 0;
-            for (const char c: ds) {
-                if (c < answer[index]) {
-                    answer = "";
-                    for (const char cc: ds) {
-                        answer.push_back(cc);
+    int answer = 0;
+    bool removed[m];
+    memset(removed, false, m);
+    for (int col = 0; col < m; col++) {
+        for (int row = 1; row < n; row++) {
+            if (grid[row - 1][col] > grid[row][col]) {
+                bool invalid = false;
+                for (int previous_col = 0; previous_col < col; previous_col++) {
+                    if (removed[previous_col]) {
+                        continue;
                     }
-                    break;
+                    if (grid[row - 1][previous_col] < grid[row][previous_col]) {
+                        invalid = true;
+                        break;
+                    }
+
                 }
-                if (c > answer[index]) {
-                    break;
+                if (invalid) {
+                    continue;
                 }
-                index++;
+                answer++;
+                removed[col] = true;
+                break;
             }
         }
     }
