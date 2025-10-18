@@ -31,23 +31,23 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    map<string, string> lang;
-    for (int i = 0; i < m; i++) {
-        string a, b;
-        cin >> a >> b;
-        if (a.size() > b.size()) {
-            lang[a] = b;
-        } else {
-            lang[a] = a;
+    pair<int, int> house, uni;
+    cin >> house.first >> house.second;
+    cin >> uni.first >> uni.second;
+    int answer = 0, n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        long long a, b, c;
+        cin >> a >> b >> c;
+        long long slope1 = a * house.first + b * house.second + c;
+        slope1 /= abs(slope1);
+        long long slope2 = a * uni.first + b * uni.second + c;
+        slope2 /= abs(slope2);
+        if (slope1 != slope2) {
+            answer++;
         }
     }
-    for (int i = 0; i < n; i++) {
-        string x;
-        cin >> x;
-        cout << lang[x] << ' ';
-    }
+    cout << answer << endl;
 }
 
 int main() {
