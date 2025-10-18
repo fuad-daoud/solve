@@ -31,23 +31,23 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int n, x;
-    cin >> n >> x;
-    pair<int, int> times[n];
-    int mx = 0;
-    for (int i = 0; i < n; i++) {
-        int a, b;
+    int n, m;
+    cin >> n >> m;
+    map<string, string> lang;
+    for (int i = 0; i < m; i++) {
+        string a, b;
         cin >> a >> b;
-        times[i] = {a, b};
+        if (a.size() > b.size()) {
+            lang[a] = b;
+        } else {
+            lang[a] = a;
+        }
     }
-    sort(times, times + n);
-    int cursor = 1, answer = 0;
     for (int i = 0; i < n; i++) {
-        int step = (times[i].first - cursor) % x;
-        answer += (times[i].second - times[i].first + 1) + step;
-        cursor = times[i].second + 1;
+        string x;
+        cin >> x;
+        cout << lang[x] << ' ';
     }
-    cout << answer << endl;
 }
 
 int main() {
