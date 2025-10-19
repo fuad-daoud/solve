@@ -31,23 +31,16 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    pair<int, int> house, uni;
-    cin >> house.first >> house.second;
-    cin >> uni.first >> uni.second;
-    int answer = 0, n;
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        long long a, b, c;
-        cin >> a >> b >> c;
-        long long slope1 = a * house.first + b * house.second + c;
-        slope1 /= abs(slope1);
-        long long slope2 = a * uni.first + b * uni.second + c;
-        slope2 /= abs(slope2);
-        if (slope1 != slope2) {
-            answer++;
-        }
+    int a, b, c, d;
+    cin >> a >> b >> c >> d;
+
+    if (max((3 * a) / 10, a - a / 250 * c) > max((3 * b) / 10, b - b / 250 * d)) {
+        cout << "Misha" << endl;
+    } else if (max((3 * a) / 10, a - a / 250 * c) < max((3 * b) / 10, b - b / 250 * d)) {
+        cout << "Vasya" << endl;
+    } else {
+        cout << "Tie" << endl;
     }
-    cout << answer << endl;
 }
 
 int main() {
