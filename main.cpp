@@ -31,15 +31,24 @@ int n, m;
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int a, b, c, d;
-    cin >> a >> b >> c >> d;
+    int n;
+    cin >> n;
+    map<string, string> olds, current, answer;
+    for (int i = 0; i < n; i++) {
+        string a, b;
+        cin >> a >> b;
 
-    if (max((3 * a) / 10, a - a / 250 * c) > max((3 * b) / 10, b - b / 250 * d)) {
-        cout << "Misha" << endl;
-    } else if (max((3 * a) / 10, a - a / 250 * c) < max((3 * b) / 10, b - b / 250 * d)) {
-        cout << "Vasya" << endl;
-    } else {
-        cout << "Tie" << endl;
+        if (current.count(a) == 0) {
+            olds[a] = b;
+            current[b] = a;
+            continue;
+        }
+        olds[current[a]] = b;
+        current[b] = current[a];
+    }
+    cout << olds.size() << endl;
+    for (auto p : olds) {
+        cout << p.first << ' ' << p.second << endl;
     }
 }
 
