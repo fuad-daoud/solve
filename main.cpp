@@ -22,7 +22,7 @@ using namespace ::std;
 int dx[4] = {0, 0, 1, -1}; // Up, Down, Right, Left
 int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 
-const int N = 2e5 + 1, M = 48, mod = 1e9 + 7;
+const int N = 1050, M = 48, mod = 1e9 + 7;
 #define in(i, j) i >= 0 && i < j
 #define not_in(i, j) !(in(i, j))
 int n, m;
@@ -30,25 +30,54 @@ int n, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
+
+int group[N] = {};
+
+int find_group(int x) {
+    if (x == group[x]) {
+        return x;
+    }
+    return group[x] = find_group(group[x]);
+}
+
 void solve() {
     int n;
     cin >> n;
-    map<string, string> olds, current, answer;
-    for (int i = 0; i < n; i++) {
-        string a, b;
-        cin >> a >> b;
-
-        if (current.count(a) == 0) {
-            olds[a] = b;
-            current[b] = a;
-            continue;
-        }
-        olds[current[a]] = b;
-        current[b] = current[a];
+    for (int i = 1; i <= n; i++) {
+        group[i] = i;
     }
-    cout << olds.size() << endl;
-    for (auto p : olds) {
-        cout << p.first << ' ' << p.second << endl;
+    int a[n + 1];
+    for (int i = 1; i <= n; i++) {
+        cin >> a[i];
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            char x;
+            cin >> x;
+            if (x == '0') {
+                continue;
+            }
+
+            const int group_a = find_group(i);
+            const int group_b = find_group(j);
+            if (group_a != group_b) {
+                group[group_a] = group_b;
+            }
+        }
+    }
+
+    vector<int> positions[N] = {};
+    for (int i = 1; i <= n; i++) {
+        positions[find_group(i)].emplace_back(a[i]);
+    }
+    for (int i = 1; i <= n; i++) {
+        sort(positions[i].begin(), positions[i].end());
+    }
+    int counter[N] = {};
+    for (int i = 1; i <= n; i++) {
+        int g = find_group(i);
+        int answer = positions[g][counter[g]++];
+        cout << answer << ' ';
     }
 }
 
