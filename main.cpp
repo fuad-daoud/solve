@@ -3,13 +3,11 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
-#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <limits.h>
 #include <map>
 #include <numeric>
-#include <set>
 #include <stack>
 #include <stdio.h>
 
@@ -22,64 +20,52 @@ using namespace ::std;
 int dx[4] = {0, 0, 1, -1}; // Up, Down, Right, Left
 int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 
-const int N = 1050, M = 48, mod = 1e9 + 7;
+const int N = 3 * 1e4 + 7, M = 250, mod = 1e9 + 7;
 #define in(i, j) i >= 0 && i < j
 #define not_in(i, j) !(in(i, j))
-int n, m;
+int n, l, m;
 // string grid[N];
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
 
-int group[N] = {};
+int gems[N] = {};
+int farthest_gem = INT_MIN;
+int dp[N][500];
+bool visited[N][500];
 
-int find_group(int x) {
-    if (x == group[x]) {
-        return x;
+int jump(int current, const int previous_step) {
+    if (current > farthest_gem) {
+        return 0;
     }
-    return group[x] = find_group(group[x]);
+    const int indexed_step = previous_step - (l - 250);
+    if (visited[current][indexed_step]) {
+        return dp[current][indexed_step];
+    }
+    visited[current][indexed_step] = true;
+    if (previous_step == 1) {
+        return dp[current][indexed_step] = gems[current] + max(jump(current + previous_step, previous_step),
+                                                               jump(current + previous_step, previous_step + 1));
+    }
+
+    return dp[current][indexed_step] = gems[current] + max(jump(current + previous_step, previous_step - 1), max(
+                                                               jump(current + previous_step, previous_step),
+                                                               jump(current + previous_step, previous_step + 1)));
 }
+
 
 void solve() {
-    int n;
-    cin >> n;
-    for (int i = 1; i <= n; i++) {
-        group[i] = i;
+    cin >> n >> l;
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        farthest_gem = max(farthest_gem, x);
+        gems[x]++;
     }
-    int a[n + 1];
-    for (int i = 1; i <= n; i++) {
-        cin >> a[i];
-    }
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= n; j++) {
-            char x;
-            cin >> x;
-            if (x == '0') {
-                continue;
-            }
-
-            const int group_a = find_group(i);
-            const int group_b = find_group(j);
-            if (group_a != group_b) {
-                group[group_a] = group_b;
-            }
-        }
-    }
-
-    vector<int> positions[N] = {};
-    for (int i = 1; i <= n; i++) {
-        positions[find_group(i)].emplace_back(a[i]);
-    }
-    for (int i = 1; i <= n; i++) {
-        sort(positions[i].begin(), positions[i].end());
-    }
-    int counter[N] = {};
-    for (int i = 1; i <= n; i++) {
-        int g = find_group(i);
-        int answer = positions[g][counter[g]++];
-        cout << answer << ' ';
-    }
+    dp[0][l] = jump(0, l);
+    cout << dp[0][l] << endl;
 }
+
 
 int main() {
 #ifndef ONLINE_JUDGE
