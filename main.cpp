@@ -34,36 +34,29 @@ int farthest_gem = INT_MIN;
 int dp[N][500];
 bool visited[N][500];
 
-int jump(int current, const int previous_step) {
-    if (current > farthest_gem) {
-        return 0;
-    }
-    const int indexed_step = previous_step - (l - 250);
-    if (visited[current][indexed_step]) {
-        return dp[current][indexed_step];
-    }
-    visited[current][indexed_step] = true;
-    if (previous_step == 1) {
-        return dp[current][indexed_step] = gems[current] + max(jump(current + previous_step, previous_step),
-                                                               jump(current + previous_step, previous_step + 1));
-    }
-
-    return dp[current][indexed_step] = gems[current] + max(jump(current + previous_step, previous_step - 1), max(
-                                                               jump(current + previous_step, previous_step),
-                                                               jump(current + previous_step, previous_step + 1)));
-}
-
 
 void solve() {
-    cin >> n >> l;
+    int k;
+    cin >> n >> k;
+    pair<int, int> ins[n];
     for (int i = 0; i < n; i++) {
         int x;
         cin >> x;
-        farthest_gem = max(farthest_gem, x);
-        gems[x]++;
+        ins[i] = {x, i};
     }
-    dp[0][l] = jump(0, l);
-    cout << dp[0][l] << endl;
+    vector<int> answer;
+    sort(ins, ins + n);
+    for (int i = 0; i < n; i++) {
+        if (ins[i].first > k) {
+            break;
+        }
+        k -= ins[i].first;
+        answer.emplace_back(ins[i].second + 1);
+    }
+    cout << answer.size() << endl;
+    for (int i = 0; i < answer.size(); i++) {
+        cout << answer[i] << ' ';
+    }
 }
 
 
