@@ -36,27 +36,10 @@ bool visited[N][500];
 
 
 void solve() {
-    int k;
-    cin >> n >> k;
-    pair<int, int> ins[n];
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
-        ins[i] = {x, i};
-    }
-    vector<int> answer;
-    sort(ins, ins + n);
-    for (int i = 0; i < n; i++) {
-        if (ins[i].first > k) {
-            break;
-        }
-        k -= ins[i].first;
-        answer.emplace_back(ins[i].second + 1);
-    }
-    cout << answer.size() << endl;
-    for (int i = 0; i < answer.size(); i++) {
-        cout << answer[i] << ' ';
-    }
+    double r, x1, y1, x2, y2;
+    cin >> r >> x1 >> y1 >> x2 >> y2;
+    const double dis = sqrt(pow((x2 - x1), 2) + pow(y2 - y1, 2));
+    cout << ceil(dis / (2 * r)) << endl;
 }
 
 
