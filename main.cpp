@@ -36,10 +36,29 @@ bool visited[N][500];
 
 
 void solve() {
-    double r, x1, y1, x2, y2;
-    cin >> r >> x1 >> y1 >> x2 >> y2;
-    const double dis = sqrt(pow((x2 - x1), 2) + pow(y2 - y1, 2));
-    cout << ceil(dis / (2 * r)) << endl;
+    long long h, n;
+    cin >> h >> n;
+    bool going_left = true;
+    long long current_height = h;
+    long long answer = 0;
+    while (current_height) {
+        const long long leafs = 1LL << current_height;
+        const bool exit_on_left = n <= leafs / 2;
+
+        if (exit_on_left != going_left) {
+            answer += (1LL << current_height) - 1;
+            going_left = !going_left;
+            continue;
+        }
+
+        if (!exit_on_left && !going_left) {
+            n -= leafs / 2;
+        }
+        answer++;
+        current_height--;
+        going_left = !going_left;
+    }
+    cout << answer << endl;
 }
 
 
