@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <limits.h>
@@ -36,27 +37,33 @@ bool visited[N][500];
 
 
 void solve() {
-    long long h, n;
-    cin >> h >> n;
-    bool going_left = true;
-    long long current_height = h;
-    long long answer = 0;
-    while (current_height) {
-        const long long leafs = 1LL << current_height;
-        const bool exit_on_left = n <= leafs / 2;
-
-        if (exit_on_left != going_left) {
-            answer += (1LL << current_height) - 1;
-            going_left = !going_left;
-            continue;
+    int n, m, k;
+    cin >> n >> m >> k;
+    bool grid[n + 2][m + 2];
+    for (int i = 0; i < n + 2; i++) {
+        for (int j = 0; j < m + 2; j++) {
+            grid[i][j] = false;
         }
-
-        if (!exit_on_left && !going_left) {
-            n -= leafs / 2;
+    }
+    int answer = 0;
+    for (int i = 0; i < k; i++) {
+        int x, y;
+        cin >> x >> y;
+        grid[x][y] = true;
+        if (answer == 0) {
+            if (grid[x][y] && grid[x + 1][y] && grid[x][y + 1] && grid[x + 1][y + 1]) {
+                answer = i + 1;
+            }
+            if (grid[x][y] && grid[x + 1][y] && grid[x][y - 1] && grid[x + 1][y - 1]) {
+                answer = i + 1;
+            }
+            if (grid[x][y] && grid[x - 1][y] && grid[x][y - 1] && grid[x - 1][y - 1]) {
+                answer = i + 1;
+            }
+            if (grid[x][y] && grid[x - 1][y] && grid[x][y + 1] && grid[x - 1][y + 1]) {
+                answer = i + 1;
+            }
         }
-        answer++;
-        current_height--;
-        going_left = !going_left;
     }
     cout << answer << endl;
 }
