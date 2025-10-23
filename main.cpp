@@ -37,35 +37,33 @@ bool visited[N][500];
 
 
 void solve() {
-    int n, m, k;
-    cin >> n >> m >> k;
-    bool grid[n + 2][m + 2];
-    for (int i = 0; i < n + 2; i++) {
-        for (int j = 0; j < m + 2; j++) {
-            grid[i][j] = false;
+    string s;
+    cin >> s;
+    char current = s[s.size() - 1];
+    bool swapped = false;
+    for (int i = 0; i < s.size() - 2; i++) {
+        if (current > s[i] && (s[i] - '0') % 2 == 0) {
+            swap(s[s.size() - 1], s[i]);
+            swapped = true;
+            break;
         }
     }
-    int answer = 0;
-    for (int i = 0; i < k; i++) {
-        int x, y;
-        cin >> x >> y;
-        grid[x][y] = true;
-        if (answer == 0) {
-            if (grid[x][y] && grid[x + 1][y] && grid[x][y + 1] && grid[x + 1][y + 1]) {
-                answer = i + 1;
-            }
-            if (grid[x][y] && grid[x + 1][y] && grid[x][y - 1] && grid[x + 1][y - 1]) {
-                answer = i + 1;
-            }
-            if (grid[x][y] && grid[x - 1][y] && grid[x][y - 1] && grid[x - 1][y - 1]) {
-                answer = i + 1;
-            }
-            if (grid[x][y] && grid[x - 1][y] && grid[x][y + 1] && grid[x - 1][y + 1]) {
-                answer = i + 1;
+
+    if (!swapped) {
+        for (int i = s.size() - 2; i >= 0; i--) {
+            if ((s[i] - '0') % 2 == 0) {
+                swap(s[s.size() - 1], s[i]);
+                swapped = true;
+                break;
             }
         }
     }
-    cout << answer << endl;
+
+    if (!swapped && (current - '0') % 2 != 0) {
+        cout << -1 << endl;
+        return;
+    }
+    cout << s << endl;
 }
 
 
