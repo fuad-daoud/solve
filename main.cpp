@@ -37,33 +37,53 @@ bool visited[N][500];
 
 
 void solve() {
-    string s;
-    cin >> s;
-    char current = s[s.size() - 1];
-    bool swapped = false;
-    for (int i = 0; i < s.size() - 2; i++) {
-        if (current > s[i] && (s[i] - '0') % 2 == 0) {
-            swap(s[s.size() - 1], s[i]);
-            swapped = true;
-            break;
-        }
+    int m, t, r;
+    cin >> m >> t >> r;
+    int after_midnight[601] = {};
+    int before_midnight[601] = {};
+    int ghosts[m];
+    for (int i = 0; i < m; i++) {
+        cin >> ghosts[i];
     }
-
-    if (!swapped) {
-        for (int i = s.size() - 2; i >= 0; i--) {
-            if ((s[i] - '0') % 2 == 0) {
-                swap(s[s.size() - 1], s[i]);
-                swapped = true;
+    for (int ghost: ghosts) {
+        int count = 0;
+        for (int i = ghost - t; i < ghost; i++) {
+            if (i < 0) {
+                count += before_midnight[i * -1];
+                continue;
+            }
+            count += after_midnight[i];
+        }
+        for (int i = ghost - 1; i >= ghost - t; i--) {
+            if (count >= r) {
                 break;
             }
+            if (i < 0) {
+                if (before_midnight[i * -1] == 0) {
+                    before_midnight[i * -1]++;
+                    count++;
+                }
+                continue;
+            }
+            if (after_midnight[i] == 0) {
+                count++;
+                after_midnight[i]++;
+            }
+        }
+        if (count < r) {
+            cout << -1 << endl;
+            return;
         }
     }
+    int answer = 0;
 
-    if (!swapped && (current - '0') % 2 != 0) {
-        cout << -1 << endl;
-        return;
+    for (const int i: before_midnight) {
+        answer += i;
     }
-    cout << s << endl;
+    for (const int i: after_midnight) {
+        answer += i;
+    }
+    cout << answer << endl;
 }
 
 
