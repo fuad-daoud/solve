@@ -37,31 +37,29 @@ int dp[N][500];
 bool visited[N][500];
 
 
-struct parent_node {
-    int r;
-    int c;
-};
-
-struct node {
-    parent_node parent;
-    int r;
-    int c;
-};
-
 void solve() {
-    string s;
-    cin >> s;
-    bool pass_first = false;
-    for (const char c: s) {
-        if (c == '9' && !pass_first) {
-            cout << c;
-        } else if ((c - '0') >= 5) {
-            cout << 9 - (c - '0');
-        } else {
-            cout << c;
-        }
-            pass_first = true;
+    int n;
+    long long x, y;
+    cin >> n >> x >> y;
+    pair<long long, long long> bots[n];
+    for (int i = 0; i < n; i++) {
+        cin >> bots[i].first >> bots[i].second;
     }
+    bool vis[n];
+    int answer = 0;
+    memset(vis, false, n * sizeof(bool));
+    for (int i = 0; i < n; i++) {
+        if (vis[i]) {
+            continue;
+        }
+        for (int j = i; j < n; j++) {
+            if ((bots[i].first - x) * (bots[j].second - y) == (bots[i].second - y) * (bots[j].first - x)) {
+                vis[j] = true;
+            }
+        }
+        answer++;
+    }
+    cout << answer << endl;
 }
 
 
