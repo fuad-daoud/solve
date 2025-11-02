@@ -39,25 +39,29 @@ bool visited[N][500];
 
 void solve() {
     int n;
-    long long x, y;
-    cin >> n >> x >> y;
-    pair<long long, long long> bots[n];
-    for (int i = 0; i < n; i++) {
-        cin >> bots[i].first >> bots[i].second;
-    }
-    bool vis[n];
-    int answer = 0;
-    memset(vis, false, n * sizeof(bool));
-    for (int i = 0; i < n; i++) {
-        if (vis[i]) {
+    cin >> n;
+    int b = 0;
+    for (int i = n; i > 0; i--) {
+        if (i * 7 > n) {
             continue;
         }
-        for (int j = i; j < n; j++) {
-            if ((bots[i].first - x) * (bots[j].second - y) == (bots[i].second - y) * (bots[j].first - x)) {
-                vis[j] = true;
-            }
+        if ((n - (i * 7)) % 4 == 0) {
+            b = i;
+            break;
         }
-        answer++;
+    }
+    int a = (n - b * 7) / 4;
+    string answer;
+    for (int j = 0; j < a && (n - b * 7) % 4 == 0; j++) {
+        answer.push_back('4');
+    }
+    for (int j = 0; j < b; j++) {
+        answer.push_back('7');
+    }
+
+    if (answer.empty()) {
+        cout << -1 << endl;
+        return;
     }
     cout << answer << endl;
 }
