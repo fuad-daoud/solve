@@ -38,32 +38,26 @@ bool visited[N][500];
 
 
 void solve() {
-    int n;
-    cin >> n;
-    int b = 0;
-    for (int i = n; i > 0; i--) {
-        if (i * 7 > n) {
-            continue;
-        }
-        if ((n - (i * 7)) % 4 == 0) {
-            b = i;
-            break;
-        }
+    int n, m;
+    cin >> n >> m;
+    long long rooms[n];
+    for (int i = 0; i < n; i++) {
+        cin >> rooms[i];
     }
-    int a = (n - b * 7) / 4;
-    string answer;
-    for (int j = 0; j < a && (n - b * 7) % 4 == 0; j++) {
-        answer.push_back('4');
-    }
-    for (int j = 0; j < b; j++) {
-        answer.push_back('7');
+    long long letters[m];
+    for (int i = 0; i < m; i++) {
+        cin >> letters[i];
     }
 
-    if (answer.empty()) {
-        cout << -1 << endl;
-        return;
+    long long numbering[n];
+    numbering[0] = 0;
+    for (int i = 1; i < n; i++) {
+        numbering[i] = rooms[i - 1] + numbering[i - 1];
     }
-    cout << answer << endl;
+    for (int i = 0; i < m; i++) {
+        const long index = lower_bound(numbering, numbering + n, letters[i]) - numbering;
+        cout << index << ' ' << letters[i] - numbering[index - 1] << endl;
+    }
 }
 
 
