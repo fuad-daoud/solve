@@ -38,26 +38,55 @@ bool visited[N][500];
 
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    long long rooms[n];
+    int n;
+    cin >> n;
+    int numbers[n];
     for (int i = 0; i < n; i++) {
-        cin >> rooms[i];
+        cin >> numbers[i];
     }
-    long long letters[m];
-    for (int i = 0; i < m; i++) {
-        cin >> letters[i];
+    sort(numbers, numbers + n);
+    int last = -1;
+    bool vis[n];
+    memset(vis, false, sizeof(false) * n);
+    vector<int> answer1;
+
+    for (int i = 0; i < n; i++) {
+        if (last != numbers[i]) {
+            answer1.emplace_back(numbers[i]);
+            vis[i] = true;
+            last = answer1.back();
+        }
     }
 
-    long long numbering[n];
-    numbering[0] = 0;
-    for (int i = 1; i < n; i++) {
-        numbering[i] = rooms[i - 1] + numbering[i - 1];
+    vector<int> answer2;
+    for (int i = 0; i < n; i++) {
+        if (vis[i]) {
+            continue;
+        }
+        if (last != numbers[i]) {
+            answer2.emplace_back(numbers[i]);
+            vis[i] = true;
+            last = answer2.back();
+        }
     }
-    for (int i = 0; i < m; i++) {
-        const long index = lower_bound(numbering, numbering + n, letters[i]) - numbering;
-        cout << index << ' ' << letters[i] - numbering[index - 1] << endl;
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) {
+            cout << "NO" << endl;
+            return;
+        }
     }
+    cout << "YES" << endl;
+    cout << answer2.size() << endl;
+    for (const int x : answer2) {
+        cout << x << ' ';
+    }
+    cout << endl;
+    cout << answer1.size() << endl;
+    reverse(answer1.begin(), answer1.end());
+    for (const int x : answer1) {
+        cout << x << ' ';
+    }
+    cout << endl;;
 }
 
 
