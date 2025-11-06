@@ -19,16 +19,37 @@
 
 using namespace ::std;
 
+int dx[4] = {0, 0, 1, -1}; // Up, Down, Right, Left
+int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
+
+const int N = 3 * 1e4 + 7, M = 250, mod = 1e9 + 7;
+#define in(i, j) i >= 0 && i < j
+#define not_in(i, j) !(in(i, j))
+int n, l, m;
+// string grid[N];
+// int dp[N][N];
+char chars[] = {'a', 'b', 'c'};
+
 
 void solve() {
-    long long n;
+    int n;
     cin >> n;
-    long long answer = 0;
-    while (n > 0) {
-        answer += powl(2, n);
-        n--;
+    for (int i = 0; i < n; i++) {
+        string s;
+        cin >> s;
+        // some process
+        int answer = INT_MIN;
+        int prev = -1;
+        for (int j = 0; j < s.size(); j++) {
+            if (s[j] == 'R') {
+                answer = max(answer, j - prev);
+                prev = j;
+            }
+        }
+
+        answer = max(answer, static_cast<int>(s.size() - prev));
+        cout << answer << endl;
     }
-    cout << answer << endl;
 }
 
 
