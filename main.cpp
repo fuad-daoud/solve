@@ -34,22 +34,26 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
+    pair<int, int> in[n];
     for (int i = 0; i < n; i++) {
-        string s;
-        cin >> s;
-        // some process
-        int answer = INT_MIN;
-        int prev = -1;
-        for (int j = 0; j < s.size(); j++) {
-            if (s[j] == 'R') {
-                answer = max(answer, j - prev);
-                prev = j;
-            }
-        }
-
-        answer = max(answer, static_cast<int>(s.size() - prev));
-        cout << answer << endl;
+        cin >> in[i].first;
     }
+
+    for (int i = 0; i < n; i++) {
+        cin >> in[i].second;
+    }
+    int diff[n];
+    for (int i = 0; i < n; i++) {
+        diff[i] = in[i].first - in[i].second;
+    }
+    sort(diff, diff + n);
+    long long answer = 0;
+    for (int i = 0; i < n - 1; i++) {
+        int target = -diff[i] + 1;
+        const int *comp = lower_bound(diff + i + 1, diff + n, target);
+        answer += n - (comp - diff);
+    }
+    cout << answer << endl;
 }
 
 
