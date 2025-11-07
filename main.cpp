@@ -31,29 +31,26 @@ int n, l, m;
 char chars[] = {'a', 'b', 'c'};
 
 
+int convert(int x) {
+    string binaryString;
+    while (x > 0) {
+        binaryString += (x % 2 == 0 ? '0' : '1');
+        x /= 2;
+    }
+    reverse(binaryString.begin(), binaryString.end());
+    return stoi(binaryString);
+}
+
 void solve() {
     int n;
     cin >> n;
-    pair<int, int> in[n];
-    for (int i = 0; i < n; i++) {
-        cin >> in[i].first;
+    constexpr int MAX = 1 << 10;
+    for (int i = MAX - 1; i >= 1; i--) {
+        if (const int current = convert(i); current <= n) {
+            cout << i << endl;
+            return;
+        }
     }
-
-    for (int i = 0; i < n; i++) {
-        cin >> in[i].second;
-    }
-    int diff[n];
-    for (int i = 0; i < n; i++) {
-        diff[i] = in[i].first - in[i].second;
-    }
-    sort(diff, diff + n);
-    long long answer = 0;
-    for (int i = 0; i < n - 1; i++) {
-        int target = -diff[i] + 1;
-        const int *comp = lower_bound(diff + i + 1, diff + n, target);
-        answer += n - (comp - diff);
-    }
-    cout << answer << endl;
 }
 
 
