@@ -42,15 +42,26 @@ int convert(int x) {
 }
 
 void solve() {
-    int n;
-    cin >> n;
-    constexpr int MAX = 1 << 10;
-    for (int i = MAX - 1; i >= 1; i--) {
-        if (const int current = convert(i); current <= n) {
-            cout << i << endl;
+    int n, k, answer;
+    cin >> n >> k;
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    sort(arr, arr + n);
+    if (k == 0) {
+        if (arr[0] == 1) {
+            cout << -1 << endl;
             return;
         }
+        cout << 1 << endl;
+        return;
     }
+    if (k != n && arr[k - 1] == arr[k]) {
+        cout << -1 << endl;
+        return;
+    }
+    cout << arr[k - 1] << endl;
 }
 
 
