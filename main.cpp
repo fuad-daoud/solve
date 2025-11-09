@@ -42,26 +42,32 @@ int convert(int x) {
 }
 
 void solve() {
-    int n, k, answer;
+    int n, k;
     cin >> n >> k;
-    int arr[n];
+    string s;
+    cin >> s;
+    int freq[26] = {};
     for (int i = 0; i < n; i++) {
-        cin >> arr[i];
+        freq[s[i] - 'a']++;
     }
-    sort(arr, arr + n);
-    if (k == 0) {
-        if (arr[0] == 1) {
-            cout << -1 << endl;
-            return;
+    for (int &f: freq) {
+        if (k > f) {
+            k -= f;
+            f = 0;
+        } else {
+            f -= k;
+            k = 0;
         }
-        cout << 1 << endl;
-        return;
     }
-    if (k != n && arr[k - 1] == arr[k]) {
-        cout << -1 << endl;
-        return;
+    string answer = "";
+    for (int i = n - 1; i >= 0; i--) {
+        if (freq[s[i] - 'a']) {
+            freq[s[i] - 'a']--;
+            answer.push_back(s[i]);
+        }
     }
-    cout << arr[k - 1] << endl;
+    reverse(answer.begin(), answer.end());
+    cout << answer << endl;
 }
 
 
