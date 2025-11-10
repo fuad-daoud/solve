@@ -42,32 +42,19 @@ int convert(int x) {
 }
 
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    int freq[26] = {};
+    int n, x, y;
+    cin >> n >> x >> y;
+    if (x > y) {
+        cout << n << endl;
+        return;
+    }
+    int lesser = 0;
     for (int i = 0; i < n; i++) {
-        freq[s[i] - 'a']++;
+        int door;
+        cin >> door;
+        lesser += door <= x;
     }
-    for (int &f: freq) {
-        if (k > f) {
-            k -= f;
-            f = 0;
-        } else {
-            f -= k;
-            k = 0;
-        }
-    }
-    string answer = "";
-    for (int i = n - 1; i >= 0; i--) {
-        if (freq[s[i] - 'a']) {
-            freq[s[i] - 'a']--;
-            answer.push_back(s[i]);
-        }
-    }
-    reverse(answer.begin(), answer.end());
-    cout << answer << endl;
+    cout << (lesser + 1) / 2 << endl;
 }
 
 
