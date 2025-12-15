@@ -30,31 +30,25 @@ int n, l, m;
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
 
-
-int convert(int x) {
-    string binaryString;
-    while (x > 0) {
-        binaryString += (x % 2 == 0 ? '0' : '1');
-        x /= 2;
-    }
-    reverse(binaryString.begin(), binaryString.end());
-    return stoi(binaryString);
-}
-
 void solve() {
-    int n, x, y;
-    cin >> n >> x >> y;
-    if (x > y) {
-        cout << n << endl;
-        return;
-    }
-    int lesser = 0;
+    int n;
+    cin >> n;
+    int chil[n];
     for (int i = 0; i < n; i++) {
-        int door;
-        cin >> door;
-        lesser += door <= x;
+        cin >> chil[i];
     }
-    cout << (lesser + 1) / 2 << endl;
+    sort(chil, chil + n);
+    for (int i = 0; i < n; i++) {
+        if (i % 2 == 0) {
+            cout << chil[i] << ' ';
+        }
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+        if (i % 2 == 1) {
+            cout << chil[i] << ' ';
+        }
+    }
 }
 
 
