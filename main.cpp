@@ -33,22 +33,26 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    int chil[n];
+    int arr[n];
     for (int i = 0; i < n; i++) {
-        cin >> chil[i];
+        cin >> arr[i];
     }
-    sort(chil, chil + n);
-    for (int i = 0; i < n; i++) {
-        if (i % 2 == 0) {
-            cout << chil[i] << ' ';
+    sort(arr, arr + n);
+    int answer = 0;
+    for (int i = 0, j = 0; i < n; i++) {
+        if (arr[i] - arr[j] > 5) {
+            while (arr[i] - arr[j] > 5) {
+                const int tmp = arr[j];
+                while (arr[j] == tmp) {
+                    j++;
+                }
+            }
         }
+        int current_answer = i - j + 1;
+        answer = max(answer, current_answer);
     }
 
-    for (int i = n - 1; i > 0; i--) {
-        if (i % 2 == 1) {
-            cout << chil[i] << ' ';
-        }
-    }
+    cout << answer << endl;
 }
 
 
