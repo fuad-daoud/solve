@@ -33,40 +33,31 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    while (n--) {
-        int c, m, x;
-        cin >> c >> m >> x;
-        int answer = 0;
-        if (c == 0 || m == 0) {
-            cout << answer << endl;
-            continue;
-        }
-        if (x != 0) {
-            answer += min(min(c, m), x);
-            c -= answer;
-            m -= answer;
-        }
-
-        if (c == 0 || m == 0) {
-            cout << answer << endl;
-            continue;
-        }
-        if (c != m) {
-            const int diff = min(min(m,abs(c - m)), c);
-            answer += diff;
-            if (c > m) {
-                c -= 2 * diff;
-                m -= diff;
-            } else {
-                m -= 2 * diff;
-                c -= diff;
-            }
-        }
-        if (c == m) {
-            answer += (c + m) / 3;
-        }
-        cout << answer << endl;;
+    map<int, int> speakers;
+    for (int i = 0; i < n; i++) {
+        int x;
+        scanf("%d", &x);
+        speakers[x]++;
     }
+    int m;
+    cin >> m;
+    int ca[m], cs[m];
+    for (int i = 0; i < m; i++) {
+        scanf("%d", &ca[i]);
+    }
+    int answer = 0;
+    pair answer_pair = {0, 0};
+    for (int i = 0; i < m; i++) {
+        int sub;
+        scanf("%d", &sub);
+        const pair curr = {speakers[ca[i]], speakers[sub]};
+        if (curr.first > answer_pair.first || (
+                curr.first == answer_pair.first && curr.second > answer_pair.second)) {
+            answer_pair = curr;
+            answer = i;
+        }
+    }
+    cout << answer + 1 << endl;
 }
 
 
