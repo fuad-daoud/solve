@@ -32,24 +32,40 @@ char chars[] = {'a', 'b', 'c'};
 
 void solve() {
     int n;
+    long long sum = 0;
     cin >> n;
-    string a, b;
-    cin >> a >> b;
-    int answer = 0;
-    for (int i = 0; i < n - 1; i++) {
-        if (a[i] != b[i] && a[i + 1] != b[i + 1] && a[i] != a[i + 1]) {
-            swap(a[i], a[i + 1]);
-            answer++;
-            i++;
-        }
-    }
-
+    int arr[n];
+    int largest = INT_MIN, second_largest = INT_MIN + 1;
     for (int i = 0; i < n; i++) {
-        if (a[i] != b[i]) {
-            answer++;
+        cin >> arr[i];
+        if (arr[i] > largest) {
+            second_largest = largest;
+            largest = arr[i];
+        } else if (arr[i] == largest) {
+            second_largest = largest;
+        } else if (arr[i] > second_largest) {
+            second_largest = arr[i];
         }
+        sum += arr[i];
     }
-    cout << answer << endl;
+    vector<int> answer;
+    for (int i = 0; i < n; i++) {
+        sum -= arr[i];
+        int target = largest;
+        if (arr[i] == largest) {
+            target = second_largest;
+        }
+        sum -= target;
+        if (sum == target) {
+            answer.emplace_back(i + 1);
+        }
+        sum += target;
+        sum += arr[i];
+    }
+    cout << answer.size() << endl;
+    for (const int x: answer) {
+        cout << x << ' ';
+    }
 }
 
 
