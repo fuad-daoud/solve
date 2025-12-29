@@ -22,10 +22,10 @@ using namespace ::std;
 int dx[4] = {0, 0, 1, -1}; // Up, Down, Right, Left
 int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 
-const int N = 3 * 1e4 + 7, M = 250, mod = 1e9 + 7;
+// const int N = 3 * 1e4 + 7, M = 250, mod = 1e9 + 7;
 #define in(i, j) i >= 0 && i < j
 #define not_in(i, j) !(in(i, j))
-int n, l, m;
+// int n, l, m;
 // string grid[N];
 // int dp[N][N];
 char chars[] = {'a', 'b', 'c'};
@@ -33,31 +33,29 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    map<int, int> speakers;
+    int arr[n];
+    map<int, int> freq;
     for (int i = 0; i < n; i++) {
-        int x;
-        scanf("%d", &x);
-        speakers[x]++;
+        cin >> arr[i];
+        freq[arr[i]]++;
     }
-    int m;
-    cin >> m;
-    int ca[m], cs[m];
-    for (int i = 0; i < m; i++) {
-        scanf("%d", &ca[i]);
-    }
-    int answer = 0;
-    pair answer_pair = {0, 0};
-    for (int i = 0; i < m; i++) {
-        int sub;
-        scanf("%d", &sub);
-        const pair curr = {speakers[ca[i]], speakers[sub]};
-        if (curr.first > answer_pair.first || (
-                curr.first == answer_pair.first && curr.second > answer_pair.second)) {
-            answer_pair = curr;
-            answer = i;
+    int answer = n;
+    for (int i = 0; i < n; i++) {
+        freq[arr[i]]--;
+        for (int j = 0; j <= 30; j++) {
+            const int current = pow(2, j);
+            if (arr[i] > current) {
+                continue;
+            }
+            if (const int target = current - arr[i]; freq.find(target) != freq.end() && freq[target] != 0) {
+                freq[arr[i]]++;
+                answer--;
+                break;
+            }
         }
+        freq[arr[i]]++;
     }
-    cout << answer + 1 << endl;
+    cout << answer << endl;
 }
 
 
