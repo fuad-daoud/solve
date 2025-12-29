@@ -33,27 +33,21 @@ char chars[] = {'a', 'b', 'c'};
 void solve() {
     int n;
     cin >> n;
-    int arr[n];
-    map<int, int> freq;
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-        freq[arr[i]]++;
-    }
-    int answer = n;
-    for (int i = 0; i < n; i++) {
-        freq[arr[i]]--;
-        for (int j = 0; j <= 30; j++) {
-            const int current = pow(2, j);
-            if (arr[i] > current) {
-                continue;
-            }
-            if (const int target = current - arr[i]; freq.find(target) != freq.end() && freq[target] != 0) {
-                freq[arr[i]]++;
-                answer--;
-                break;
-            }
+    string a, b;
+    cin >> a >> b;
+    int answer = 0;
+    for (int i = 0; i < n - 1; i++) {
+        if (a[i] != b[i] && a[i + 1] != b[i + 1] && a[i] != a[i + 1]) {
+            swap(a[i], a[i + 1]);
+            answer++;
+            i++;
         }
-        freq[arr[i]]++;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (a[i] != b[i]) {
+            answer++;
+        }
     }
     cout << answer << endl;
 }
