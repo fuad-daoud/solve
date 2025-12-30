@@ -31,37 +31,22 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    int arr[n];
-    set<int> big_dawgs;
+    int n, m;
+    cin >> n >> m;
+    string arr[n];
     for (int i = 0; i < n; i++) {
         cin >> arr[i];
-        if (arr[i] > n - k) {
-            big_dawgs.insert(i);
-        }
     }
-    const long long MOD = 998244353;
-    long long answer = 1;
-    long long count = 0;
-    bool counting = false;
-    for (int i = 0; i < n; i++) {
-        if (big_dawgs.count(i) == 1) {
-            counting = true;
-            if (count != 0) {
-                answer = (answer * count) % MOD;
-                count = 0;
-            }
+    constexpr long long MOD = 1e9 + 7;
+    unsigned long long answer = 1;
+    for (int characterIndex = 0; characterIndex < m; characterIndex++) {
+        set<char> diff;
+        for (int nameIndex = 0; nameIndex < n; nameIndex++) {
+            diff.insert(arr[nameIndex][characterIndex]);
         }
-        if (counting) {
-            count++;
-        }
+        answer = (answer * diff.size()) % MOD;
     }
-    long long sum = 0;
-    for (int i = n - k + 1; i <= n; i++) {
-        sum += i;
-    }
-    cout << sum << ' ' << answer << endl;
+    cout << answer << endl;
 }
 
 
