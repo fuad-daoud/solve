@@ -31,41 +31,37 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 char chars[] = {'a', 'b', 'c'};
 
 void solve() {
-    int n;
-    long long sum = 0;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
     int arr[n];
-    int largest = INT_MIN, second_largest = INT_MIN + 1;
+    set<int> big_dawgs;
     for (int i = 0; i < n; i++) {
         cin >> arr[i];
-        if (arr[i] > largest) {
-            second_largest = largest;
-            largest = arr[i];
-        } else if (arr[i] == largest) {
-            second_largest = largest;
-        } else if (arr[i] > second_largest) {
-            second_largest = arr[i];
+        if (arr[i] > n - k) {
+            big_dawgs.insert(i);
         }
-        sum += arr[i];
     }
-    vector<int> answer;
+    const long long MOD = 998244353;
+    long long answer = 1;
+    long long count = 0;
+    bool counting = false;
     for (int i = 0; i < n; i++) {
-        sum -= arr[i];
-        int target = largest;
-        if (arr[i] == largest) {
-            target = second_largest;
+        if (big_dawgs.count(i) == 1) {
+            counting = true;
+            if (count != 0) {
+                answer = (answer * count) % MOD;
+                count = 0;
+            }
         }
-        sum -= target;
-        if (sum == target) {
-            answer.emplace_back(i + 1);
+        if (counting) {
+            count++;
         }
-        sum += target;
-        sum += arr[i];
     }
-    cout << answer.size() << endl;
-    for (const int x: answer) {
-        cout << x << ' ';
+    long long sum = 0;
+    for (int i = n - k + 1; i <= n; i++) {
+        sum += i;
     }
+    cout << sum << ' ' << answer << endl;
 }
 
 
