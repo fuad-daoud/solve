@@ -28,25 +28,60 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int n, l, m;
 // string grid[N];
 // int dp[N][N];
-char chars[] = {'a', 'b', 'c'};
+
+
+vector<string> splitString(const string &str, char delimiter) {
+    vector<string> tokens;
+    string token;
+    stringstream ss(str);
+
+    while (getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+void printStack(std::stack<string> s) {
+    if (s.empty()) {
+        return;
+    }
+    string x = s.top();
+    s.pop();
+    printStack(s);
+    cout << x << "/";
+}
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    string arr[n];
-    for (int i = 0; i < n; i++) {
-        cin >> arr[i];
-    }
-    constexpr long long MOD = 1e9 + 7;
-    unsigned long long answer = 1;
-    for (int characterIndex = 0; characterIndex < m; characterIndex++) {
-        set<char> diff;
-        for (int nameIndex = 0; nameIndex < n; nameIndex++) {
-            diff.insert(arr[nameIndex][characterIndex]);
+    int n;
+    cin >> n;
+    stack<string> state;
+    while (n--) {
+        string x;
+        cin >> x;
+        if (x == "pwd") {
+            cout << "/";
+            printStack(state);
+            cout << endl;
+            continue;
         }
-        answer = (answer * diff.size()) % MOD;
+        if (x == "cd") {
+            cin >> x;
+            vector<string> tokens = splitString(x, '/');
+            for (const string& token: tokens) {
+                if (token.empty()) {
+                    while (!state.empty()) {
+                        state.pop();
+                    }
+                    continue;
+                }
+                if (token == "..") {
+                    state.pop();
+                } else {
+                    state.push(token);
+                }
+            }
+        }
     }
-    cout << answer << endl;
 }
 
 
