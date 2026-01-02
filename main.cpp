@@ -30,57 +30,34 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int dp[N][N];
 
 
-vector<string> splitString(const string &str, char delimiter) {
-    vector<string> tokens;
-    string token;
-    stringstream ss(str);
-
-    while (getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-    return tokens;
-}
-
-void printStack(std::stack<string> s) {
-    if (s.empty()) {
-        return;
-    }
-    string x = s.top();
-    s.pop();
-    printStack(s);
-    cout << x << "/";
-}
-
 void solve() {
-    int n;
-    cin >> n;
-    stack<string> state;
-    while (n--) {
-        string x;
-        cin >> x;
-        if (x == "pwd") {
-            cout << "/";
-            printStack(state);
-            cout << endl;
+    string s;
+    cin >> s;
+    bool not_valid[s.size()];
+    memset(not_valid, false, s.size());
+    // We will assume that three identical letters together is a typo
+    // Besides, a couple of identical letters immediately followed by another couple of identical letters is a typo too
+    vector<int> dups;
+    dups.emplace_back(1);
+    for (int i = 1; i < s.size(); i++) {
+        if (s[i] == s[i - 1]) {
+            dups.back()++;
+        } else {
+            dups.emplace_back(1);
+        }
+        if (dups.back() > 2) {
+            not_valid[i] = true;
+            dups.back()--;
+        } else if (dups.size() > 1 && dups.back() == 2 && dups[dups.size() - 2] == 2) {
+            not_valid[i] = true;
+            dups.back()--;
+        }
+    }
+    for (int i = 0; i < s.size(); i++) {
+        if (not_valid[i]) {
             continue;
         }
-        if (x == "cd") {
-            cin >> x;
-            vector<string> tokens = splitString(x, '/');
-            for (const string& token: tokens) {
-                if (token.empty()) {
-                    while (!state.empty()) {
-                        state.pop();
-                    }
-                    continue;
-                }
-                if (token == "..") {
-                    state.pop();
-                } else {
-                    state.push(token);
-                }
-            }
-        }
+        cout << s[i];
     }
 }
 
