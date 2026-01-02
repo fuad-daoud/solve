@@ -31,33 +31,51 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 
 
 void solve() {
-    string s;
-    cin >> s;
-    bool not_valid[s.size()];
-    memset(not_valid, false, s.size());
-    // We will assume that three identical letters together is a typo
-    // Besides, a couple of identical letters immediately followed by another couple of identical letters is a typo too
-    vector<int> dups;
-    dups.emplace_back(1);
-    for (int i = 1; i < s.size(); i++) {
-        if (s[i] == s[i - 1]) {
-            dups.back()++;
-        } else {
-            dups.emplace_back(1);
-        }
-        if (dups.back() > 2) {
-            not_valid[i] = true;
-            dups.back()--;
-        } else if (dups.size() > 1 && dups.back() == 2 && dups[dups.size() - 2] == 2) {
-            not_valid[i] = true;
-            dups.back()--;
-        }
+    int n, m;
+    cin >> n >> m;
+    if (m > 2 * n + 2) {
+        cout << -1 << endl;
+        return;
     }
-    for (int i = 0; i < s.size(); i++) {
-        if (not_valid[i]) {
-            continue;
+    if (m < n - 1) {
+        cout << -1 << endl;
+        return;
+    }
+
+    if (m == n) {
+        for (int i = 0; i < n; i++) {
+            cout << "01";
         }
-        cout << s[i];
+        return;
+    }
+    if (m == n - 1) {
+        cout << "0";
+        for (int i = 0; i < m; i++) {
+            cout << "10";
+        }
+        return;
+    }
+    if (m > n) {
+        bool ones = false;
+        while (m > n) {
+            cout << "11";
+            m -= 2;
+            if (m == n) {
+                ones = true;
+                break;
+            }
+            cout << "0";
+            n--;
+        }
+        if (ones) {
+            for (int i = 0; i < m; i++) {
+                cout << "01";
+            }
+        } else {
+            for (int i = 0; i < m; i++) {
+                cout << "10";
+            }
+        }
     }
 }
 
