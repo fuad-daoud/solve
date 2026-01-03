@@ -32,22 +32,24 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int dp[N][N];
 
 void solve() {
-    int n, m;
-    cin >> n >> m;
-
-    int arr[1001];
-    for (int i = 1; i <= n; i++) {
-        cin >> arr[i];
+    int n;
+    cin >> n;
+    pair<int, int> arr[n];
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i].first >> arr[i].second;
     }
-
-    long long answer = 0;
-    for (int i = 0; i < m; i++) {
-        int x, y;
-        cin >> x >> y;
-        answer += min(arr[x], arr[y]);
+    sort(arr, arr + n);
+    int prev = min(arr[0].first, arr[0].second);
+    for (int i = 1; i < n; i++) {
+        if (arr[i].second >= prev) {
+            prev = arr[i].second;
+            continue;
+        }
+        if (arr[i].first >= prev) {
+            prev = arr[i].first;
+        }
     }
-
-    cout << answer << endl;
+    cout << prev << endl;
 }
 
 
