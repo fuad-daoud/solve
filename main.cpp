@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bitset>
 #include <vector>
 #include <cassert>
 #include <cmath>
@@ -12,6 +13,7 @@
 #include <set>
 #include <stack>
 #include <stdio.h>
+#include <unordered_map>
 
 #ifndef ONLINE_JUDGE
 #include "util.h"
@@ -29,54 +31,23 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // string grid[N];
 // int dp[N][N];
 
-
 void solve() {
     int n, m;
     cin >> n >> m;
-    if (m > 2 * n + 2) {
-        cout << -1 << endl;
-        return;
-    }
-    if (m < n - 1) {
-        cout << -1 << endl;
-        return;
+
+    int arr[1001];
+    for (int i = 1; i <= n; i++) {
+        cin >> arr[i];
     }
 
-    if (m == n) {
-        for (int i = 0; i < n; i++) {
-            cout << "01";
-        }
-        return;
+    long long answer = 0;
+    for (int i = 0; i < m; i++) {
+        int x, y;
+        cin >> x >> y;
+        answer += min(arr[x], arr[y]);
     }
-    if (m == n - 1) {
-        cout << "0";
-        for (int i = 0; i < m; i++) {
-            cout << "10";
-        }
-        return;
-    }
-    if (m > n) {
-        bool ones = false;
-        while (m > n) {
-            cout << "11";
-            m -= 2;
-            if (m == n) {
-                ones = true;
-                break;
-            }
-            cout << "0";
-            n--;
-        }
-        if (ones) {
-            for (int i = 0; i < m; i++) {
-                cout << "01";
-            }
-        } else {
-            for (int i = 0; i < m; i++) {
-                cout << "10";
-            }
-        }
-    }
+
+    cout << answer << endl;
 }
 
 
