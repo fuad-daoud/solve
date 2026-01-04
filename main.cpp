@@ -34,22 +34,36 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 void solve() {
     int n;
     cin >> n;
-    pair<int, int> arr[n];
+    string s;
+    cin >> s;
+    string answer = "";
     for (int i = 0; i < n; i++) {
-        cin >> arr[i].first >> arr[i].second;
-    }
-    sort(arr, arr + n);
-    int prev = min(arr[0].first, arr[0].second);
-    for (int i = 1; i < n; i++) {
-        if (arr[i].second >= prev) {
-            prev = arr[i].second;
-            continue;
+        switch (s[i]) {
+            case '0':
+            case '1':
+                break;
+            case '2':
+            case '3':
+            case '5':
+            case '7':
+                answer.push_back(s[i]);
+                break;
+            case '4':
+                answer += "322";
+                break;
+            case '6':
+                answer += "53";
+                break;
+            case '8':
+                answer += "7222";
+                break;
+            case '9':
+                answer += "7332";
+                break;
         }
-        if (arr[i].first >= prev) {
-            prev = arr[i].first;
-        }
     }
-    cout << prev << endl;
+    sort(answer.rbegin(), answer.rend());
+    cout << answer << endl;
 }
 
 
