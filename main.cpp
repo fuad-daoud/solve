@@ -34,36 +34,75 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 void solve() {
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    string answer = "";
-    for (int i = 0; i < n; i++) {
-        switch (s[i]) {
-            case '0':
-            case '1':
-                break;
-            case '2':
-            case '3':
-            case '5':
-            case '7':
-                answer.push_back(s[i]);
-                break;
-            case '4':
-                answer += "322";
-                break;
-            case '6':
-                answer += "53";
-                break;
-            case '8':
-                answer += "7222";
-                break;
-            case '9':
-                answer += "7332";
-                break;
-        }
+    int a;
+    cin >> a;
+    deque<int> arr_a;
+    for (int i = 0; i < a; i++) {
+        int x;
+        cin >> x;
+        arr_a.push_front(x);
     }
-    sort(answer.rbegin(), answer.rend());
-    cout << answer << endl;
+    int b;
+    cin >> b;
+    deque<int> arr_b;
+    for (int i = 0; i < b; i++) {
+        int x;
+        cin >> x;
+        arr_b.push_front(x);
+    }
+    vector<deque<int> > state_a, state_b;
+    state_a.emplace_back(arr_a);
+    state_b.emplace_back(arr_b);
+    int rounds = 0;
+    while (!arr_a.empty() && !arr_b.empty()) {
+        rounds++;
+        if (arr_b.back() > arr_a.back()) {
+            int smaller_card = arr_a.back();
+            arr_a.pop_back();
+            arr_b.push_front(smaller_card);
+            int bigger_card = arr_b.back();
+            arr_b.pop_back();
+            arr_b.push_front(bigger_card);
+        } else {
+            int smaller_card = arr_b.back();
+            arr_b.pop_back();
+            arr_a.push_front(smaller_card);
+            int bigger_card = arr_a.back();
+            arr_a.pop_back();
+            arr_a.push_front(bigger_card);
+        }
+
+
+        for (int i = 0; i < state_a.size(); i++) {
+            bool same = arr_a.size() == state_a[i].size() && arr_b.size() == state_b[i].size();
+            if (!same) {
+                continue;
+            }
+
+            for (auto it = arr_a.begin(), it_c = state_a[i].begin(); it != arr_a.end() && it_c != state_a[i].end();
+                 ++it, ++it_c) {
+                if (*it != *it_c) {
+                    same = false;
+                    break;
+                }
+            }
+
+            for (auto it = arr_b.begin(), it_c = state_b[i].begin(); it != arr_b.end() && it_c != state_b[i].end();
+                 ++it, ++it_c) {
+                if (*it != *it_c) {
+                    same = false;
+                    break;
+                }
+            }
+            if (same) {
+                cout << -1 << endl;
+                return;
+            }
+        }
+        state_a.emplace_back(arr_a);
+        state_b.emplace_back(arr_b);
+    }
+    cout << rounds << ' ' << (arr_a.empty() ? 2 : 1) << endl;
 }
 
 
