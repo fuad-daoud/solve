@@ -33,43 +33,35 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int dp[N][N];
 
 void solve() {
-    int n;
-    cin >> n;
-    int sizes[n], costs[n];
-    for (int i = 0; i < n; i++) {
-        cin >> sizes[i];
+    int n, k;
+    cin >> n >> k;
+    priority_queue<int> answer;
+    while (n) {
+        int x = pow(2,floor(log2(n)));
+        answer.emplace(x);
+        n -= x;
     }
-
-    for (int i = 0; i < n; i++) {
-        cin >> costs[i];
-    }
-
-    long long mins[n];
-
-    for (int i = n - 2; i >= 0; i--) {
-        const int current = sizes[i];
-        int mn = INT_MAX;
-        for (int j = i + 1; j < n; j++) {
-            if (current < sizes[j]) {
-                mn = min(mn, costs[j]);
-            }
+    k -= answer.size();
+    while (k > 0) {
+        const int x = answer.top();
+        if (x == 1) {
+            break;
         }
-        mins[i] = mn;
+        answer.pop();
+        answer.emplace(x / 2);
+        answer.emplace(x / 2);
+        k--;
     }
-    long long answer = INT_MAX;
-    for (int i = 0; i < n; i++) {
-        const int current = sizes[i];
-        for (int j = i + 1; j < n; j++) {
-            if (current < sizes[j]) {
-                answer = min(answer, costs[i] + costs[j] + mins[j]);
-            }
-        }
-    }
-    if (answer == INT_MAX) {
-        cout << -1 << endl;
+    if (k == 0) {
+        cout << "YES" << endl;
+    } else {
+       cout << "NO" << endl;
         return;
     }
-    cout << answer << endl;
+    while (!answer.empty()) {
+        cout << answer.top() << ' ';
+        answer.pop();
+    }
 }
 
 
