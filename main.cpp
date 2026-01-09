@@ -33,35 +33,45 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int dp[N][N];
 
 void solve() {
-    int n, k;
-    cin >> n >> k;
-    priority_queue<int> answer;
-    while (n) {
-        int x = pow(2,floor(log2(n)));
-        answer.emplace(x);
-        n -= x;
-    }
-    k -= answer.size();
-    while (k > 0) {
-        const int x = answer.top();
-        if (x == 1) {
-            break;
+    int n;
+    cin >> n;
+    map<int, int> freq;
+    for (int i = 0; i < n; i++) {
+        string x;
+        cin >> x;
+        int open = 0, close = 0;
+        for (const char j: x) {
+            if (j == ')') {
+                if (open > 0) {
+                    open--;
+                } else {
+                    close++;
+                }
+            } else {
+                open++;
+            }
         }
-        answer.pop();
-        answer.emplace(x / 2);
-        answer.emplace(x / 2);
-        k--;
+        if (open != 0 && close != 0) {
+        } else if (open == 0 && close == 0) {
+            freq[0]++;
+        } else if (open == 0) {
+            freq[close]++;
+        } else {
+            freq[open * -1]++;
+        }
     }
-    if (k == 0) {
-        cout << "YES" << endl;
-    } else {
-       cout << "NO" << endl;
-        return;
+    for (auto const x: freq) {
+        if (x.first == 0 || x.second == 0) {
+            continue;
+        }
+        if (freq[x.first * -1] != 0) {
+            int y = min(freq[x.first], freq[x.first * -1]);
+            freq[x.first] -= y;
+            freq[x.first * -1] -= y;
+            freq[0] += 2 * y;
+        }
     }
-    while (!answer.empty()) {
-        cout << answer.top() << ' ';
-        answer.pop();
-    }
+    cout << freq[0] / 2 << endl;
 }
 
 
