@@ -33,45 +33,26 @@ int dy[4] = {-1, 1, 0, 0}; // Up, Down, Right, Left
 // int dp[N][N];
 
 void solve() {
-    int n;
-    cin >> n;
-    map<int, int> freq;
-    for (int i = 0; i < n; i++) {
-        string x;
-        cin >> x;
-        int open = 0, close = 0;
-        for (const char j: x) {
-            if (j == ')') {
-                if (open > 0) {
-                    open--;
-                } else {
-                    close++;
-                }
+    int q;
+    cin >> q;
+    while (q--) {
+        long long k, n, a, b;
+        cin >> k >> n >> a >> b;
+        k -= n * a;
+        if (k > 0) {
+            cout << n << endl;
+        } else {
+            k = -k;
+            ++k;
+            const long long diff = a - b;
+            const long long turns = (k + diff - 1) / diff;
+            if (turns > n) {
+                cout << -1 << '\n';
             } else {
-                open++;
+                cout << n - turns << '\n';
             }
         }
-        if (open != 0 && close != 0) {
-        } else if (open == 0 && close == 0) {
-            freq[0]++;
-        } else if (open == 0) {
-            freq[close]++;
-        } else {
-            freq[open * -1]++;
-        }
     }
-    for (auto const x: freq) {
-        if (x.first == 0 || x.second == 0) {
-            continue;
-        }
-        if (freq[x.first * -1] != 0) {
-            int y = min(freq[x.first], freq[x.first * -1]);
-            freq[x.first] -= y;
-            freq[x.first * -1] -= y;
-            freq[0] += 2 * y;
-        }
-    }
-    cout << freq[0] / 2 << endl;
 }
 
 
