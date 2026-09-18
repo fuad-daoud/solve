@@ -369,3 +369,8 @@ def test_main_next_reports_when_roadmap_is_complete(tmp_path, capsys):
     (tmp_path / "ROADMAP.md").write_text("- [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/)\n")
     assert lc.main(["next"], root=tmp_path) == 1
     assert "ROADMAP" in capsys.readouterr().err
+
+
+def test_compare_unordered_is_recursive_into_nested_lists():
+    assert lc.matches('[["bat"],["nat","tan"],["ate","eat","tea"]]', [["tea", "ate", "eat"], ["tan", "nat"], ["bat"]], unordered=True) is True
+    assert lc.matches('[["bat"],["nat","tan"]]', [["bat", "nat"], ["tan"]], unordered=True) is False
