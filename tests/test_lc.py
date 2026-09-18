@@ -321,3 +321,22 @@ def test_start_writes_problem_md(tmp_path, monkeypatch):
     monkeypatch.setattr(lc, "fetch", lambda slug: FETCHED)
     lc.start(tmp_path, "generate-parentheses")
     assert (tmp_path / "problem.md").read_text().startswith("# 22. Generate Parentheses")
+
+
+def test_commit_message_from_header():
+    assert lc.commit_message(lc.parse_header(HEADER)) == "feat: solved 22. Generate Parentheses [Medium]"
+
+
+def test_commit_stages_working_files_and_commits(tmp_path):
+    import subprocess
+    git = lambda *a: subprocess.run(["git", *a], cwd=tmp_path, check=True, capture_output=True, text=True).stdout
+    git("init", "-q")
+    git("config", "user.email", "t@t"); git("config", "user.name", "t")
+    (tmp_path / "solve.py").write_text(HEADER)
+    (tmp_path / "cases.txt").write_text("3\n")
+    (tmp_path / "problem.md").write_text("# 22\n")
+    (tmp_path / "unrelated.txt").write_text("x\n")
+    assert lc.main(["commit"], root=tmp_path) == 0
+    assert git("log", "--format=%s", "-1").strip() == "feat: solved 22. Generate Parentheses [Medium]"
+    assert set(git("show", "--name-only", "--format=", "HEAD").split()) == {"solve.py", "cases.txt", "problem.md"}
+    assert "unrelated.txt" in git("status", "--porcelain")

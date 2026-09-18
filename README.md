@@ -13,7 +13,7 @@ make setup   # once per clone: installs the pre-commit hook
 ```sh
 make start P=https://leetcode.com/problems/two-sum/   # fetch problem → solve.py, cases.txt, problem.md
 make test                                             # run every case, LeetCode-style report
-git commit -am "solved 1"                             # hook saves to problems/ and updates the table below
+make commit                                           # "feat: solved 1. Two Sum [Easy]"; hook saves to problems/ + updates tables
 ```
 
 In neovim, `<leader>rp` from `solve.py` runs `make test` into a right-hand column (`cases.txt` on top, report below);
@@ -37,6 +37,7 @@ One JSON argument per line, exactly as LeetCode's testcase box shows them. Blank
 
 ### Saving
 
+`make commit` stages `solve.py`, `cases.txt`, `problem.md` and commits as `feat: solved N. Title [Difficulty]`.
 The pre-commit hook fires only when `solve.py` is staged. It refuses the commit if `cases.txt` has failures
 (`--no-verify` to override), then copies `solve.py` → `problems/NNNN-slug.py`, `cases.txt` → `problems/NNNN-slug.cases.txt`,
 regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all of it. `make save` does the same by hand.

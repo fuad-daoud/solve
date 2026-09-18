@@ -7,6 +7,7 @@ import importlib.util
 import json
 import re
 import shutil
+import subprocess
 import sys
 import traceback
 import urllib.error
@@ -394,6 +395,21 @@ def test(cls, root: Path | None = None) -> int:
     return sum(r.status in ("fail", "error") for r in results)
 
 
+WORKING_FILES = ("solve.py", "cases.txt", "problem.md")
+
+
+def commit_message(meta: Meta) -> str:
+    return f"feat: solved {meta.id}. {meta.title} [{meta.difficulty}]"
+
+
+def commit(root: Path) -> int:
+    """Stage the working files and commit them; the pre-commit hook does the saving."""
+    meta = parse_header((root / "solve.py").read_text())
+    files = [f for f in WORKING_FILES if (root / f).exists()]
+    subprocess.run(["git", "add", "--", *files], cwd=root, check=True)
+    return subprocess.run(["git", "commit", "-m", commit_message(meta)], cwd=root).returncode
+
+
 def _prompt_case() -> tuple[list[str], str | None]:
     print("input args, one per line (blank line to finish):")
     inputs = []
@@ -413,6 +429,7 @@ def main(argv: list[str], root: Path | None = None) -> int:
     sub.add_parser("test", help="run cases.txt against solve.py")
     sub.add_parser("add", help="append a case to cases.txt (interactive)")
     sub.add_parser("save", help="copy solve.py + cases.txt into problems/ and refresh README")
+    sub.add_parser("commit", help="git commit solve.py/cases.txt/problem.md as 'feat: solved N. Title'")
     args = parser.parse_args(argv)
     try:
         return _dispatch(args, root)
@@ -447,6 +464,8 @@ def _dispatch(args, root: Path) -> int:
     elif args.cmd == "save":
         for path in save(root):
             print(f"wrote {path.relative_to(root)}")
+    elif args.cmd == "commit":
+        return commit(root)
     return 0
 
 

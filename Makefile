@@ -1,4 +1,4 @@
-.PHONY: start test add save setup check
+.PHONY: start test add save commit setup check
 
 # make start P=<leetcode url or slug>   (p= works too)
 P ?= $(p)
@@ -14,6 +14,10 @@ add:
 
 save:
 	python3 lc.py save
+
+# commit the current problem as "feat: solved N. Title [Difficulty]" (hook saves it into problems/)
+commit:
+	python3 lc.py commit
 
 # one-time per clone: install the pre-commit hook
 setup:
