@@ -371,6 +371,20 @@ def start(root: Path, arg: str, force: bool = False) -> Meta:
     return _meta(data)
 
 
+ROADMAP_LINE = re.compile(r"^- \[ \] \*\*\d+\. .*?\[LC\]\((https://leetcode\.com/problems/[\w-]+/?)\)")
+
+
+def next_unsolved(root: Path) -> str | None:
+    """URL of the first unticked problem in ROADMAP.md (topic order), or None."""
+    roadmap = root / "ROADMAP.md"
+    if not roadmap.exists():
+        return None
+    for line in roadmap.read_text().splitlines():
+        if m := ROADMAP_LINE.match(line):
+            return m.group(1)
+    return None
+
+
 def add(root: Path, inputs: list[str], expected: str | None) -> None:
     path = root / "cases.txt"
     text = path.read_text() if path.exists() else ""
@@ -426,6 +440,8 @@ def main(argv: list[str], root: Path | None = None) -> int:
     p = sub.add_parser("start", help="fetch a problem into solve.py + cases.txt")
     p.add_argument("problem", help="LeetCode URL or title slug")
     p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
+    p = sub.add_parser("next", help="start the first unsolved problem in ROADMAP.md")
+    p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
     sub.add_parser("test", help="run cases.txt against solve.py")
     sub.add_parser("add", help="append a case to cases.txt (interactive)")
     sub.add_parser("save", help="copy solve.py + cases.txt into problems/ and refresh README")
@@ -446,13 +462,17 @@ def main(argv: list[str], root: Path | None = None) -> int:
 
 
 def _dispatch(args, root: Path) -> int:
-    if args.cmd == "start":
+    if args.cmd in ("start", "next"):
+        problem = args.problem if args.cmd == "start" else next_unsolved(root)
+        if problem is None:
+            print("lc: nothing left unticked in ROADMAP.md", file=sys.stderr)
+            return 1
         try:
-            meta = start(root, args.problem, args.force)
+            meta = start(root, problem, args.force)
         except Unsaved as e:
             print(f"lc: {e}", file=sys.stderr)
             return 1
-        print(f"{meta.id}. {meta.title} [{meta.difficulty}] -> solve.py, cases.txt")
+        print(f"{meta.id}. {meta.title} [{meta.difficulty}] -> solve.py, cases.txt, problem.md")
     elif args.cmd == "test":
         return 1 if test(load_solution(root), root) else 0
     elif args.cmd == "add":

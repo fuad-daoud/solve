@@ -11,7 +11,8 @@ make setup   # once per clone: installs the pre-commit hook
 ## Workflow
 
 ```sh
-make start P=https://leetcode.com/problems/two-sum/   # fetch problem → solve.py, cases.txt, problem.md
+make next                                             # first unticked problem in ROADMAP.md → solve.py, cases.txt, problem.md
+make start P=https://leetcode.com/problems/two-sum/   # …or any problem by URL / slug
 make test                                             # run every case, LeetCode-style report
 make commit                                           # "feat: solved 1. Two Sum [Easy]"; hook saves to problems/ + updates tables
 ```

@@ -340,3 +340,32 @@ def test_commit_stages_working_files_and_commits(tmp_path):
     assert git("log", "--format=%s", "-1").strip() == "feat: solved 22. Generate Parentheses [Medium]"
     assert set(git("show", "--name-only", "--format=", "HEAD").split()) == {"solve.py", "cases.txt", "problem.md"}
     assert "unrelated.txt" in git("status", "--porcelain")
+
+
+def test_next_unsolved_is_first_unticked_roadmap_url(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(
+        "- [x] **217. Contains Duplicate** (Easy) · [LC](https://leetcode.com/problems/contains-duplicate/) · [Video](https://youtu.be/a)\n"
+        "- [ ] **49. Group Anagrams** (Medium) · [LC](https://leetcode.com/problems/group-anagrams/) · [Video](https://youtu.be/b)\n"
+        "- [ ] **347. Top K** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/c)\n")
+    assert lc.next_unsolved(tmp_path) == "https://leetcode.com/problems/group-anagrams/"
+
+
+def test_next_unsolved_none_when_done_or_missing(tmp_path):
+    assert lc.next_unsolved(tmp_path) is None
+    (tmp_path / "ROADMAP.md").write_text("- [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/)\n")
+    assert lc.next_unsolved(tmp_path) is None
+
+
+def test_main_next_starts_the_next_roadmap_problem(tmp_path, monkeypatch, capsys):
+    seen = []
+    monkeypatch.setattr(lc, "fetch", lambda slug: seen.append(slug) or FETCHED)
+    (tmp_path / "ROADMAP.md").write_text("- [ ] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/)\n")
+    assert lc.main(["next"], root=tmp_path) == 0
+    assert seen == ["generate-parentheses"]
+    assert (tmp_path / "solve.py").exists()
+
+
+def test_main_next_reports_when_roadmap_is_complete(tmp_path, capsys):
+    (tmp_path / "ROADMAP.md").write_text("- [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/)\n")
+    assert lc.main(["next"], root=tmp_path) == 1
+    assert "ROADMAP" in capsys.readouterr().err

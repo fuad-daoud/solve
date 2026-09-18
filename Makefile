@@ -1,10 +1,14 @@
-.PHONY: start test add save commit setup check
+.PHONY: start next test add save commit setup check
 
 # make start P=<leetcode url or slug>   (p= works too)
 P ?= $(p)
 start:
 	@test -n "$(P)" || { echo "usage: make start P=<leetcode url or slug>"; exit 2; }
 	python3 lc.py start $(P)
+
+# start the first unticked problem in ROADMAP.md
+next:
+	python3 lc.py next
 
 test:
 	python3 lc.py test
