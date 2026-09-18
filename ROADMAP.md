@@ -84,7 +84,7 @@ graph TD
 - [x] **242. Valid Anagram** (Easy) · [LC](https://leetcode.com/problems/valid-anagram/) · [Video](https://youtu.be/9UtInBqnCgA) · [sol](problems/0242-valid-anagram.py)
 - [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/) · [Video](https://youtu.be/KLlXCFG5TnA) · [sol](problems/0001-two-sum.py)
 - [x] **49. Group Anagrams** (Medium) · [LC](https://leetcode.com/problems/group-anagrams/) · [Video](https://youtu.be/vzdNOK2oB2E) · [sol](problems/0049-group-anagrams.py)
-- [ ] **347. Top K Frequent Elements** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/YPTqKIgVk-k)
+- [x] **347. Top K Frequent Elements** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/YPTqKIgVk-k) · [sol](problems/0347-top-k-frequent-elements.py)
 - [ ] **238. Product of Array Except Self** (Medium) · [LC](https://leetcode.com/problems/product-of-array-except-self/) · [Video](https://youtu.be/bNvIQI2wAjk)
 - [ ] **36. Valid Sudoku** (Medium) · [LC](https://leetcode.com/problems/valid-sudoku/) · [Video](https://youtu.be/TjFXEUCMqI8)
 - [ ] **271. Encode and Decode Strings** (Medium) · [LC](https://leetcode.com/problems/encode-and-decode-strings/) · [Video](https://youtu.be/B1k_sxOSgv8)
