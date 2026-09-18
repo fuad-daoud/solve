@@ -239,11 +239,11 @@ def test_main_reports_missing_files_without_traceback(tmp_path, capsys):
 
 
 def test_main_test_reports_syntax_error_in_solve_briefly(tmp_path, capsys):
-    (tmp_path / "solve.py").write_text("class Solution:\n    def f(self, n):\n\n")
+    (tmp_path / "solve.py").write_text("class Solution:\n    def f(self, n):\n\n\nx = 1\n")
     (tmp_path / "cases.txt").write_text("1\n")
     assert lc.main(["test"], root=tmp_path) == 1
     err = capsys.readouterr().err
-    assert "solve.py" in err and "line 2" in err and "Traceback" not in err
+    assert err == "lc: solve.py line 2: expected an indented block after function definition\n"
 
 
 def test_render_cases_marks_unordered_when_problem_says_any_order():

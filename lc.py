@@ -359,7 +359,11 @@ def main(argv: list[str], root: Path | None = None) -> int:
     try:
         return _dispatch(args, root)
     except SyntaxError as e:
-        print(f"lc: solve.py line {e.lineno}: {e.msg}", file=sys.stderr)
+        # "expected an indented block after function definition on line 13" is reported at a later
+        # line; point at the empty def itself since that's where the fix goes
+        m = re.fullmatch(r"(.*) on line (\d+)", e.msg)
+        lineno, msg = (m.group(2), m.group(1)) if m else (e.lineno, e.msg)
+        print(f"lc: solve.py line {lineno}: {msg}", file=sys.stderr)
         return 1
     except (FileNotFoundError, ValueError) as e:
         print(f"lc: {e}", file=sys.stderr)
