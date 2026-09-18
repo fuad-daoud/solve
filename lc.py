@@ -226,6 +226,21 @@ def update_readme(root: Path) -> bool:
     return True
 
 
+def update_roadmap(root: Path, meta: Meta) -> bool:
+    """Tick `- [ ] **N. Title**` in ROADMAP.md and append a [sol] link. False if nothing changed."""
+    roadmap = root / "ROADMAP.md"
+    if not roadmap.exists():
+        return False
+    prefix = f"- [ ] **{meta.id}. "
+    lines = roadmap.read_text().splitlines(keepends=True)
+    for i, line in enumerate(lines):
+        if line.startswith(prefix):
+            lines[i] = "- [x]" + line[5:].rstrip("\n") + f" · [sol](problems/{meta.stem}.py)\n"
+            roadmap.write_text("".join(lines))
+            return True
+    return False
+
+
 def save(root: Path) -> list[Path]:
     """Copy solve.py + cases.txt into problems/ under NNNN-slug names and refresh the README table."""
     meta = parse_header((root / "solve.py").read_text())
@@ -237,6 +252,8 @@ def save(root: Path) -> list[Path]:
         written.append(problems / dst)
     if update_readme(root):
         written.append(root / "README.md")
+    if update_roadmap(root, meta):
+        written.append(root / "ROADMAP.md")
     return written
 
 

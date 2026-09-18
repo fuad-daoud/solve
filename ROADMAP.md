@@ -5,7 +5,7 @@ A self-hosted copy of the [NeetCode roadmap](https://neetcode.io/roadmap): same 
 **How to use**
 
 - Work topics top to bottom (the numbered order below). Each topic's problems are listed easiest-first.
-- When you solve a problem (`lc.py save` puts it in `problems/NNNN-slug.py`): tick its box and append `· [sol](problems/NNNN-slug.py)`.
+- Solving a problem (`git commit` / `lc.py save`) ticks its box here and appends `· [sol](problems/NNNN-slug.py)` automatically.
 - Progress: `grep -c '^- \[x\]' ROADMAP.md` (out of 150).
 - Try each problem for ~30–45 min before opening the video.
 

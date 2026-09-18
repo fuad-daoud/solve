@@ -38,7 +38,7 @@ One JSON argument per line, exactly as LeetCode's testcase box shows them. Blank
 
 The pre-commit hook fires only when `solve.py` is staged. It refuses the commit if `cases.txt` has failures
 (`--no-verify` to override), then copies `solve.py` → `problems/NNNN-slug.py`, `cases.txt` → `problems/NNNN-slug.cases.txt`,
-regenerates the table below, and stages all of it. `make save` does the same by hand.
+regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all of it. `make save` does the same by hand.
 
 `make start` refuses to overwrite `solve.py` while it holds unsaved work on a different problem (`--force` via `python3 lc.py start --force …`).
 

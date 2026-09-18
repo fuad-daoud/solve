@@ -249,3 +249,39 @@ def test_main_test_reports_syntax_error_in_solve_briefly(tmp_path, capsys):
 def test_render_cases_marks_unordered_when_problem_says_any_order():
     data = dict(FETCHED, content="<p>Return the answer in <strong>any order</strong>.</p>" + FETCHED["content"])
     assert lc.render_cases(data) == '3\n=> ~ ["((()))","()()()"]\n\n1\n=> ~ ["()"]\n'
+
+
+ROADMAP = (
+    "- [ ] **242. Valid Anagram** (Easy) · [LC](https://leetcode.com/problems/valid-anagram/) · [Video](https://youtu.be/a)\n"
+    "- [ ] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/) · [Video](https://youtu.be/b)\n"
+)
+
+
+def test_update_roadmap_ticks_and_links_the_saved_problem(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    assert lc.update_roadmap(tmp_path, lc.parse_header(HEADER)) is True
+    lines = (tmp_path / "ROADMAP.md").read_text().splitlines()
+    assert lines[0] == ROADMAP.splitlines()[0]
+    assert lines[1] == "- [x] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/) · [Video](https://youtu.be/b) · [sol](problems/0022-generate-parentheses.py)"
+
+
+def test_update_roadmap_is_idempotent(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    lc.update_roadmap(tmp_path, lc.parse_header(HEADER))
+    once = (tmp_path / "ROADMAP.md").read_text()
+    assert lc.update_roadmap(tmp_path, lc.parse_header(HEADER)) is False
+    assert (tmp_path / "ROADMAP.md").read_text() == once
+
+
+def test_update_roadmap_false_when_problem_not_listed_or_no_file(tmp_path):
+    assert lc.update_roadmap(tmp_path, lc.parse_header(HEADER)) is False
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP.splitlines()[0] + "\n")
+    assert lc.update_roadmap(tmp_path, lc.parse_header(HEADER)) is False
+
+
+def test_save_includes_roadmap_when_it_changed(tmp_path):
+    (tmp_path / "solve.py").write_text(HEADER)
+    (tmp_path / "cases.txt").write_text("")
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    assert tmp_path / "ROADMAP.md" in lc.save(tmp_path)
+    assert tmp_path / "ROADMAP.md" not in lc.save(tmp_path)
