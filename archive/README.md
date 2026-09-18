@@ -1,3 +1,18 @@
+# Archive (Feb–May 2025)
+
+Pre-LeetCode-workbench era: Codeforces / AtCoder / CSES solutions in Python, Elixir and C++.
+Nothing here is used by the current setup (see the top-level README).
+
+- `cpp/` — the Codeforces ladder loop (`main.cpp` was overwritten per problem; ~100 solutions live in its
+  history: `git log --follow -p -- archive/cpp/main.cpp`), plus `util.h`, `Makefile`, `build.zig`.
+- `python/` — Codeforces/AtCoder/CSES solutions, the old `main.py` stdin template, and `c-fetcher.py`
+  (generates `c.txt`, the ladder progress list, from the Codeforces API).
+- `elixir/` — AtCoder ABC solutions.
+
+Original README follows.
+
+---
+
 # Solve
 
 Repo for solving questiosn on leetcode or any similar platform

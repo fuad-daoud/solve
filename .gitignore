@@ -174,9 +174,5 @@ cython_debug/
 .pypirc
 
 # ignore txt input/output files
-input.txt
 output.txt
-
-.zig-cache
-zig-out
-main
+.idea/

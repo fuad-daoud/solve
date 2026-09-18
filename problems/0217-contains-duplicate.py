@@ -1,3 +1,5 @@
+# 217. Contains Duplicate [Easy]
+# https://leetcode.com/problems/contains-duplicate/
 class Solution(object):
     def containsDuplicate(self, nums):
         """

@@ -1,3 +1,5 @@
+# 350. Intersection of Two Arrays II [Easy]
+# https://leetcode.com/problems/intersection-of-two-arrays-ii/
 class Solution(object):
     def intersect(self, nums1, nums2):
         """

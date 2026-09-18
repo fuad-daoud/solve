@@ -1,0 +1,373 @@
+#!/usr/bin/env python3
+"""LeetCode workbench: fetch a problem into solve.py, run cases.txt against it, save solutions."""
+
+import argparse
+import html
+import importlib.util
+import json
+import re
+import shutil
+import sys
+import traceback
+import urllib.error
+import urllib.request
+from collections import Counter
+from dataclasses import dataclass, field
+from pathlib import Path
+
+
+@dataclass
+class Case:
+    inputs: list[str] = field(default_factory=list)
+    expected: str | None = None
+    unordered: bool = False
+
+
+def parse_cases(text: str) -> list[Case]:
+    """cases.txt: one JSON arg per line, `=> expected` (optional, `~` = any order), blank line between cases."""
+    cases: list[Case] = []
+    current: Case | None = None
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            if current and current.inputs:
+                cases.append(current)
+            current = None
+            continue
+        if current is None:
+            current = Case()
+        if line.startswith("=>"):
+            expected = line[2:].strip()
+            if expected.startswith("~"):
+                current.unordered = True
+                expected = expected[1:].strip()
+            current.expected = expected
+        else:
+            current.inputs.append(line)
+    if current and current.inputs:
+        cases.append(current)
+    return cases
+
+
+def _normalize(value, unordered: bool):
+    if isinstance(value, float):
+        return round(value, 5)
+    if isinstance(value, list):
+        items = [_normalize(v, unordered) for v in value]
+        return sorted(items, key=json.dumps) if unordered else items
+    return value
+
+
+def matches(expected: str, actual, unordered: bool = False) -> bool:
+    """Compare LeetCode-style: parsed JSON, floats to 1e-5, optionally order-insensitive lists."""
+    try:
+        exp = json.loads(expected)
+    except json.JSONDecodeError:
+        return False
+    return _normalize(exp, unordered) == _normalize(actual, unordered)
+
+
+def find_method(cls):
+    """The one public method on a Solution class is the entry point."""
+    names = [n for n, v in vars(cls).items() if callable(v) and not n.startswith("_")]
+    if len(names) != 1:
+        raise ValueError(f"expected exactly one public method on {cls.__name__}, found {names}")
+    return getattr(cls, names[0])
+
+
+@dataclass
+class Result:
+    case: Case
+    status: str  # pass | fail | unchecked | error
+    actual: str
+
+
+def run_cases(cls, cases: list[Case]) -> list[Result]:
+    method = find_method(cls)
+    results = []
+    for case in cases:
+        try:
+            args = [json.loads(a) for a in case.inputs]
+            value = method(cls(), *args)
+        except Exception:
+            results.append(Result(case, "error", traceback.format_exc().rstrip()))
+            continue
+        actual = json.dumps(value, separators=(",", ":"))
+        if case.expected is None:
+            status = "unchecked"
+        else:
+            status = "pass" if matches(case.expected, value, case.unordered) else "fail"
+        results.append(Result(case, status, actual))
+    return results
+
+
+@dataclass
+class Meta:
+    id: int
+    title: str
+    difficulty: str
+    slug: str
+
+    @property
+    def url(self) -> str:
+        return f"https://leetcode.com/problems/{self.slug}/"
+
+    @property
+    def stem(self) -> str:
+        return f"{self.id:04d}-{self.slug}"
+
+
+HEADER_RE = re.compile(r"^# (\d+)\. (.+?) \[(\w+)\]\n# https://leetcode\.com/problems/([\w-]+)/", re.M)
+
+
+def parse_header(text: str) -> Meta:
+    m = HEADER_RE.search(text)
+    if not m:
+        raise ValueError("solve.py has no header; expected '# N. Title [Difficulty]' + URL line (run `lc.py start`)")
+    return Meta(int(m.group(1)), m.group(2), m.group(3), m.group(4))
+
+
+def slug_from_arg(arg: str) -> str:
+    m = re.search(r"leetcode\.com/problems/([\w-]+)", arg)
+    return m.group(1) if m else arg.strip().strip("/")
+
+
+def _meta(data: dict) -> Meta:
+    return Meta(int(data["questionFrontendId"]), data["title"], data["difficulty"], data["titleSlug"])
+
+
+def render_solve(data: dict) -> str:
+    meta = _meta(data)
+    snippet = next(s["code"] for s in data["codeSnippets"] if s["langSlug"] == "python3").rstrip()
+    return (
+        f"# {meta.id}. {meta.title} [{meta.difficulty}]\n"
+        f"# {meta.url}\n"
+        "import bisect\n"
+        "import functools\n"
+        "import heapq\n"
+        "import itertools\n"
+        "import math\n"
+        "from collections import *\n"
+        "from typing import *\n"
+        "\n\n"
+        f"{snippet}\n"
+        "\n\n"
+        'if __name__ == "__main__":\n'
+        "    import lc\n"
+        "    lc.test(Solution)\n"
+    )
+
+
+def render_cases(data: dict) -> str:
+    arity = len(json.loads(data["metaData"]).get("params", []))
+    lines = data["exampleTestcases"].split("\n")
+    content = data.get("content") or ""
+    outputs = [html.unescape(o) for o in re.findall(r"<strong>Output:</strong>\s*(.*?)\s*(?:<|\n)", content)]
+    # "return the answer in any order" → compare order-insensitively
+    prefix = "~ " if re.search(r"in\s*(<[^>]+>\s*)*any\s*(<[^>]+>\s*)*order", html.unescape(content)) else ""
+    blocks = []
+    for i in range(0, len(lines), arity):
+        block = "\n".join(lines[i : i + arity])
+        n = i // arity
+        if n < len(outputs):
+            block += f"\n=> {prefix}{outputs[n]}"
+        blocks.append(block + "\n")
+    return "\n".join(blocks)
+
+
+MARK = {"pass": "✓", "fail": "✗", "unchecked": "·", "error": "!"}
+
+
+def format_report(results: list[Result]) -> str:
+    lines = []
+    for i, r in enumerate(results, 1):
+        lines.append(f"Case {i}  {MARK[r.status]}")
+        if r.status != "pass":
+            lines.append("  input:    " + " | ".join(r.case.inputs))
+            if r.case.expected is not None:
+                lines.append(f"  expected: {r.case.expected}")
+            if r.status == "error":
+                lines.append("  " + r.actual.replace("\n", "\n  "))
+            else:
+                lines.append(f"  got:      {r.actual}")
+    counts = Counter(r.status for r in results)
+    summary = ", ".join(f"{counts[s]} {s}" for s in ("pass", "fail", "unchecked", "error") if counts[s])
+    summary = summary.replace(" pass", " passed").replace(" fail", " failed")
+    lines += ["", summary or "no cases"]
+    return "\n".join(lines) + "\n"
+
+
+def _problem_row(path: Path) -> tuple[int, str]:
+    try:
+        meta = parse_header(path.read_text())
+        num, title, diff, url = meta.id, meta.title, meta.difficulty, meta.url
+    except ValueError:  # legacy file without header: derive from NNNN-slug.py
+        num, slug = path.stem.split("-", 1)
+        num, title, diff, url = int(num), slug, "", f"https://leetcode.com/problems/{slug}/"
+    return num, f"| {num} | [{title}]({url}) | {diff} | [{path.name}](problems/{path.name}) |"
+
+
+def render_problem_table(root: Path) -> str:
+    rows = sorted(_problem_row(p) for p in (root / "problems").glob("[0-9]*.py"))
+    return "| # | Problem | Difficulty | Solution |\n|---|---|---|---|\n" + "\n".join(r for _, r in rows) + "\n"
+
+
+def update_readme(root: Path) -> bool:
+    readme = root / "README.md"
+    if not readme.exists():
+        return False
+    text = readme.read_text()
+    start, end = "<!-- problems -->\n", "<!-- /problems -->"
+    if start not in text or end not in text:
+        return False
+    head, rest = text.split(start, 1)
+    _, tail = rest.split(end, 1)
+    readme.write_text(head + start + render_problem_table(root) + end + tail)
+    return True
+
+
+def save(root: Path) -> list[Path]:
+    """Copy solve.py + cases.txt into problems/ under NNNN-slug names and refresh the README table."""
+    meta = parse_header((root / "solve.py").read_text())
+    problems = root / "problems"
+    problems.mkdir(exist_ok=True)
+    written = []
+    for src, dst in (("solve.py", f"{meta.stem}.py"), ("cases.txt", f"{meta.stem}.cases.txt")):
+        shutil.copyfile(root / src, problems / dst)
+        written.append(problems / dst)
+    if update_readme(root):
+        written.append(root / "README.md")
+    return written
+
+
+# --- commands -------------------------------------------------------------
+
+ROOT = Path(__file__).resolve().parent
+
+GRAPHQL = "https://leetcode.com/graphql"
+QUERY = """query q($slug: String!) { question(titleSlug: $slug) {
+  questionFrontendId title titleSlug difficulty exampleTestcases metaData content
+  codeSnippets { langSlug code } } }"""
+
+
+def fetch(slug: str) -> dict:
+    body = json.dumps({"query": QUERY, "variables": {"slug": slug}}).encode()
+    headers = {
+        "Content-Type": "application/json",
+        "Referer": "https://leetcode.com",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) lc.py",  # the default Python-urllib UA gets a 403
+    }
+    req = urllib.request.Request(GRAPHQL, body, headers)
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.load(resp)["data"]["question"]
+    except urllib.error.URLError as e:
+        raise ValueError(f"fetching {slug} from LeetCode failed: {e}") from e
+    if data is None:
+        raise ValueError(f"no such problem: {slug}")
+    return data
+
+
+class Unsaved(Exception):
+    """solve.py holds a different problem whose contents aren't in problems/ yet."""
+
+
+def _is_saved(root: Path) -> bool:
+    solve = root / "solve.py"
+    if not solve.exists():
+        return True
+    try:
+        meta = parse_header(solve.read_text())
+    except ValueError:
+        return False
+    saved = root / "problems" / f"{meta.stem}.py"
+    return saved.exists() and saved.read_text() == solve.read_text()
+
+
+def start(root: Path, arg: str, force: bool = False) -> Meta:
+    if not force and not _is_saved(root):
+        raise Unsaved("solve.py has unsaved work; commit it or pass --force")
+    data = fetch(slug_from_arg(arg))
+    (root / "solve.py").write_text(render_solve(data))
+    (root / "cases.txt").write_text(render_cases(data))
+    return _meta(data)
+
+
+def add(root: Path, inputs: list[str], expected: str | None) -> None:
+    path = root / "cases.txt"
+    text = path.read_text() if path.exists() else ""
+    block = "\n".join(inputs) + (f"\n=> {expected}" if expected else "") + "\n"
+    if text and not text.endswith("\n"):
+        text += "\n"
+    path.write_text(text + ("\n" if text else "") + block)
+
+
+def load_solution(root: Path):
+    spec = importlib.util.spec_from_file_location("solve", root / "solve.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.Solution
+
+
+def test(cls, root: Path | None = None) -> int:
+    """Run cases.txt against `cls`, print the report; returns the number of non-passing checked cases."""
+    root = root or ROOT
+    results = run_cases(cls, parse_cases((root / "cases.txt").read_text()))
+    print(format_report(results), end="")
+    return sum(r.status in ("fail", "error") for r in results)
+
+
+def _prompt_case() -> tuple[list[str], str | None]:
+    print("input args, one per line (blank line to finish):")
+    inputs = []
+    while (line := input().strip()):
+        inputs.append(line)
+    expected = input("expected output (blank for none): ").strip()
+    return inputs, expected or None
+
+
+def main(argv: list[str], root: Path | None = None) -> int:
+    root = root or ROOT
+    parser = argparse.ArgumentParser(prog="lc", description=__doc__)
+    sub = parser.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("start", help="fetch a problem into solve.py + cases.txt")
+    p.add_argument("problem", help="LeetCode URL or title slug")
+    p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
+    sub.add_parser("test", help="run cases.txt against solve.py")
+    sub.add_parser("add", help="append a case to cases.txt (interactive)")
+    sub.add_parser("save", help="copy solve.py + cases.txt into problems/ and refresh README")
+    args = parser.parse_args(argv)
+    try:
+        return _dispatch(args, root)
+    except SyntaxError as e:
+        print(f"lc: solve.py line {e.lineno}: {e.msg}", file=sys.stderr)
+        return 1
+    except (FileNotFoundError, ValueError) as e:
+        print(f"lc: {e}", file=sys.stderr)
+        return 1
+
+
+def _dispatch(args, root: Path) -> int:
+    if args.cmd == "start":
+        try:
+            meta = start(root, args.problem, args.force)
+        except Unsaved as e:
+            print(f"lc: {e}", file=sys.stderr)
+            return 1
+        print(f"{meta.id}. {meta.title} [{meta.difficulty}] -> solve.py, cases.txt")
+    elif args.cmd == "test":
+        return 1 if test(load_solution(root), root) else 0
+    elif args.cmd == "add":
+        inputs, expected = _prompt_case()
+        if not inputs:
+            print("no inputs given", file=sys.stderr)
+            return 1
+        add(root, inputs, expected)
+    elif args.cmd == "save":
+        for path in save(root):
+            print(f"wrote {path.relative_to(root)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

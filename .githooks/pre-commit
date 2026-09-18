@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""When solve.py is staged: require its cases to pass, then save it into problems/ and stage the results."""
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+import lc  # noqa: E402
+
+staged = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True, cwd=ROOT).stdout.split()
+if "solve.py" not in staged:
+    sys.exit(0)
+
+try:
+    lc.parse_header((ROOT / "solve.py").read_text())
+except ValueError as e:
+    sys.exit(f"pre-commit: {e}")
+
+if lc.test(lc.load_solution(ROOT), ROOT):
+    sys.exit("pre-commit: cases.txt has failures; fix them or commit with --no-verify")
+
+written = lc.save(ROOT)
+subprocess.run(["git", "add", "--", *map(str, written)], check=True, cwd=ROOT)
+print("pre-commit: saved " + ", ".join(p.relative_to(ROOT).as_posix() for p in written))
