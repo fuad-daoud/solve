@@ -46,7 +46,7 @@ regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all o
 ## Layout
 
 ```
-solve.py  cases.txt   working files (+ problem.md, the statement; not tracked)
+solve.py  cases.txt   working files (+ problem.md, the statement)
 lc.py                 the tool (stdlib only); `make check` runs its tests
 problems/             saved solutions + their cases
 archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see archive/README.md)
