@@ -285,3 +285,12 @@ def test_save_includes_roadmap_when_it_changed(tmp_path):
     (tmp_path / "ROADMAP.md").write_text(ROADMAP)
     assert tmp_path / "ROADMAP.md" in lc.save(tmp_path)
     assert tmp_path / "ROADMAP.md" not in lc.save(tmp_path)
+
+
+def test_render_cases_reads_span_style_outputs():
+    data = dict(FETCHED, exampleTestcases='"anagram"\n"nagaram"\n"rat"\n"car"',
+                metaData='{"name":"isAnagram","params":[{"name":"s"},{"name":"t"}]}',
+                content='<p><strong>Input:</strong> <span class="example-io">s = "anagram"</span></p>'
+                        '<p><strong>Output:</strong> <span class="example-io">true</span></p>'
+                        '<p><strong>Output:</strong> <span class="example-io">[1,2]</span></p>')
+    assert lc.render_cases(data) == '"anagram"\n"nagaram"\n=> true\n\n"rat"\n"car"\n=> [1,2]\n'
