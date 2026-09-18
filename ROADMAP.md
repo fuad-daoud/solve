@@ -81,7 +81,7 @@ graph TD
 ## 1. Arrays & Hashing (9)
 
 - [x] **217. Contains Duplicate** (Easy) · [LC](https://leetcode.com/problems/contains-duplicate/) · [Video](https://youtu.be/3OamzN90kPg) · [sol](problems/0217-contains-duplicate.py)
-- [ ] **242. Valid Anagram** (Easy) · [LC](https://leetcode.com/problems/valid-anagram/) · [Video](https://youtu.be/9UtInBqnCgA)
+- [x] **242. Valid Anagram** (Easy) · [LC](https://leetcode.com/problems/valid-anagram/) · [Video](https://youtu.be/9UtInBqnCgA) · [sol](problems/0242-valid-anagram.py)
 - [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/) · [Video](https://youtu.be/KLlXCFG5TnA) · [sol](problems/0001-two-sum.py)
 - [ ] **49. Group Anagrams** (Medium) · [LC](https://leetcode.com/problems/group-anagrams/) · [Video](https://youtu.be/vzdNOK2oB2E)
 - [ ] **347. Top K Frequent Elements** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/YPTqKIgVk-k)
