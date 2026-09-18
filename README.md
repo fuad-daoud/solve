@@ -11,12 +11,13 @@ make setup   # once per clone: installs the pre-commit hook
 ## Workflow
 
 ```sh
-make start P=https://leetcode.com/problems/two-sum/   # fetch problem → solve.py + cases.txt
+make start P=https://leetcode.com/problems/two-sum/   # fetch problem → solve.py, cases.txt, problem.md
 make test                                             # run every case, LeetCode-style report
 git commit -am "solved 1"                             # hook saves to problems/ and updates the table below
 ```
 
-In neovim, `<leader>rp` from `solve.py` runs `make test` into a right-hand column (`cases.txt` on top, report below).
+In neovim, `<leader>rp` from `solve.py` runs `make test` into a right-hand column (`cases.txt` on top, report below);
+`<leader>rd` opens the problem statement (`problem.md`) in a new tab.
 
 ### cases.txt
 
@@ -45,7 +46,7 @@ regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all o
 ## Layout
 
 ```
-solve.py  cases.txt   working files
+solve.py  cases.txt   working files (+ problem.md, the statement; not tracked)
 lc.py                 the tool (stdlib only); `make check` runs its tests
 problems/             saved solutions + their cases
 archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see archive/README.md)

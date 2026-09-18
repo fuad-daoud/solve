@@ -294,3 +294,30 @@ def test_render_cases_reads_span_style_outputs():
                         '<p><strong>Output:</strong> <span class="example-io">true</span></p>'
                         '<p><strong>Output:</strong> <span class="example-io">[1,2]</span></p>')
     assert lc.render_cases(data) == '"anagram"\n"nagaram"\n=> true\n\n"rat"\n"car"\n=> [1,2]\n'
+
+
+def test_html_to_markdown_paragraphs_code_bold_and_entities():
+    md = lc.html_to_markdown('<p>Given <code>s</code>, return <strong>true</strong> if &quot;x&quot; &lt; y.</p>\n\n<p>&nbsp;</p>\n<p>Next.</p>')
+    assert md == 'Given `s`, return **true** if "x" < y.\n\nNext.\n'
+
+
+def test_html_to_markdown_pre_becomes_fenced_block_and_sup_caret():
+    md = lc.html_to_markdown('<pre><strong>Input:</strong> n = 3\n<strong>Output:</strong> [1]\n</pre><ul>\n\t<li><code>1 &lt;= n &lt;= 10<sup>4</sup></code></li>\n</ul>')
+    assert md == "```\nInput: n = 3\nOutput: [1]\n```\n\n- `1 <= n <= 10^4`\n"
+
+
+def test_html_to_markdown_example_io_spans_and_em():
+    md = lc.html_to_markdown('<p><strong class="example">Example 1:</strong></p><div class="example-block"><p><strong>Input:</strong> <span class="example-io">s = &quot;a&quot;</span></p><p><strong>Output:</strong> <span class="example-io">true</span></p></div><p><em>note</em></p>')
+    assert md == '**Example 1:**\n\n**Input:** s = "a"\n\n**Output:** true\n\n*note*\n'
+
+
+def test_render_problem_has_title_line_then_body():
+    md = lc.render_problem(FETCHED)
+    assert md.startswith("# 22. Generate Parentheses [Medium]\n\nhttps://leetcode.com/problems/generate-parentheses/\n\n")
+    assert 'Output: ["((()))","()()()"]' in md
+
+
+def test_start_writes_problem_md(tmp_path, monkeypatch):
+    monkeypatch.setattr(lc, "fetch", lambda slug: FETCHED)
+    lc.start(tmp_path, "generate-parentheses")
+    assert (tmp_path / "problem.md").read_text().startswith("# 22. Generate Parentheses")

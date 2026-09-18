@@ -13,6 +13,7 @@ import urllib.error
 import urllib.request
 from collections import Counter
 from dataclasses import dataclass, field
+from html.parser import HTMLParser
 from pathlib import Path
 
 
@@ -259,6 +260,62 @@ def save(root: Path) -> list[Path]:
     return written
 
 
+class _Markdown(HTMLParser):
+    """Enough HTML→markdown for LeetCode statements: p, pre, code, strong/b, em, ul/li, sup."""
+
+    INLINE = {"code": "`", "strong": "**", "b": "**", "em": "*", "i": "*"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.out: list[str] = []
+        self.in_pre = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "pre":
+            self.in_pre = True
+            self.out.append("\n```\n")
+        elif tag == "li":
+            self.out.append("\n- ")
+        elif tag == "sup":
+            self.out.append("^")
+        elif tag in ("p", "ul", "div") and not self.in_pre:
+            self.out.append("\n\n")
+        elif tag in self.INLINE and not self.in_pre:
+            self.out.append(self.INLINE[tag])
+
+    def handle_endtag(self, tag):
+        if tag == "pre":
+            self.in_pre = False
+            self.out.append("```\n\n" if self.out[-1].endswith("\n") else "\n```\n\n")
+        elif tag in self.INLINE and not self.in_pre:
+            self.out.append(self.INLINE[tag])
+
+    def handle_data(self, data):
+        if self.in_pre:
+            if self.out[-1] == "\n```\n":  # first data inside the block: no leading blank line
+                data = data.lstrip("\n")
+            self.out.append(data)
+        else:
+            self.out.append(data.replace("\n", " ").replace("\t", ""))
+
+    def text(self) -> str:
+        md = "".join(self.out).replace("\xa0", "")
+        md = re.sub(r"[ \t]+\n", "\n", md)  # trailing spaces (also from "&nbsp;" paragraphs)
+        md = re.sub(r"\n{3,}", "\n\n", md)
+        return md.strip() + "\n"
+
+
+def html_to_markdown(content: str) -> str:
+    parser = _Markdown()
+    parser.feed(content)
+    return parser.text()
+
+
+def render_problem(data: dict) -> str:
+    meta = _meta(data)
+    return f"# {meta.id}. {meta.title} [{meta.difficulty}]\n\n{meta.url}\n\n" + html_to_markdown(data.get("content") or "")
+
+
 # --- commands -------------------------------------------------------------
 
 ROOT = Path(__file__).resolve().parent
@@ -309,6 +366,7 @@ def start(root: Path, arg: str, force: bool = False) -> Meta:
     data = fetch(slug_from_arg(arg))
     (root / "solve.py").write_text(render_solve(data))
     (root / "cases.txt").write_text(render_cases(data))
+    (root / "problem.md").write_text(render_problem(data))
     return _meta(data)
 
 
