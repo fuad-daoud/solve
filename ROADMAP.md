@@ -93,7 +93,7 @@ graph TD
 
 ## 2. Two Pointers (5)
 
-- [ ] **125. Valid Palindrome** (Easy) · [LC](https://leetcode.com/problems/valid-palindrome/) · [Video](https://youtu.be/jJXJ16kPFWg)
+- [x] **125. Valid Palindrome** (Easy) · [LC](https://leetcode.com/problems/valid-palindrome/) · [Video](https://youtu.be/jJXJ16kPFWg) · [sol](problems/0125-valid-palindrome.py)
 - [ ] **167. Two Sum II - Input Array Is Sorted** (Medium) · [LC](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) · [Video](https://youtu.be/cQ1Oz4ckceM)
 - [x] **15. 3Sum** (Medium) · [LC](https://leetcode.com/problems/3sum/) · [Video](https://youtu.be/jzZsG8n2R9A) · [sol](problems/0015-3sum.py)
 - [ ] **11. Container With Most Water** (Medium) · [LC](https://leetcode.com/problems/container-with-most-water/) · [Video](https://youtu.be/UuiTKBwPgAo)
