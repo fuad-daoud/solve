@@ -61,7 +61,8 @@ After a commit that includes `solve.py`, the post-commit hook posts the solution
   Re-committing the same code is a no-op.
 
 One-time setup: create an application at <https://discord.com/developers/applications> → *Bot* → copy the token;
-invite it with *View Channels, Send Messages, Send Messages in Threads, Create Public Threads, Read Message History*
+invite it with *View Channels, Send Messages, Send Messages in Threads, Create Public Threads, Read Message History,
+Manage Threads* (needed to apply the `Solved` tag when it is a mod-only tag)
 (*OAuth2 → URL Generator*, scope `bot`); turn on *Developer Mode* in Discord's settings and right-click each forum
 channel → *Copy Channel ID*. Then:
 
