@@ -6,20 +6,17 @@ class Solution:
     def longestConsecutive(self, nums: list[int]) -> int:
         if len(nums) == 0:
             return 0
-        nums = list(dict.fromkeys(sorted(nums)))
+        st = set(nums)
         answer = 0
-        current = 0
-        prev = nums[0]
-        for i in range(1, len(nums)):
-            n = nums[i]
-            if abs(n - prev) == 1:
-                current += 1
-                answer = max(current, answer)
-            else:
-                current = 0
-            prev = n
+        for n in st:
+            if n - 1 in st:
+                continue
+            length = 1
+            while n + length in st:
+                length += 1
+            answer = max(answer, length)
 
-        return answer + 1
+        return answer
 
 
 if __name__ == "__main__":
