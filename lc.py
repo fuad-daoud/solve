@@ -461,6 +461,19 @@ def main(argv: list[str], root: Path | None = None) -> int:
         return 1
 
 
+def announce_start(meta: Meta) -> None:
+    """Open the problem's Discord post as In Progress, if Discord is configured; failures only warn."""
+    import discord
+
+    config = discord.load_config()
+    if config is None:
+        return
+    try:
+        print("discord: " + discord.start_post(meta, config, discord.Api(config["token"])))
+    except Exception as e:  # noqa: BLE001 — Discord being down must not undo a successful start
+        print(f"discord: {e}", file=sys.stderr)
+
+
 def _dispatch(args, root: Path) -> int:
     if args.cmd in ("start", "next"):
         problem = args.problem if args.cmd == "start" else next_unsolved(root)
@@ -473,6 +486,7 @@ def _dispatch(args, root: Path) -> int:
             print(f"lc: {e}", file=sys.stderr)
             return 1
         print(f"{meta.id}. {meta.title} [{meta.difficulty}] -> solve.py, cases.txt, problem.md")
+        announce_start(meta)
     elif args.cmd == "test":
         return 1 if test(load_solution(root), root) else 0
     elif args.cmd == "add":

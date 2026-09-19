@@ -99,10 +99,12 @@ def test_announce_replies_in_an_existing_post():
             {"id": "2", "name": "two sum ", "parent_id": "100"},
         ]},
         ("GET", "/channels/2/messages?limit=100"): [{"content": "https://leetcode.com/problems/two-sum/"}],
+        ("PATCH", "/channels/2"): {"id": "2"},
         ("POST", "/channels/2/messages"): {"id": "3"},
     })
     result = discord.announce(META, CODE, CONFIG, api)
     assert [c for c in api.calls if c[0] == "POST"] == [("POST", "/channels/2/messages", {"content": CODE_MESSAGE})]
+    assert ("PATCH", "/channels/2", {"applied_tags": ["t2"]}) in api.calls  # a friend's untagged post gets Solved
     assert result == "replied in existing post Two Sum in #easy-problems"
 
 
@@ -113,6 +115,7 @@ def test_announce_finds_archived_posts():
         ("GET", "/channels/100/threads/archived/public?limit=100"): {
             "threads": [{"id": "7", "name": "Two Sum", "parent_id": "100"}], "has_more": False},
         ("GET", "/channels/7/messages?limit=100"): [],
+        ("PATCH", "/channels/7"): {"id": "7"},
         ("POST", "/channels/7/messages"): {"id": "8"},
     })
     discord.announce(META, CODE, CONFIG, api)
@@ -122,7 +125,7 @@ def test_announce_finds_archived_posts():
 def test_announce_skips_when_the_same_code_is_already_there():
     api = FakeApi({
         ("GET", "/channels/100"): FORUM,
-        ("GET", "/guilds/900/threads/active"): {"threads": [{"id": "2", "name": "Two Sum", "parent_id": "100"}]},
+        ("GET", "/guilds/900/threads/active"): {"threads": [{"id": "2", "name": "Two Sum", "parent_id": "100", "applied_tags": ["t2"]}]},
         ("GET", "/channels/2/messages?limit=100"): [{"content": CODE_MESSAGE}, {"content": "https://leetcode.com/problems/two-sum/"}],
     })
     result = discord.announce(META, CODE, CONFIG, api)
@@ -202,3 +205,68 @@ def test_code_message_fits_discords_2000_char_limit():
     assert len(msg) <= 2000
     assert msg.startswith("```py\nxxx")
     assert msg.endswith("\n# … truncated\n```")
+
+
+FORUM_TAGS = {"available_tags": [
+    {"id": "t1", "name": "Not Solved"}, {"id": "t2", "name": "Solved"},
+    {"id": "t3", "name": "In Progress"}, {"id": "t4", "name": "SQL"},
+]}
+
+
+def test_start_post_creates_an_in_progress_post():
+    api = FakeApi({
+        ("GET", "/channels/100"): FORUM | FORUM_TAGS,
+        ("GET", "/guilds/900/threads/active"): {"threads": []},
+        ("GET", "/channels/100/threads/archived/public?limit=100"): {"threads": [], "has_more": False},
+        ("POST", "/channels/100/threads"): {"id": "555"},
+    })
+    result = discord.start_post(META, CONFIG, api)
+    assert api.calls[-1] == ("POST", "/channels/100/threads", {
+        "name": "Two Sum", "applied_tags": ["t3"],
+        "message": {"content": "https://leetcode.com/problems/two-sum/"},
+    })
+    assert result == "posted Two Sum as In Progress in #easy-problems"
+
+
+def test_start_post_leaves_an_existing_post_alone():
+    api = FakeApi({
+        ("GET", "/channels/100"): FORUM | FORUM_TAGS,
+        ("GET", "/guilds/900/threads/active"): {"threads": [{"id": "2", "name": "Two Sum", "parent_id": "100", "applied_tags": ["t2"]}]},
+    })
+    result = discord.start_post(META, CONFIG, api)
+    assert not [c for c in api.calls if c[0] != "GET"]
+    assert result == "Two Sum already posted in #easy-problems"
+
+
+def test_start_post_skips_difficulties_without_a_channel():
+    api = FakeApi({})
+    assert discord.start_post(lc.Meta(4, "Median", "Hard", "median"), CONFIG, api) == "no channel configured for Hard; skipped"
+    assert api.calls == []
+
+
+def _existing(tags):
+    return FakeApi({
+        ("GET", "/channels/100"): FORUM | FORUM_TAGS,
+        ("GET", "/guilds/900/threads/active"): {"threads": [{"id": "2", "name": "Two Sum", "parent_id": "100", "applied_tags": tags}]},
+        ("GET", "/channels/2/messages?limit=100"): [{"content": CODE_MESSAGE}],
+        ("PATCH", "/channels/2"): {"id": "2"},
+    })
+
+
+def test_announce_flips_in_progress_to_solved_even_when_code_is_already_there():
+    api = _existing(["t3"])
+    result = discord.announce(META, CODE, CONFIG, api)
+    assert ("PATCH", "/channels/2", {"applied_tags": ["t2"]}) in api.calls
+    assert result == "Two Sum already posted in #easy-problems; nothing new"
+
+
+def test_announce_replaces_not_solved_but_keeps_unrelated_tags():
+    api = _existing(["t4", "t1"])
+    discord.announce(META, CODE, CONFIG, api)
+    assert ("PATCH", "/channels/2", {"applied_tags": ["t4", "t2"]}) in api.calls
+
+
+def test_announce_does_not_retag_a_post_already_marked_solved():
+    api = _existing(["t2", "t4"])
+    discord.announce(META, CODE, CONFIG, api)
+    assert not [c for c in api.calls if c[0] == "PATCH"]

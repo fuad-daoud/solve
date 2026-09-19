@@ -374,3 +374,34 @@ def test_main_next_reports_when_roadmap_is_complete(tmp_path, capsys):
 def test_compare_unordered_is_recursive_into_nested_lists():
     assert lc.matches('[["bat"],["nat","tan"],["ate","eat","tea"]]', [["tea", "ate", "eat"], ["tan", "nat"], ["bat"]], unordered=True) is True
     assert lc.matches('[["bat"],["nat","tan"]]', [["bat", "nat"], ["tan"]], unordered=True) is False
+
+
+def test_main_start_announces_on_discord_when_configured(tmp_path, monkeypatch, capsys):
+    import discord
+    monkeypatch.setattr(lc, "fetch", lambda slug: FETCHED)
+    monkeypatch.setattr(discord, "load_config", lambda: {"token": "t", "channels": {}})
+    monkeypatch.setattr(discord, "start_post", lambda meta, config, api: f"posted {meta.title}")
+    assert lc.main(["start", "generate-parentheses"], tmp_path) == 0
+    assert "discord: posted Generate Parentheses" in capsys.readouterr().out
+
+
+def test_main_start_survives_discord_failure(tmp_path, monkeypatch, capsys):
+    import discord
+    monkeypatch.setattr(lc, "fetch", lambda slug: FETCHED)
+    monkeypatch.setattr(discord, "load_config", lambda: {"token": "t", "channels": {}})
+
+    def boom(meta, config, api):
+        raise RuntimeError("GET /channels/1: 403")
+
+    monkeypatch.setattr(discord, "start_post", boom)
+    assert lc.main(["start", "generate-parentheses"], tmp_path) == 0
+    assert lc.parse_header((tmp_path / "solve.py").read_text()).id == 22
+    assert "discord: GET /channels/1: 403" in capsys.readouterr().err
+
+
+def test_main_start_is_quiet_without_discord_config(tmp_path, monkeypatch, capsys):
+    import discord
+    monkeypatch.setattr(lc, "fetch", lambda slug: FETCHED)
+    monkeypatch.setattr(discord, "load_config", lambda: None)
+    assert lc.main(["start", "generate-parentheses"], tmp_path) == 0
+    assert "discord" not in capsys.readouterr().out

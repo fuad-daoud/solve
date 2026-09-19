@@ -75,21 +75,54 @@ def find_thread(api, forum: dict, title: str) -> dict | None:
     return match(api("GET", f"/channels/{forum['id']}/threads/archived/public?limit=100")["threads"])
 
 
+def tag_ids(forum: dict, *names: str) -> list[str]:
+    return [t["id"] for t in forum["available_tags"] if t["name"] in names]
+
+
+def create_post(api, forum: dict, meta, tag: str) -> dict:
+    return api("POST", f"/channels/{forum['id']}/threads", {
+        "name": meta.title, "applied_tags": tag_ids(forum, tag), "message": {"content": meta.url},
+    })
+
+
+def mark_solved(api, forum: dict, thread: dict) -> None:
+    """Swap In Progress / Not Solved for Solved on `thread`, keeping unrelated tags (e.g. SQL)."""
+    solved = tag_ids(forum, "Solved")
+    stale = set(tag_ids(forum, "In Progress", "Not Solved"))
+    current = thread.get("applied_tags", [])
+    wanted = [t for t in current if t not in stale] + [t for t in solved if t not in current]
+    if wanted != current:
+        api("PATCH", f"/channels/{thread['id']}", {"applied_tags": wanted})
+
+
+def _forum(meta, config: dict, api) -> dict | None:
+    channel = config["channels"].get(meta.difficulty)
+    return api("GET", f"/channels/{channel}") if channel else None
+
+
+def start_post(meta, config: dict, api) -> str:
+    """`make start`: open the problem's forum post tagged In Progress, unless one already exists."""
+    forum = _forum(meta, config, api)
+    if forum is None:
+        return f"no channel configured for {meta.difficulty}; skipped"
+    if find_thread(api, forum, meta.title):
+        return f"{meta.title} already posted in #{forum['name']}"
+    create_post(api, forum, meta, "In Progress")
+    return f"posted {meta.title} as In Progress in #{forum['name']}"
+
+
 def announce(meta, code: str, config: dict, api) -> str:
     """Post `code` for `meta` in the forum for its difficulty: a new post, or a reply if one exists."""
-    channel = config["channels"].get(meta.difficulty)
-    if not channel:
+    forum = _forum(meta, config, api)
+    if forum is None:
         return f"no channel configured for {meta.difficulty}; skipped"
-    forum = api("GET", f"/channels/{channel}")
     message = code_message(code)
     thread = find_thread(api, forum, meta.title)
     if thread is None:
-        tags = [t["id"] for t in forum["available_tags"] if t["name"] == "Solved"]
-        thread = api("POST", f"/channels/{forum['id']}/threads", {
-            "name": meta.title, "applied_tags": tags, "message": {"content": meta.url},
-        })
+        thread = create_post(api, forum, meta, "Solved")
         api("POST", f"/channels/{thread['id']}/messages", {"content": message})
         return f"posted {meta.title} in #{forum['name']}"
+    mark_solved(api, forum, thread)
     if any(m["content"] == message for m in api("GET", f"/channels/{thread['id']}/messages?limit=100")):
         return f"{meta.title} already posted in #{forum['name']}; nothing new"
     api("POST", f"/channels/{thread['id']}/messages", {"content": message})

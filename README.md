@@ -52,13 +52,14 @@ regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all o
 
 ### Discord
 
-After a commit that includes `solve.py`, the post-commit hook posts the solution to a Discord forum channel
-(skipped silently when `~/.config/solve/discord.json` doesn't exist; a Discord failure is printed but never fails the commit):
+Mirrors the forum-post-per-problem routine, in the channel for the problem's difficulty
+(skipped silently when `~/.config/solve/discord.json` doesn't exist; a Discord failure is printed but never fails the command):
 
-- looks for a forum post with the problem's title — if a friend already posted it, replies there instead;
-- otherwise creates the post: title, `Solved` tag, the LeetCode URL as the first message;
-- then posts the `class Solution` body in a ` ```py ` block (header, imports and harness stripped).
-  Re-committing the same code is a no-op.
+- `make start` / `make next` creates the post — title, `In Progress` tag, the LeetCode URL as the first message —
+  unless a post with that title already exists (yours or a friend's), which is left untouched.
+- the post-commit hook, after a commit that includes `solve.py`, swaps `In Progress` / `Not Solved` for `Solved`
+  (other tags are kept) and posts the `class Solution` body in a ` ```py ` block (header, imports and harness stripped).
+  No post yet → it is created tagged `Solved`. Re-committing the same code is a no-op.
 
 One-time setup: create an application at <https://discord.com/developers/applications> → *Bot* → copy the token;
 invite it with *View Channels, Send Messages, Send Messages in Threads, Create Public Threads, Read Message History,
