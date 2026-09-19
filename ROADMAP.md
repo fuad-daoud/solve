@@ -89,7 +89,7 @@ graph TD
 - [x] **238. Product of Array Except Self** (Medium) · [LC](https://leetcode.com/problems/product-of-array-except-self/) · [Video](https://youtu.be/bNvIQI2wAjk) · [sol](problems/0238-product-of-array-except-self.py)
 - [x] **36. Valid Sudoku** (Medium) · [LC](https://leetcode.com/problems/valid-sudoku/) · [Video](https://youtu.be/TjFXEUCMqI8) · [sol](problems/0036-valid-sudoku.py)
 - [ ] ~~**271. Encode and Decode Strings** (Medium) · [LC](https://leetcode.com/problems/encode-and-decode-strings/) · [Video](https://youtu.be/B1k_sxOSgv8)~~ · premium
-- [ ] **128. Longest Consecutive Sequence** (Medium) · [LC](https://leetcode.com/problems/longest-consecutive-sequence/) · [Video](https://youtu.be/P6RZZMu_maU)
+- [x] **128. Longest Consecutive Sequence** (Medium) · [LC](https://leetcode.com/problems/longest-consecutive-sequence/) · [Video](https://youtu.be/P6RZZMu_maU) · [sol](problems/0128-longest-consecutive-sequence.py)
 
 ## 2. Two Pointers (5)
 
