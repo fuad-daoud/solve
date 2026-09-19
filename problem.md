@@ -3,7 +3,8 @@
 https://leetcode.com/problems/valid-sudoku/
 
 Determine if a`9 x 9` Sudoku boardis valid.Only the filled cells need to be validated**according to the following rules**:
-- Each rowmust contain thedigits`1-9` without repetition.
+
+- Each row must contain thedigits`1-9` without repetition.
 - Each column must contain the digits`1-9`without repetition.
 - Each of the nine`3 x 3` sub-boxes of the grid must contain the digits`1-9`without repetition.
 
@@ -13,6 +14,7 @@ Determine if a`9 x 9` Sudoku boardis valid.Only the filled cells need to be vali
 - Only the filled cells need to be validated according to the mentionedrules.
 
 **Example 1:**
+
 ```
 Input: board =
 [["5","3",".",".","7",".",".",".","."]
@@ -28,6 +30,7 @@ Output: true
 ```
 
 **Example 2:**
+
 ```
 Input: board =
 [["8","3",".",".","7",".",".",".","."]

@@ -2,43 +2,27 @@
 # https://leetcode.com/problems/valid-sudoku/
 
 
+from collections import defaultdict
+
+
 class Solution:
     def isValidSudoku(self, board: list[list[str]]) -> bool:
         N = 9
-        for i in range(N):
-            numbers = set()
-            for j in range(N):
-                cell = board[i][j]
-                if cell == ".":
-                    continue
-                if cell in numbers:
-                    return False
-                numbers.add(cell)
+        rows = defaultdict(set)
+        cols = defaultdict(set)
+        boxes = defaultdict(set)
 
-        for i in range(N):
-            numbers = set()
-            for j in range(N):
-                cell = board[j][i]
-                if cell == ".":
+        for r in range(N):
+            for c in range(N):
+                v = board[r][c]
+                if v == ".":
                     continue
-                if cell in numbers:
+                b = (r // 3, c // 3)
+                if v in rows[r] or v in cols[c] or v in boxes[b]:
                     return False
-                numbers.add(cell)
-
-        M = 3
-        for k in range(M):
-            for l in range(M):
-                numbers = set()
-                for i in range(M):
-                    for j in range(M):
-                        cell = board[i + (k * M)][j + (l * M)]
-                        if cell == ".":
-                            continue
-                        if cell in numbers:
-                            print("numbers", numbers)
-                            print("cell", cell)
-                            return False
-                        numbers.add(cell)
+                rows[r].add(v)
+                cols[c].add(v)
+                boxes[b].add(v)
 
         return True
 
