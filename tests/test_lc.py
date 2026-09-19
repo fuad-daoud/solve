@@ -1,3 +1,5 @@
+import json
+
 import lc
 
 
@@ -174,6 +176,36 @@ def test_save_skips_readme_without_markers(tmp_path):
     assert tmp_path / "README.md" not in written
 
 
+def _stub_leetcode(monkeypatch, question):
+    import io
+    import urllib.request
+
+    class Resp(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            pass
+
+    body = json.dumps({"data": {"question": question}}).encode()
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout=None: Resp(body))
+
+
+def test_fetch_rejects_premium_problem_with_a_clear_message(monkeypatch):
+    import pytest
+    # LeetCode answers a premium slug with nulls for the locked fields rather than an error
+    _stub_leetcode(monkeypatch, dict(FETCHED, isPaidOnly=True, content=None, codeSnippets=None))
+    with pytest.raises(lc.Premium, match="premium"):
+        lc.fetch("encode-and-decode-strings")
+
+
+def test_fetch_rejects_unknown_slug(monkeypatch):
+    import pytest
+    _stub_leetcode(monkeypatch, None)
+    with pytest.raises(ValueError, match="no such problem"):
+        lc.fetch("nope")
+
+
 def test_start_writes_solve_and_cases(tmp_path, monkeypatch):
     monkeypatch.setattr(lc, "fetch", lambda slug: dict(FETCHED, titleSlug=slug))
     lc.start(tmp_path, "https://leetcode.com/problems/generate-parentheses/")
@@ -263,6 +295,16 @@ def test_update_roadmap_ticks_and_links_the_saved_problem(tmp_path):
     lines = (tmp_path / "ROADMAP.md").read_text().splitlines()
     assert lines[0] == ROADMAP.splitlines()[0]
     assert lines[1] == "- [x] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/) · [Video](https://youtu.be/b) · [sol](problems/0022-generate-parentheses.py)"
+
+
+def test_strike_roadmap_strikes_the_premium_line_and_leaves_it_unticked(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    assert lc.strike_roadmap(tmp_path, "https://leetcode.com/problems/valid-anagram/") is True
+    lines = (tmp_path / "ROADMAP.md").read_text().splitlines()
+    assert lines[0] == "- [ ] ~~**242. Valid Anagram** (Easy) · [LC](https://leetcode.com/problems/valid-anagram/) · [Video](https://youtu.be/a)~~ · premium"
+    assert lines[1] == ROADMAP.splitlines()[1]
+    assert lc.next_unsolved(tmp_path) == "https://leetcode.com/problems/generate-parentheses/"
+    assert lc.strike_roadmap(tmp_path, "https://leetcode.com/problems/valid-anagram/") is False
 
 
 def test_update_roadmap_is_idempotent(tmp_path):
@@ -363,6 +405,28 @@ def test_main_next_starts_the_next_roadmap_problem(tmp_path, monkeypatch, capsys
     assert lc.main(["next"], root=tmp_path) == 0
     assert seen == ["generate-parentheses"]
     assert (tmp_path / "solve.py").exists()
+
+
+def test_main_next_strikes_a_premium_problem_and_starts_the_following_one(tmp_path, monkeypatch, capsys):
+    def fetch(slug):
+        if slug == "valid-anagram":
+            raise lc.Premium("242. Valid Anagram is a LeetCode premium problem")
+        return FETCHED
+    monkeypatch.setattr(lc, "fetch", fetch)
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    assert lc.main(["next"], root=tmp_path) == 0
+    assert lc.parse_header((tmp_path / "solve.py").read_text()).id == 22
+    assert (tmp_path / "ROADMAP.md").read_text().splitlines()[0].startswith("- [ ] ~~**242. Valid Anagram**")
+    assert "premium" in capsys.readouterr().err
+
+
+def test_main_next_fails_when_only_premium_problems_remain(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(lc, "fetch", lambda slug: (_ for _ in ()).throw(lc.Premium(f"{slug} is premium")))
+    (tmp_path / "ROADMAP.md").write_text(ROADMAP)
+    assert lc.main(["next"], root=tmp_path) == 1
+    assert (tmp_path / "ROADMAP.md").read_text().count("~~ · premium") == 2
+    assert not (tmp_path / "solve.py").exists()
+    assert "ROADMAP" in capsys.readouterr().err
 
 
 def test_main_next_reports_when_roadmap_is_complete(tmp_path, capsys):

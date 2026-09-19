@@ -245,6 +245,20 @@ def update_roadmap(root: Path, meta: Meta) -> bool:
     return False
 
 
+def strike_roadmap(root: Path, url: str) -> bool:
+    """Strike through the ROADMAP.md line for `url` (a premium problem) so `next` skips it. False if nothing changed."""
+    roadmap = root / "ROADMAP.md"
+    if not roadmap.exists():
+        return False
+    lines = roadmap.read_text().splitlines(keepends=True)
+    for i, line in enumerate(lines):
+        if (m := ROADMAP_LINE.match(line)) and m.group(1) == url:
+            lines[i] = "- [ ] ~~" + line[6:].rstrip("\n") + "~~ · premium\n"
+            roadmap.write_text("".join(lines))
+            return True
+    return False
+
+
 def save(root: Path) -> list[Path]:
     """Copy solve.py + cases.txt into problems/ under NNNN-slug names and refresh the README table."""
     meta = parse_header((root / "solve.py").read_text())
@@ -323,7 +337,7 @@ ROOT = Path(__file__).resolve().parent
 
 GRAPHQL = "https://leetcode.com/graphql"
 QUERY = """query q($slug: String!) { question(titleSlug: $slug) {
-  questionFrontendId title titleSlug difficulty exampleTestcases metaData content
+  questionFrontendId title titleSlug difficulty exampleTestcases metaData content isPaidOnly
   codeSnippets { langSlug code } } }"""
 
 
@@ -342,7 +356,14 @@ def fetch(slug: str) -> dict:
         raise ValueError(f"fetching {slug} from LeetCode failed: {e}") from e
     if data is None:
         raise ValueError(f"no such problem: {slug}")
+    if data.get("isPaidOnly") or data.get("codeSnippets") is None:
+        # premium-locked: LeetCode answers with nulls for content/codeSnippets instead of an error
+        raise Premium(f"{data['questionFrontendId']}. {data['title']} is a LeetCode premium problem")
     return data
+
+
+class Premium(ValueError):
+    """The problem is LeetCode-premium: no snippet or examples without a paid account."""
 
 
 class Unsaved(Exception):
@@ -476,15 +497,23 @@ def announce_start(meta: Meta) -> None:
 
 def _dispatch(args, root: Path) -> int:
     if args.cmd in ("start", "next"):
-        problem = args.problem if args.cmd == "start" else next_unsolved(root)
-        if problem is None:
-            print("lc: nothing left unticked in ROADMAP.md", file=sys.stderr)
-            return 1
-        try:
-            meta = start(root, problem, args.force)
-        except Unsaved as e:
-            print(f"lc: {e}", file=sys.stderr)
-            return 1
+        while True:
+            problem = args.problem if args.cmd == "start" else next_unsolved(root)
+            if problem is None:
+                print("lc: nothing left unticked in ROADMAP.md", file=sys.stderr)
+                return 1
+            try:
+                meta = start(root, problem, args.force)
+                break
+            except Unsaved as e:
+                print(f"lc: {e}", file=sys.stderr)
+                return 1
+            except Premium as e:
+                if args.cmd == "start":
+                    raise
+                # strike it out so the roadmap moves past it, then try the following problem
+                strike_roadmap(root, problem)
+                print(f"lc: {e}; struck it from ROADMAP.md", file=sys.stderr)
         print(f"{meta.id}. {meta.title} [{meta.difficulty}] -> solve.py, cases.txt, problem.md")
         announce_start(meta)
     elif args.cmd == "test":

@@ -7,6 +7,7 @@ A self-hosted copy of the [NeetCode roadmap](https://neetcode.io/roadmap): same 
 - Work topics top to bottom (the numbered order below). Each topic's problems are listed easiest-first.
 - Solving a problem (`git commit` / `lc.py save`) ticks its box here and appends `· [sol](problems/NNNN-slug.py)` automatically.
 - Progress: `grep -c '^- \[x\]' ROADMAP.md` (out of 150).
+- ~~Struck-through~~ problems are LeetCode Premium: `make next` skips them automatically (no snippet or examples without a paid account).
 - Try each problem for ~30–45 min before opening the video.
 
 ## Prerequisite graph
@@ -87,7 +88,7 @@ graph TD
 - [x] **347. Top K Frequent Elements** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/YPTqKIgVk-k) · [sol](problems/0347-top-k-frequent-elements.py)
 - [x] **238. Product of Array Except Self** (Medium) · [LC](https://leetcode.com/problems/product-of-array-except-self/) · [Video](https://youtu.be/bNvIQI2wAjk) · [sol](problems/0238-product-of-array-except-self.py)
 - [x] **36. Valid Sudoku** (Medium) · [LC](https://leetcode.com/problems/valid-sudoku/) · [Video](https://youtu.be/TjFXEUCMqI8) · [sol](problems/0036-valid-sudoku.py)
-- [ ] **271. Encode and Decode Strings** (Medium) · [LC](https://leetcode.com/problems/encode-and-decode-strings/) · [Video](https://youtu.be/B1k_sxOSgv8)
+- [ ] ~~**271. Encode and Decode Strings** (Medium) · [LC](https://leetcode.com/problems/encode-and-decode-strings/) · [Video](https://youtu.be/B1k_sxOSgv8)~~ · premium
 - [ ] **128. Longest Consecutive Sequence** (Medium) · [LC](https://leetcode.com/problems/longest-consecutive-sequence/) · [Video](https://youtu.be/P6RZZMu_maU)
 
 ## 2. Two Pointers (5)
