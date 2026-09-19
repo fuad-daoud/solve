@@ -11,12 +11,16 @@ from typing import *
 
 class Solution:
     def isPalindrome(self, s: str) -> bool:
-        s = "".join(filter(str.isalnum, s)).lower()
-
-        n = len(s)
-        for i in range(n):
-            if s[i] != s[n - i - 1]:
+        l, r = 0, len(s) - 1
+        while l < r:
+            while l < r and not s[l].isalnum():
+                l += 1
+            while l < r and not s[r].isalnum():
+                r -= 1
+            if s[l].lower() != s[r].lower():
                 return False
+            l += 1
+            r -= 1
         return True
 
 
