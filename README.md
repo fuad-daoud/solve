@@ -20,6 +20,11 @@ make commit                                           # "feat: solved 1. Two Sum
 In neovim, `<leader>rp` from `solve.py` runs `make test` into a right-hand column (`cases.txt` on top, report below);
 `<leader>rd` opens the problem statement (`problem.md`) in a new tab.
 
+A Socratic coach lives under `<leader>a` (Claude Code session per problem, never hands over the solution):
+`<leader>ah` next hint (4-rung ladder), `<leader>aa` ask about the selection, `<leader>ar` review the attempt,
+`<leader>ad` debrief once solved (reveals the approach — asks first if tests still fail), `<leader>at` toggle the pane,
+`<leader>ac` terminal chat. Also `:Solve`, `:SolveHint`, `:SolveAsk`, `:SolveReview`, `:SolveDebrief`, `:SolveChat`.
+
 ### cases.txt
 
 One JSON argument per line, exactly as LeetCode's testcase box shows them. Blank line between cases.
