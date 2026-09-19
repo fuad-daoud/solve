@@ -86,7 +86,7 @@ graph TD
 - [x] **49. Group Anagrams** (Medium) · [LC](https://leetcode.com/problems/group-anagrams/) · [Video](https://youtu.be/vzdNOK2oB2E) · [sol](problems/0049-group-anagrams.py)
 - [x] **347. Top K Frequent Elements** (Medium) · [LC](https://leetcode.com/problems/top-k-frequent-elements/) · [Video](https://youtu.be/YPTqKIgVk-k) · [sol](problems/0347-top-k-frequent-elements.py)
 - [x] **238. Product of Array Except Self** (Medium) · [LC](https://leetcode.com/problems/product-of-array-except-self/) · [Video](https://youtu.be/bNvIQI2wAjk) · [sol](problems/0238-product-of-array-except-self.py)
-- [ ] **36. Valid Sudoku** (Medium) · [LC](https://leetcode.com/problems/valid-sudoku/) · [Video](https://youtu.be/TjFXEUCMqI8)
+- [x] **36. Valid Sudoku** (Medium) · [LC](https://leetcode.com/problems/valid-sudoku/) · [Video](https://youtu.be/TjFXEUCMqI8) · [sol](problems/0036-valid-sudoku.py)
 - [ ] **271. Encode and Decode Strings** (Medium) · [LC](https://leetcode.com/problems/encode-and-decode-strings/) · [Video](https://youtu.be/B1k_sxOSgv8)
 - [ ] **128. Longest Consecutive Sequence** (Medium) · [LC](https://leetcode.com/problems/longest-consecutive-sequence/) · [Video](https://youtu.be/P6RZZMu_maU)
 

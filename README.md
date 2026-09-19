@@ -92,6 +92,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 15 | [3Sum](https://leetcode.com/problems/3sum/) | Medium | [0015-3sum.py](problems/0015-3sum.py) |
 | 22 | [Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) | Medium | [0022-generate-parentheses.py](problems/0022-generate-parentheses.py) |
 | 26 | [Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) | Easy | [0026-remove-duplicates-from-sorted-array.py](problems/0026-remove-duplicates-from-sorted-array.py) |
+| 36 | [Valid Sudoku](https://leetcode.com/problems/valid-sudoku/) | Medium | [0036-valid-sudoku.py](problems/0036-valid-sudoku.py) |
 | 49 | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | Medium | [0049-group-anagrams.py](problems/0049-group-anagrams.py) |
 | 66 | [Plus One](https://leetcode.com/problems/plus-one/) | Easy | [0066-plus-one.py](problems/0066-plus-one.py) |
 | 122 | [Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/) | Medium | [0122-best-time-to-buy-and-sell-stock-ii.py](problems/0122-best-time-to-buy-and-sell-stock-ii.py) |
