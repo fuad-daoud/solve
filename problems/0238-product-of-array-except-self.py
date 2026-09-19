@@ -11,28 +11,15 @@ from typing import *
 
 class Solution:
     def productExceptSelf(self, nums: list[int]) -> list[int]:
-        allProduct = 0
-        zeroes = 0
-        answer = []
-        for n in nums:
-            if n == 0:
-                zeroes = zeroes + 1
-                continue
-            if allProduct == 0:
-                allProduct = n
-                continue
-            allProduct = allProduct * n
-        for n in nums:
-            if zeroes > 1:
-                answer.append(0)
-                continue
-            if zeroes == 1 and n != 0:
-                answer.append(0)
-                continue
-            if n == 0:
-                answer.append(allProduct)
-            else:
-                answer.append(allProduct // n)
+        n = len(nums)
+        answer = [1] * n
+        for i in range(1, n):
+            answer[i] = answer[i - 1] * nums[i - 1]
+
+        product = 1
+        for i in range(n - 1, -1, -1):
+            answer[i] *= product
+            product *= nums[i]
         return answer
 
 
