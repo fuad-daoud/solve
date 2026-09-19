@@ -50,11 +50,32 @@ regenerates the table below, ticks the problem in `ROADMAP.md`, and stages all o
 
 `make start` refuses to overwrite `solve.py` while it holds unsaved work on a different problem (`--force` via `python3 lc.py start --force …`).
 
+### Discord
+
+After a commit that includes `solve.py`, the post-commit hook posts the solution to a Discord forum channel
+(skipped silently when `~/.config/solve/discord.json` doesn't exist; a Discord failure is printed but never fails the commit):
+
+- looks for a forum post with the problem's title — if a friend already posted it, replies there instead;
+- otherwise creates the post: title, `Solved` tag, the LeetCode URL as the first message;
+- then posts the `class Solution` body in a ` ```py ` block (header, imports and harness stripped).
+  Re-committing the same code is a no-op.
+
+One-time setup: create an application at <https://discord.com/developers/applications> → *Bot* → copy the token;
+invite it with *View Channels, Send Messages, Send Messages in Threads, Create Public Threads, Read Message History*
+(*OAuth2 → URL Generator*, scope `bot`); turn on *Developer Mode* in Discord's settings and right-click each forum
+channel → *Copy Channel ID*. Then:
+
+```json
+// ~/.config/solve/discord.json — one forum channel id per difficulty; missing ones are skipped
+{ "token": "…", "channels": { "Easy": "123…", "Medium": "456…" } }
+```
+
 ## Layout
 
 ```
 solve.py  cases.txt   working files (+ problem.md, the statement)
 lc.py                 the tool (stdlib only); `make check` runs its tests
+discord.py            posts solutions to Discord (used by .githooks/post-commit)
 problems/             saved solutions + their cases
 archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see archive/README.md)
 ```
