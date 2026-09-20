@@ -99,6 +99,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 125 | [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | [0125-valid-palindrome.py](problems/0125-valid-palindrome.py) |
 | 128 | [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/) | Medium | [0128-longest-consecutive-sequence.py](problems/0128-longest-consecutive-sequence.py) |
 | 136 | [Single Number](https://leetcode.com/problems/single-number/) | Easy | [0136-single-number.py](problems/0136-single-number.py) |
+| 167 | [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | Medium | [0167-two-sum-ii-input-array-is-sorted.py](problems/0167-two-sum-ii-input-array-is-sorted.py) |
 | 189 | [Rotate Array](https://leetcode.com/problems/rotate-array/) | Medium | [0189-rotate-array.py](problems/0189-rotate-array.py) |
 | 217 | [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/) | Easy | [0217-contains-duplicate.py](problems/0217-contains-duplicate.py) |
 | 238 | [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/) | Medium | [0238-product-of-array-except-self.py](problems/0238-product-of-array-except-self.py) |
