@@ -59,7 +59,7 @@ CONFIG = {"token": "t", "channels": {"Easy": "100"}}
 FORUM = {"id": "100", "name": "easy-problems", "guild_id": "900",
          "available_tags": [{"id": "t1", "name": "Not Solved"}, {"id": "t2", "name": "Solved"}]}
 CODE = "class Solution:\n    pass"
-CODE_MESSAGE = "```py\nclass Solution:\n    pass\n```"
+CODE_MESSAGE = "||```py\nclass Solution:\n    pass\n```||"
 
 
 class FakeApi:
@@ -200,11 +200,15 @@ def test_api_turns_http_errors_into_readable_messages(monkeypatch):
         raise AssertionError("expected RuntimeError")
 
 
+def test_code_message_is_a_spoiler():
+    assert discord.code_message(CODE) == CODE_MESSAGE
+
+
 def test_code_message_fits_discords_2000_char_limit():
     msg = discord.code_message("x" * 5000)
     assert len(msg) <= 2000
-    assert msg.startswith("```py\nxxx")
-    assert msg.endswith("\n# … truncated\n```")
+    assert msg.startswith("||```py\nxxx")
+    assert msg.endswith("\n# … truncated\n```||")
 
 
 FORUM_TAGS = {"available_tags": [

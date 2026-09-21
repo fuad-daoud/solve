@@ -21,7 +21,8 @@ def solution_body(text: str) -> str:
 
 
 def code_message(code: str) -> str:
-    fence = "```py\n{}\n```"
+    """`code` as a spoiler-wrapped code block, so nobody reads a solution by accident."""
+    fence = "||```py\n{}\n```||"
     if len(fence.format(code)) > LIMIT:
         tail = "\n# … truncated"
         code = code[: LIMIT - len(fence.format("")) - len(tail)] + tail
