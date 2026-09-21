@@ -97,7 +97,7 @@ graph TD
 - [x] **167. Two Sum II - Input Array Is Sorted** (Medium) · [LC](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) · [Video](https://youtu.be/cQ1Oz4ckceM) · [sol](problems/0167-two-sum-ii-input-array-is-sorted.py)
 - [x] **15. 3Sum** (Medium) · [LC](https://leetcode.com/problems/3sum/) · [Video](https://youtu.be/jzZsG8n2R9A) · [sol](problems/0015-3sum.py)
 - [x] **11. Container With Most Water** (Medium) · [LC](https://leetcode.com/problems/container-with-most-water/) · [Video](https://youtu.be/UuiTKBwPgAo) · [sol](problems/0011-container-with-most-water.py)
-- [ ] **42. Trapping Rain Water** (Hard) · [LC](https://leetcode.com/problems/trapping-rain-water/) · [Video](https://youtu.be/ZI2z5pq0TqA)
+- [x] **42. Trapping Rain Water** (Hard) · [LC](https://leetcode.com/problems/trapping-rain-water/) · [Video](https://youtu.be/ZI2z5pq0TqA) · [sol](problems/0042-trapping-rain-water.py)
 
 ## 3. Stack (7)
 
