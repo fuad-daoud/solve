@@ -12,7 +12,7 @@ class Solution:
             answer = max(answer, area)
             if height[l] >= height[r]:
                 r -= 1
-            elif height[l] < height[r]:
+            else:
                 l += 1
 
         return answer
