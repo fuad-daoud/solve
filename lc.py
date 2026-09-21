@@ -144,13 +144,6 @@ def render_solve(data: dict) -> str:
     return (
         f"# {meta.id}. {meta.title} [{meta.difficulty}]\n"
         f"# {meta.url}\n"
-        "import bisect\n"
-        "import functools\n"
-        "import heapq\n"
-        "import itertools\n"
-        "import math\n"
-        "from collections import *\n"
-        "from typing import *\n"
         "\n\n"
         f"{snippet}\n"
         "\n\n"
