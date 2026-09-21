@@ -89,6 +89,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 |---|---|---|---|
 | 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | [0001-two-sum.py](problems/0001-two-sum.py) |
 | 6 | [Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion/) | Medium | [0006-zigzag-conversion.py](problems/0006-zigzag-conversion.py) |
+| 11 | [Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | [0011-container-with-most-water.py](problems/0011-container-with-most-water.py) |
 | 15 | [3Sum](https://leetcode.com/problems/3sum/) | Medium | [0015-3sum.py](problems/0015-3sum.py) |
 | 22 | [Generate Parentheses](https://leetcode.com/problems/generate-parentheses/) | Medium | [0022-generate-parentheses.py](problems/0022-generate-parentheses.py) |
 | 26 | [Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/) | Easy | [0026-remove-duplicates-from-sorted-array.py](problems/0026-remove-duplicates-from-sorted-array.py) |
