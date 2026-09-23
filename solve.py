@@ -4,24 +4,14 @@
 
 class Solution:
     def isValid(self, s: str) -> bool:
+        pairs = {")": "(", "]": "[", "}": "{"}
         st = []
         for c in s:
-            if not st and (c == ")" or c == "]" or c == "}"):
-                return False
-            if c == ")" and st[-1] == "(":
-                st.pop()
-                continue
-
-            if c == "]" and st[-1] == "[":
-                st.pop()
-                continue
-
-            if c == "}" and st[-1] == "{":
-                st.pop()
-                continue
-
-            st.append(c)
-
+            if c in pairs:
+                if not st or st.pop() != pairs[c]:
+                    return False
+            else:
+                st.append(c)
         return not st
 
 
