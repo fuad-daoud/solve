@@ -1,22 +1,28 @@
-# 42. Trapping Rain Water [Hard]
-# https://leetcode.com/problems/trapping-rain-water/
+# 20. Valid Parentheses [Easy]
+# https://leetcode.com/problems/valid-parentheses/
 
 
 class Solution:
-    def trap(self, height: list[int]) -> int:
-        l, r = 0, len(height) - 1
-        left_max = right_max = 0
-        water = 0
-        while l < r:
-            if height[l] < height[r]:
-                left_max = max(left_max, height[l])
-                water += left_max - height[l]
-                l += 1
-            else:
-                right_max = max(right_max, height[r])
-                water += right_max - height[r]
-                r -= 1
-        return water
+    def isValid(self, s: str) -> bool:
+        st = []
+        for c in s:
+            if not st and (c == ")" or c == "]" or c == "}"):
+                return False
+            if c == ")" and st[-1] == "(":
+                st.pop()
+                continue
+
+            if c == "]" and st[-1] == "[":
+                st.pop()
+                continue
+
+            if c == "}" and st[-1] == "{":
+                st.pop()
+                continue
+
+            st.append(c)
+
+        return not st
 
 
 if __name__ == "__main__":

@@ -1,24 +1,45 @@
-# 42. Trapping Rain Water [Hard]
+# 20. Valid Parentheses [Easy]
 
-https://leetcode.com/problems/trapping-rain-water/
+https://leetcode.com/problems/valid-parentheses/
 
-Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water it can trap after raining.
+Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+
+An input string is valid if:
+- Open brackets must be closed by the same type of brackets.
+- Open brackets must be closed in the correct order.
+- Every close bracket has a corresponding open bracket of the same type.
 
 **Example 1:**
-```
-Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
-Output: 6
-Explanation: The above elevation map (black section) is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped.
-```
+
+**Input:** s = "()"
+
+**Output:** true
 
 **Example 2:**
-```
-Input: height = [4,2,0,3,2,5]
-Output: 9
-```
+
+**Input:** s = "()[]{}"
+
+**Output:** true
+
+**Example 3:**
+
+**Input:** s = "(]"
+
+**Output:** false
+
+**Example 4:**
+
+**Input:** s = "([])"
+
+**Output:** true
+
+**Example 5:**
+
+**Input:** s = "([)]"
+
+**Output:** false
 
 **Constraints:**
 
-- `n == height.length`
-- `1 <= n <= 2 * 10^4`
-- `0 <= height[i] <= 10^5`
+- `1 <= s.length <= 10^4`
+- `s` consists of parentheses only `'()[]{}'`.
