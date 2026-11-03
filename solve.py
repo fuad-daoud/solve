@@ -3,16 +3,19 @@
 
 
 class Solution:
-    def isValid(self, s: str) -> bool:
-        pairs = {")": "(", "]": "[", "}": "{"}
+    def isValid(self, string: str) -> bool:
         st = []
-        for c in s:
-            if c in pairs:
-                if not st or st.pop() != pairs[c]:
-                    return False
+        closing = {"(": ")", "{": "}", "[": "]"}
+        for s in string:
+            if s in list(closing.keys()):
+                st.append(s)
+                continue
+
+            if len(st) != 0 and closing[st[-1]] == s:
+                st.pop()
             else:
-                st.append(c)
-        return not st
+                return False
+        return len(st) == 0
 
 
 if __name__ == "__main__":

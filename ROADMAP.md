@@ -101,7 +101,7 @@ graph TD
 
 ## 3. Stack (7)
 
-- [ ] **20. Valid Parentheses** (Easy) · [LC](https://leetcode.com/problems/valid-parentheses/) · [Video](https://youtu.be/WTzjTskDFMg)
+- [x] **20. Valid Parentheses** (Easy) · [LC](https://leetcode.com/problems/valid-parentheses/) · [Video](https://youtu.be/WTzjTskDFMg) · [sol](problems/0020-valid-parentheses.py)
 - [ ] **155. Min Stack** (Medium) · [LC](https://leetcode.com/problems/min-stack/) · [Video](https://youtu.be/qkLl7nAwDPo)
 - [ ] **150. Evaluate Reverse Polish Notation** (Medium) · [LC](https://leetcode.com/problems/evaluate-reverse-polish-notation/) · [Video](https://youtu.be/iu0082c4HDE)
 - [x] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/) · [Video](https://youtu.be/s9fokUqJ76A) · [sol](problems/0022-generate-parentheses.py)
