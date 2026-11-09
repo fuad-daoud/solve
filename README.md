@@ -20,10 +20,11 @@ make commit                                           # "feat: solved 1. Two Sum
 In neovim, `<leader>rp` from `solve.py` runs `make test` into a right-hand column (`cases.txt` on top, report below);
 `<leader>rd` opens the problem statement (`problem.md`) in a new tab.
 
-A Socratic coach lives under `<leader>a` (Claude Code session per problem, never hands over the solution):
+A Socratic coach lives under `<leader>a` (one agent session per problem, never hands over the solution):
 `<leader>ah` next hint (4-rung ladder), `<leader>aa` ask about the selection, `<leader>ar` review the attempt,
 `<leader>ad` debrief once solved (reveals the approach — asks first if tests still fail), `<leader>at` toggle the pane,
-`<leader>ac` terminal chat. Also `:Solve`, `:SolveHint`, `:SolveAsk`, `:SolveReview`, `:SolveDebrief`, `:SolveChat`.
+`<leader>ac` terminal chat, `<leader>am` pick the engine (claude or agy), model and effort — switching engine restarts the
+current problem's session. Also `:Solve`, `:Solve model`, `:SolveHint`, `:SolveAsk`, `:SolveReview`, `:SolveDebrief`, `:SolveChat`.
 
 ### cases.txt
 
