@@ -106,6 +106,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 167 | [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | Medium | [0167-two-sum-ii-input-array-is-sorted.py](problems/0167-two-sum-ii-input-array-is-sorted.py) |
 | 189 | [Rotate Array](https://leetcode.com/problems/rotate-array/) | Medium | [0189-rotate-array.py](problems/0189-rotate-array.py) |
 | 217 | [Contains Duplicate](https://leetcode.com/problems/contains-duplicate/) | Easy | [0217-contains-duplicate.py](problems/0217-contains-duplicate.py) |
+| 224 | [Basic Calculator](https://leetcode.com/problems/basic-calculator/) | Hard | [0224-basic-calculator.py](problems/0224-basic-calculator.py) |
 | 238 | [Product of Array Except Self](https://leetcode.com/problems/product-of-array-except-self/) | Medium | [0238-product-of-array-except-self.py](problems/0238-product-of-array-except-self.py) |
 | 242 | [Valid Anagram](https://leetcode.com/problems/valid-anagram/) | Easy | [0242-valid-anagram.py](problems/0242-valid-anagram.py) |
 | 347 | [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) | Medium | [0347-top-k-frequent-elements.py](problems/0347-top-k-frequent-elements.py) |
