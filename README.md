@@ -77,7 +77,7 @@ channel → *Copy Channel ID*. Then:
 
 ```
 solve.py  cases.txt   working files (+ problem.md, the statement)
-lc.py                 the tool (stdlib only); `make check` runs its tests
+lc.py                 the tool (stdlib only); `make check` runs its tests, `make smoke` tries it on live LeetCode
 discord.py            posts solutions to Discord (used by .githooks/post-commit)
 problems/             saved solutions + their cases
 archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see archive/README.md)

@@ -9,6 +9,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import traceback
 import urllib.error
 import urllib.request
@@ -430,6 +431,50 @@ def next_unsolved(root: Path) -> str | None:
     return None
 
 
+def unticked_urls(root: Path) -> list[str]:
+    roadmap = root / "ROADMAP.md"
+    if not roadmap.exists():
+        return []
+    return [m.group(1) for line in roadmap.read_text().splitlines() if (m := ROADMAP_LINE.match(line))]
+
+
+SMOKE_PAUSE = 0.4  # seconds between LeetCode requests
+
+
+def smoke(root: Path, fetch=None, pause: float | None = None, log=lambda slug, kind, msg: None) -> list[tuple[str, str]]:
+    """Render every unticked ROADMAP problem in memory (writes nothing, no Discord); [(slug, issue)] for the broken ones.
+
+    `log(slug, kind, msg)` sees every problem as it goes; kind is "ok", "premium" or "issue"."""
+    fetch = fetch or globals()["fetch"]
+    pause = SMOKE_PAUSE if pause is None else pause
+    issues = []
+    for n, url in enumerate(unticked_urls(root)):
+        if n and pause:
+            time.sleep(pause)
+        slug = slug_from_arg(url)
+        try:
+            data = fetch(slug)
+            render_solve(data)
+            render_problem(data)
+            cases = parse_cases(render_cases(data))
+        except Premium:
+            log(slug, "premium", "premium, skipped")
+            continue
+        except Exception as e:  # noqa: BLE001 — any crash is what smoke is looking for
+            issues.append((slug, f"crash: {type(e).__name__}: {e}"))
+        else:
+            missing = [i for i, c in enumerate(cases, 1) if not c.expected]
+            if not cases:
+                issues.append((slug, "no cases"))
+            elif missing:
+                issues.append((slug, f"missing expected output in case(s) {missing}"))
+            else:
+                log(slug, "ok", f"ok ({len(cases)} cases)")
+                continue
+        log(slug, "issue", issues[-1][1])
+    return issues
+
+
 def add(root: Path, inputs: list[str], expected: str | None) -> None:
     path = root / "cases.txt"
     text = path.read_text() if path.exists() else ""
@@ -496,6 +541,7 @@ def main(argv: list[str], root: Path | None = None) -> int:
     sub.add_parser("test", help="run cases.txt against solve.py")
     sub.add_parser("add", help="append a case to cases.txt (interactive)")
     sub.add_parser("save", help="copy solve.py + cases.txt into problems/ and refresh README")
+    sub.add_parser("smoke", help="render every unticked ROADMAP problem from live LeetCode, report breakage (writes nothing)")
     sub.add_parser("commit", help="git commit solve.py/cases.txt/problem.md as 'feat: solved N. Title'")
     args = parser.parse_args(argv)
     try:
@@ -559,6 +605,19 @@ def _dispatch(args, root: Path) -> int:
             print(f"wrote {path.relative_to(root)}")
     elif args.cmd == "commit":
         return commit(root)
+    elif args.cmd == "smoke":
+        kinds = Counter()
+
+        def log(slug, kind, msg):
+            kinds[kind] += 1
+            print(f"  {slug}: {msg}", flush=True)
+
+        issues = smoke(root, log=log)
+        premium, checked = kinds["premium"], kinds["ok"] + kinds["issue"]
+        print(f"\nsmoke: {len(issues)} of {checked} problems have issues ({premium} premium skipped)")
+        for slug, issue in issues:
+            print(f"  {slug}: {issue}")
+        return 1 if issues else 0
     return 0
 
 

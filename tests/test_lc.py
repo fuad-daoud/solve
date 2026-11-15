@@ -550,3 +550,50 @@ def test_render_cases_reads_code_wrapped_outputs():
                 metaData='{"name":"twoSum","params":[{"name":"nums"},{"name":"target"}]}',
                 content="<p><strong>Output:</strong> <code>[0,1]</code></p><p><strong>Output:</strong> <code>[0,1]</code></p>")
     assert lc.render_cases(data) == "[2,7]\n9\n=> [0,1]\n\n[3,3]\n6\n=> [0,1]\n"
+
+
+# --- smoke: render every unticked ROADMAP problem from live data ------------
+
+SMOKE_ROADMAP = (
+    "- [ ] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/)\n"
+    "- [ ] **155. Min Stack** (Medium) · [LC](https://leetcode.com/problems/min-stack/)\n"
+    "- [ ] **252. Meeting Rooms** (Easy) · [LC](https://leetcode.com/problems/meeting-rooms/)\n"
+    "- [ ] **9. Broken** (Easy) · [LC](https://leetcode.com/problems/broken/)\n"
+    "- [ ] **10. No Outputs** (Easy) · [LC](https://leetcode.com/problems/no-outputs/)\n"
+    "- [x] **1. Two Sum** (Easy) · [LC](https://leetcode.com/problems/two-sum/)\n"
+)
+
+
+def _smoke_fetch(slug):
+    if slug == "meeting-rooms":
+        raise lc.Premium("252. Meeting Rooms is a LeetCode premium problem")
+    if slug == "broken":
+        return dict(FETCHED, metaData="not json")
+    if slug == "no-outputs":
+        return dict(FETCHED, content="<p>no examples</p>")
+    return DESIGN if slug == "min-stack" else FETCHED
+
+
+def test_smoke_reports_crashes_and_missing_outputs_and_skips_premium(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(SMOKE_ROADMAP)
+    issues = lc.smoke(tmp_path, fetch=_smoke_fetch, pause=0)
+    assert [slug for slug, _ in issues] == ["broken", "no-outputs"]
+    assert "JSONDecodeError" in issues[0][1]
+    assert "missing expected" in issues[1][1]
+
+
+def test_smoke_writes_nothing(tmp_path):
+    (tmp_path / "ROADMAP.md").write_text(SMOKE_ROADMAP)
+    lc.smoke(tmp_path, fetch=_smoke_fetch, pause=0)
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["ROADMAP.md"]
+
+
+def test_main_smoke_exit_code_reflects_issues(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(lc, "fetch", _smoke_fetch)
+    monkeypatch.setattr(lc, "SMOKE_PAUSE", 0)
+    (tmp_path / "ROADMAP.md").write_text(SMOKE_ROADMAP)
+    assert lc.main(["smoke"], root=tmp_path) == 1
+    out = capsys.readouterr().out
+    assert "broken" in out and "2 of 4" in out
+    (tmp_path / "ROADMAP.md").write_text(SMOKE_ROADMAP.split("- [ ] **252")[0])
+    assert lc.main(["smoke"], root=tmp_path) == 0

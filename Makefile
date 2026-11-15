@@ -1,4 +1,4 @@
-.PHONY: start next test add save commit setup check
+.PHONY: start next test add save commit setup check smoke
 
 # make start P=<leetcode url or slug>   (p= works too)
 P ?= $(p)
@@ -30,3 +30,8 @@ setup:
 # lc.py's own tests
 check:
 	python3 -m pytest tests -q
+
+# render every unticked ROADMAP problem from live LeetCode in memory; flags crashes / missing expected outputs
+# (writes nothing, no Discord) — run after editing lc.py or when LeetCode changes its pages
+smoke:
+	python3 lc.py smoke
