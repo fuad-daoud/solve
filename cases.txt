@@ -1,38 +1,15 @@
-"1 + 1"
-=> 2
+["MinStack","push","push","push","getMin","pop","top","getMin"]
+[[],[-2],[0],[-3],[],[],[],[]]
+=> [null,null,null,null,-3,null,0,-2]
 
-" 2-1 + 2 "
-=> 3
+["MinStack","push","push","push","getMin","top","pop","getMin"]
+[[],[-2],[0],[-1],[],[],[],[]]
+=> [null,null,null,null,-2,-1,null,-2]
 
-"(1+(4+5+2)-3)+(6+8)"
-=> 23
+["MinStack","push","push","getMin","getMin","push","getMin","getMin","top","getMin","pop","push","push","getMin","push","pop","top","getMin","pop"]
+[[],[-10],[14],[],[],[-20],[],[],[],[],[],[10],[-7],[],[-7],[],[],[],[]]
+=> [null,null,null,-10,-10,null,-20,-20,-20,-20,null,null,null,-10,null,null,-7,-10,null]
 
-"(1)"
-=> 1
-
-"123"
-=> 123
-
-"123 + 45"
-=> 168
-
-"1-(     -2)"
-=> 3
-
-"-2+1"
-=> -1
-
-"1-(5)"
-=> -4
-
-"(7)-(0)+(4)"
-=> 11
-
-"((2))"
-=> 2
-
-"1-(2+3)-1"
-=> -5
-
-"- (3 + (4 + 5))"
-=> -12
+["MinStack","push","push","push","getMin","pop","pop","top","getMin"]
+[[],[5],[3],[4],[],[],[],[],[]]
+=> [null,null,null,null,3,null,null,5,5]

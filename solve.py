@@ -1,56 +1,34 @@
-# 224. Basic Calculator [Hard]
-# https://leetcode.com/problems/basic-calculator/
+# 155. Min Stack [Medium]
+# https://leetcode.com/problems/min-stack/
+
+import heapq
 
 
-class Solution:
-    def calculate(self, string: str) -> int:
-        st = []
-        string = string.replace(" ", "")
-        skip = set()
-        for i, s in enumerate(string):
-            if i in skip:
-                continue
-            if s == ")":
-                # pop the opening parentheses and calculate
-                st.pop(-2)
-                s = st.pop()
+class MinStack:
+    def __init__(self):
+        self.st = []
+        self.q = []
+        self.freq = {}
 
-                if len(st) != 0 and (st[-1] == "-" or st[-1] == "+"):
-                    sign = st.pop()
-                    if sign == "-":
-                        s *= -1
-                if len(st) != 0 and st[-1] != "(":
-                    st.append(s + st.pop())
-                else:
-                    st.append(s)
-                continue
-            if s == "(":
-                st.append(s)
-                continue
-            if s == "-" or s == "+":
-                st.append(s)
-                continue
+    def push(self, value: int) -> None:
+        heapq.heappush(self.q, value)
+        self.freq[value] = self.freq.get(value, 0) + 1
+        self.st.append(value)
 
-            original = i
-            i += 1
-            while i < len(string) and string[i].isnumeric():
-                skip.add(i)
-                i += 1
-            s = int(string[original:i])
-            if len(st) != 0 and (st[-1] == "-" or st[-1] == "+"):
-                sign = st.pop()
-                if sign == "-":
-                    s *= -1
+    def pop(self) -> None:
+        value = self.st.pop()
+        self.freq[value] = self.freq[value] - 1
 
-            if len(st) != 0 and st[-1] != "(":
-                st.append(s + st.pop())
-            else:
-                st.append(s)
+    def top(self) -> int:
+        return self.st[-1]
 
-        return st.pop()
+    def getMin(self) -> int:
+        while self.freq[self.q[0]] == 0:
+            heapq.heappop(self.q)
+        return self.q[0]
 
 
 if __name__ == "__main__":
     import lc
 
-    lc.test(Solution)
+    lc.test(MinStack)
