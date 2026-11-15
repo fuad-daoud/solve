@@ -190,7 +190,7 @@ def render_cases(data: dict) -> str:
     content = data.get("content") or ""
     # examples are either plain text in <pre> blocks or wrapped in <span class="example-io">
     outputs = [html.unescape(o) for o in re.findall(
-        r"<strong>Output:?</strong>\s*(?:<span[^>]*>)?\s*([^\s<].*?)\s*(?:</span>|<|\n)", content)]
+        r"<strong>Output:?</strong>\s*(?:<(?:span|code)[^>]*>)?\s*([^\s<].*?)\s*(?:</span>|<|\n)", content)]
     # "return the answer in any order" → compare order-insensitively
     prefix = "~ " if re.search(r"in\s*(<[^>]+>\s*)*any\s*(<[^>]+>\s*)*order", html.unescape(content)) else ""
     blocks = []

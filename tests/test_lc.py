@@ -543,3 +543,10 @@ def test_start_writes_design_problem_files(tmp_path, monkeypatch):
     lc.start(tmp_path, "min-stack")
     assert (tmp_path / "cases.txt").read_text() == DESIGN_CASES
     assert (tmp_path / "problem.md").read_text().startswith("# 155. Min Stack [Medium]")
+
+
+def test_render_cases_reads_code_wrapped_outputs():
+    data = dict(FETCHED, exampleTestcases="[2,7]\n9\n[3,3]\n6",
+                metaData='{"name":"twoSum","params":[{"name":"nums"},{"name":"target"}]}',
+                content="<p><strong>Output:</strong> <code>[0,1]</code></p><p><strong>Output:</strong> <code>[0,1]</code></p>")
+    assert lc.render_cases(data) == "[2,7]\n9\n=> [0,1]\n\n[3,3]\n6\n=> [0,1]\n"
