@@ -1,31 +1,28 @@
 # 155. Min Stack [Medium]
 # https://leetcode.com/problems/min-stack/
 
-import heapq
-
 
 class MinStack:
     def __init__(self):
         self.st = []
-        self.q = []
-        self.freq = {}
+        self.mns = []
 
     def push(self, value: int) -> None:
-        heapq.heappush(self.q, value)
-        self.freq[value] = self.freq.get(value, 0) + 1
         self.st.append(value)
+        if len(self.mns) == 0:
+            self.mns.append(value)
+        else:
+            self.mns.append(min(self.mns[-1], value))
 
     def pop(self) -> None:
-        value = self.st.pop()
-        self.freq[value] = self.freq[value] - 1
+        self.st.pop()
+        self.mns.pop()
 
     def top(self) -> int:
         return self.st[-1]
 
     def getMin(self) -> int:
-        while self.freq[self.q[0]] == 0:
-            heapq.heappop(self.q)
-        return self.q[0]
+        return self.mns[-1]
 
 
 if __name__ == "__main__":
