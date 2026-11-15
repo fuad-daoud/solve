@@ -469,3 +469,77 @@ def test_main_start_is_quiet_without_discord_config(tmp_path, monkeypatch, capsy
     monkeypatch.setattr(discord, "load_config", lambda: None)
     assert lc.main(["start", "generate-parentheses"], tmp_path) == 0
     assert "discord" not in capsys.readouterr().out
+
+
+# --- design problems ("Implement the MinStack class") -----------------------
+
+DESIGN = dict(
+    FETCHED,
+    questionFrontendId="155", title="Min Stack", titleSlug="min-stack",
+    exampleTestcases='["MinStack","push","push","push","getMin","pop","top","getMin"]\n[[],[-2],[0],[-3],[],[],[],[]]',
+    metaData='{"classname":"MinStack","constructor":{"params":[]},"methods":[{"name":"push","params":[{"name":"value"}]},'
+             '{"name":"pop","params":[]},{"name":"top","params":[]},{"name":"getMin","params":[]}],"systemdesign":true}',
+    codeSnippets=[{"langSlug": "python3", "code": "class MinStack:\n\n    def __init__(self):\n        \n"}],
+    content="<pre>\n<strong>Input</strong>\n[&quot;MinStack&quot;,&quot;push&quot;]\n[[],[-2]]\n\n"
+            "<strong>Output</strong>\n[null,null,null,null,-3,null,0,-2]\n\n<strong>Explanation</strong>\n"
+            "MinStack minStack = new MinStack();\n</pre>",
+)
+
+
+class MinStack:
+    def __init__(self):
+        self.st = []
+
+    def push(self, value):
+        self.st.append((value, min(value, self.st[-1][1]) if self.st else value))
+
+    def pop(self):
+        self.st.pop()
+
+    def top(self):
+        return self.st[-1][0]
+
+    def getMin(self):
+        return self.st[-1][1]
+
+
+DESIGN_CASES = ('["MinStack","push","push","push","getMin","pop","top","getMin"]\n'
+                '[[],[-2],[0],[-3],[],[],[],[]]\n=> [null,null,null,null,-3,null,0,-2]\n')
+
+
+def test_render_cases_design_problem_pairs_ops_with_args_and_reads_unlabelled_output():
+    assert lc.render_cases(DESIGN) == DESIGN_CASES
+
+
+def test_render_solve_design_problem_tests_the_named_class():
+    text = lc.render_solve(DESIGN)
+    assert "lc.test(MinStack)" in text
+    assert "lc.test(Solution)" not in text
+
+
+def test_run_cases_design_problem_replays_the_operations():
+    results = lc.run_cases(MinStack, lc.parse_cases(DESIGN_CASES))
+    assert results[0].status == "pass"
+    assert results[0].actual == "[null,null,null,null,-3,null,0,-2]"
+
+
+def test_run_cases_design_problem_reports_a_wrong_answer():
+    class Broken(MinStack):
+        def getMin(self):
+            return 0
+
+    cases = lc.parse_cases(DESIGN_CASES.replace('["MinStack"', '["Broken"'))
+    assert lc.run_cases(Broken, cases)[0].status == "fail"
+
+
+def test_load_solution_finds_the_design_class_named_in_cases(tmp_path):
+    (tmp_path / "solve.py").write_text("class Node: pass\n\nclass MinStack:\n    def top(self): return 7\n")
+    (tmp_path / "cases.txt").write_text(DESIGN_CASES)
+    assert lc.load_solution(tmp_path).__name__ == "MinStack"
+
+
+def test_start_writes_design_problem_files(tmp_path, monkeypatch):
+    monkeypatch.setattr(lc, "fetch", lambda slug: DESIGN)
+    lc.start(tmp_path, "min-stack")
+    assert (tmp_path / "cases.txt").read_text() == DESIGN_CASES
+    assert (tmp_path / "problem.md").read_text().startswith("# 155. Min Stack [Medium]")

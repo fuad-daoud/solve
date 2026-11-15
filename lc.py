@@ -84,13 +84,38 @@ class Result:
     actual: str
 
 
+def design_ops(case: Case) -> tuple[list[str], list[list]] | None:
+    """A design-problem case is two lines, `["MinStack","push",...]` and `[[],[-2],...]`; else None."""
+    if len(case.inputs) != 2:
+        return None
+    try:
+        ops, args = (json.loads(a) for a in case.inputs)
+    except json.JSONDecodeError:
+        return None
+    if (isinstance(ops, list) and ops and all(isinstance(o, str) for o in ops)
+            and isinstance(args, list) and len(args) == len(ops) and all(isinstance(a, list) for a in args)
+            and re.fullmatch(r"[A-Z]\w*", ops[0])):
+        return ops, args
+    return None
+
+
+def replay(cls, ops: list[str], args: list[list]) -> list:
+    """Construct `cls` with the first args, call each op in turn; LeetCode's output list (None for the constructor)."""
+    obj = cls(*args[0])
+    return [None] + [getattr(obj, op)(*a) for op, a in zip(ops[1:], args[1:])]
+
+
 def run_cases(cls, cases: list[Case]) -> list[Result]:
-    method = find_method(cls)
+    design = bool(cases) and design_ops(cases[0]) is not None
+    method = None if design else find_method(cls)
     results = []
     for case in cases:
         try:
-            args = [json.loads(a) for a in case.inputs]
-            value = method(cls(), *args)
+            if design:
+                value = replay(cls, *design_ops(case))
+            else:
+                args = [json.loads(a) for a in case.inputs]
+                value = method(cls(), *args)
         except Exception:
             results.append(Result(case, "error", traceback.format_exc().rstrip()))
             continue
@@ -138,6 +163,11 @@ def _meta(data: dict) -> Meta:
     return Meta(int(data["questionFrontendId"]), data["title"], data["difficulty"], data["titleSlug"])
 
 
+def _classname(data: dict) -> str | None:
+    """The class a design problem asks for ("MinStack"), or None for a plain `Solution` problem."""
+    return json.loads(data["metaData"]).get("classname")
+
+
 def render_solve(data: dict) -> str:
     meta = _meta(data)
     snippet = next(s["code"] for s in data["codeSnippets"] if s["langSlug"] == "python3").rstrip()
@@ -149,17 +179,18 @@ def render_solve(data: dict) -> str:
         "\n\n"
         'if __name__ == "__main__":\n'
         "    import lc\n"
-        "    lc.test(Solution)\n"
+        f"    lc.test({_classname(data) or 'Solution'})\n"
     )
 
 
 def render_cases(data: dict) -> str:
-    arity = len(json.loads(data["metaData"]).get("params", []))
+    # a design problem's example is two lines: the operations and their arguments
+    arity = 2 if _classname(data) else len(json.loads(data["metaData"]).get("params", []))
     lines = data["exampleTestcases"].split("\n")
     content = data.get("content") or ""
     # examples are either plain text in <pre> blocks or wrapped in <span class="example-io">
     outputs = [html.unescape(o) for o in re.findall(
-        r"<strong>Output:</strong>\s*(?:<span[^>]*>)?\s*(.*?)\s*(?:</span>|<|\n)", content)]
+        r"<strong>Output:?</strong>\s*(?:<span[^>]*>)?\s*([^\s<].*?)\s*(?:</span>|<|\n)", content)]
     # "return the answer in any order" → compare order-insensitively
     prefix = "~ " if re.search(r"in\s*(<[^>]+>\s*)*any\s*(<[^>]+>\s*)*order", html.unescape(content)) else ""
     blocks = []
@@ -412,7 +443,13 @@ def load_solution(root: Path):
     spec = importlib.util.spec_from_file_location("solve", root / "solve.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.Solution
+    if hasattr(module, "Solution"):
+        return module.Solution
+    # design problem: the class is the first operation of the first case
+    cases = parse_cases((root / "cases.txt").read_text())
+    if cases and (ops := design_ops(cases[0])) and hasattr(module, ops[0][0]):
+        return getattr(module, ops[0][0])
+    raise ValueError("solve.py defines no Solution class (nor the class cases.txt constructs)")
 
 
 def test(cls, root: Path | None = None) -> int:
