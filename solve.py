@@ -1,31 +1,35 @@
-# 155. Min Stack [Medium]
-# https://leetcode.com/problems/min-stack/
+# 150. Evaluate Reverse Polish Notation [Medium]
+# https://leetcode.com/problems/evaluate-reverse-polish-notation/
+
+import math
 
 
-class MinStack:
-    def __init__(self):
-        self.st = []
-        self.mns = []
+class Solution:
+    def evalRPN(self, tokens: list[str]) -> int:
+        st = []
+        ops = ["*", "/", "-", "+"]
+        for t in tokens:
+            if t in ops:
+                v1 = st.pop()
+                v2 = st.pop()
+                answer = 0
+                if t == "+":
+                    answer = v2 + v1
+                elif t == "-":
+                    answer = v2 - v1
+                elif t == "*":
+                    answer = v2 * v1
+                else:
+                    answer = math.trunc(v2 / v1)
+                st.append(answer)
 
-    def push(self, value: int) -> None:
-        self.st.append(value)
-        if len(self.mns) == 0:
-            self.mns.append(value)
-        else:
-            self.mns.append(min(self.mns[-1], value))
+                continue
+            st.append(int(t))
 
-    def pop(self) -> None:
-        self.st.pop()
-        self.mns.pop()
-
-    def top(self) -> int:
-        return self.st[-1]
-
-    def getMin(self) -> int:
-        return self.mns[-1]
+        return st.pop()
 
 
 if __name__ == "__main__":
     import lc
 
-    lc.test(MinStack)
+    lc.test(Solution)
