@@ -1,28 +1,23 @@
 # 150. Evaluate Reverse Polish Notation [Medium]
 # https://leetcode.com/problems/evaluate-reverse-polish-notation/
 
-import math
+import operator
 
 
 class Solution:
     def evalRPN(self, tokens: list[str]) -> int:
         st = []
-        ops = ["*", "/", "-", "+"]
+        OPS = {
+            "+": operator.add,
+            "-": operator.sub,
+            "*": operator.mul,
+            "/": lambda a, b: int(a / b),
+        }
         for t in tokens:
-            if t in ops:
-                v1 = st.pop()
-                v2 = st.pop()
-                answer = 0
-                if t == "+":
-                    answer = v2 + v1
-                elif t == "-":
-                    answer = v2 - v1
-                elif t == "*":
-                    answer = v2 * v1
-                else:
-                    answer = math.trunc(v2 / v1)
-                st.append(answer)
-
+            if t in OPS:
+                right = st.pop()
+                left = st.pop()
+                st.append(OPS[t](left, right))
                 continue
             st.append(int(t))
 
