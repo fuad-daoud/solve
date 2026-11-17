@@ -11,10 +11,7 @@ class Solution:
         answer = sm
         for i in range(1, len(nums)):
             d = nums[i]
-            if sm + d < d:
-                sm = d
-            else:
-                sm += d
+            sm = max(d, sm + d)
             answer = max(answer, sm)
         return answer
 
