@@ -4,12 +4,13 @@
 
 class Solution:
     def lengthOfLongestSubstring(self, string: str) -> int:
-        last = {}
+        seen = set()
         left = best = 0
         for right, c in enumerate(string):
-            if last.get(c, -1) >= left:  # duplicate is inside the window
-                left = last[c] + 1
-            last[c] = right
+            while c in seen:
+                seen.remove(string[left])
+                left += 1
+            seen.add(c)
             best = max(best, right - left + 1)
         return best
 
