@@ -1,41 +1,24 @@
-# 53. Maximum Subarray [Medium]
-# https://leetcode.com/problems/maximum-subarray/
-
-
-# divide & conquer
+# 3. Longest Substring Without Repeating Characters [Medium]
+# https://leetcode.com/problems/longest-substring-without-repeating-characters/
 
 
 class Solution:
-    def maxSubArray(self, nums: list[int]) -> int:
-        return solve(nums, 0, len(nums))
-
-
-def solve(nums: list[int], left, right):
-    split = (left + right) // 2
-
-    if right - left == 1:
-        return max(nums[left], nums[right - 1])
-    if right - left < 3:
-        return max(nums[left], nums[left] + nums[right - 1], nums[right - 1])
-
-    ## cross check
-    rightSum = 0
-    rightBest = nums[split]
-    for i in range(split, right):
-        rightSum = rightSum + nums[i]
-        rightBest = max(rightBest, rightSum)
-
-    leftSum = 0
-    leftBest = nums[split - 1]
-    for i in range(split - 1, left - 1, -1):
-        leftSum = leftSum + nums[i]
-        leftBest = max(leftBest, leftSum)
-
-    return max(
-        solve(nums, left, split),
-        rightBest + leftBest,
-        solve(nums, split, right),
-    )
+    def lengthOfLongestSubstring(self, string: str) -> int:
+        if len(string) == 0:
+            return 0
+        left = 0
+        answer = 1
+        chars = {string[left]: 0}
+        for right in range(2, len(string) + 1):
+            if string[right - 1] in chars:
+                value = chars.pop(string[right - 1]) + 1
+                while left != value and string[left] in chars:
+                    chars.pop(string[left])
+                    left += 1
+                left = value
+            chars[string[right - 1]] = right - 1
+            answer = max(answer, right - left)
+        return answer
 
 
 if __name__ == "__main__":

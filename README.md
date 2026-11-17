@@ -90,6 +90,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | # | Problem | Difficulty | Solution |
 |---|---|---|---|
 | 1 | [Two Sum](https://leetcode.com/problems/two-sum/) | Easy | [0001-two-sum.py](problems/0001-two-sum.py) |
+| 3 | [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | [0003-longest-substring-without-repeating-characters.py](problems/0003-longest-substring-without-repeating-characters.py) |
 | 6 | [Zigzag Conversion](https://leetcode.com/problems/zigzag-conversion/) | Medium | [0006-zigzag-conversion.py](problems/0006-zigzag-conversion.py) |
 | 11 | [Container With Most Water](https://leetcode.com/problems/container-with-most-water/) | Medium | [0011-container-with-most-water.py](problems/0011-container-with-most-water.py) |
 | 15 | [3Sum](https://leetcode.com/problems/3sum/) | Medium | [0015-3sum.py](problems/0015-3sum.py) |
