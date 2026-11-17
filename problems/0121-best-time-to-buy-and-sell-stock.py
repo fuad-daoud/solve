@@ -2,15 +2,24 @@
 # https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 
 
+# Kadane's algorithmKadane's algorithm
+
+
 class Solution:
     def maxProfit(self, prices: list[int]) -> int:
-        answer = -1
-        mx = -1
-        for p in reversed(prices):
-            answer = max(answer, mx - p)
-            mx = max(mx, p)
+        answer = 0
+        sm = 0
+        for i in range(0, len(prices) - 1):
+            if i == len(prices) - 1:
+                break
+            d = prices[i + 1] - prices[i]
+            if sm < 0:
+                sm = d
+            else:
+                sm += d
+            answer = max(answer, sm)
 
-        return max(0, answer)
+        return answer
 
 
 if __name__ == "__main__":
