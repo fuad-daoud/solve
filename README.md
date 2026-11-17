@@ -13,6 +13,7 @@ make setup   # once per clone: installs the pre-commit hook
 ```sh
 make next                                             # first unticked problem in ROADMAP.md → solve.py, cases.txt, problem.md (premium ones get struck through and skipped)
 make start P=https://leetcode.com/problems/two-sum/   # …or any problem by URL / slug
+make path                                             # …or the next problem on paths/interview.txt (core by day, then stretch; never the mock six)
 make test                                             # run every case, LeetCode-style report
 make commit                                           # "feat: solved 1. Two Sum [Easy]"; hook saves to problems/ + updates tables
 ```

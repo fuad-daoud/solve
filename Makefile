@@ -1,4 +1,4 @@
-.PHONY: start next test add save commit setup check smoke
+.PHONY: start next path test add save commit setup check smoke
 
 # make start P=<leetcode url or slug>   (p= works too)
 P ?= $(p)
@@ -9,6 +9,10 @@ start:
 # start the first unticked problem in ROADMAP.md
 next:
 	python3 lc.py next
+
+# start the next problem on the interview path (paths/interview.txt: core by day, then stretch)
+path:
+	python3 lc.py path
 
 test:
 	python3 lc.py test

@@ -1,0 +1,38 @@
+# Interview path: ZenHR onsite, Nov 26, 2026. `make path` walks [core] by day, then [stretch].
+# A problem counts as done once it is saved in problems/ (make commit). [mock] is never handed out:
+# those six are reserved, unseen, for the timed pairs on Nov 24-25.
+
+[core]
+2026-11-17  121  best-time-to-buy-and-sell-stock
+2026-11-17  3    longest-substring-without-repeating-characters
+2026-11-18  875  koko-eating-bananas
+2026-11-18  153  find-minimum-in-rotated-sorted-array
+2026-11-19  206  reverse-linked-list
+2026-11-19  21   merge-two-sorted-lists
+2026-11-19  146  lru-cache
+2026-11-20  104  maximum-depth-of-binary-tree
+2026-11-20  102  binary-tree-level-order-traversal
+2026-11-20  98   validate-binary-search-tree
+2026-11-21  200  number-of-islands                  # with a queue or explicit stack, not recursion
+2026-11-21  207  course-schedule
+2026-11-22  215  kth-largest-element-in-an-array
+2026-11-22  56   merge-intervals
+2026-11-23  198  house-robber                       # if a day slips, drop 322 first, then 198
+2026-11-23  322  coin-change
+
+[stretch]
+981  time-based-key-value-store                     # write the binary search by hand, no bisect
+567  permutation-in-string
+973  k-closest-points-to-origin
+70   climbing-stairs
+
+[mock]
+# pair A
+141  linked-list-cycle
+994  rotting-oranges
+# pair B
+703  kth-largest-element-in-a-stream
+57   insert-interval
+# pair C
+235  lowest-common-ancestor-of-a-binary-search-tree
+435  non-overlapping-intervals

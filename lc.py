@@ -16,6 +16,7 @@ import urllib.error
 import urllib.request
 from collections import Counter
 from dataclasses import dataclass, field
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -585,6 +586,61 @@ def unticked_urls(root: Path) -> list[str]:
     return [m.group(1) for line in roadmap.read_text().splitlines() if (m := ROADMAP_LINE.match(line))]
 
 
+@dataclass
+class PathEntry:
+    id: int
+    slug: str
+    day: date | None = None
+
+
+PATH_LINE = re.compile(r"^(?:(\d{4}-\d{2}-\d{2})\s+)?(\d+)\s+([\w-]+)$")
+
+
+def read_path(root: Path, name: str) -> dict[str, list[PathEntry]]:
+    """paths/<name>.txt: `[core]` / `[stretch]` / `[mock]` sections of `[YYYY-MM-DD] N slug` lines, `#` comments."""
+    sections, current = {}, None
+    for line in (root / "paths" / f"{name}.txt").read_text().splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            current = sections.setdefault(line[1:-1], [])
+        elif current is not None and (m := PATH_LINE.match(line)):
+            current.append(PathEntry(int(m.group(2)), m.group(3), date.fromisoformat(m.group(1)) if m.group(1) else None))
+        else:
+            raise ValueError(f"paths/{name}.txt: can't read {line!r}")
+    return sections
+
+
+def solved_slugs(root: Path) -> set[str]:
+    """Slugs saved in problems/ (NNNN-slug.py): what a path counts as done."""
+    return {f.stem.split("-", 1)[1] for f in (root / "problems").glob("*.py") if "-" in f.stem}
+
+
+def path_next(root: Path, name: str) -> str | None:
+    """First unsolved slug in the path's core, then stretch; mock problems are never handed out."""
+    sections, done = read_path(root, name), solved_slugs(root)
+    for entry in sections.get("core", []) + sections.get("stretch", []):
+        if entry.slug not in done:
+            return entry.slug
+    return None
+
+
+def path_status(root: Path, name: str, today: date) -> str:
+    """"core 3/16 · stretch 0/4 · today: 875, 153 · behind: 3"."""
+    sections, done = read_path(root, name), solved_slugs(root)
+    parts = []
+    for section in ("core", "stretch"):
+        entries = sections.get(section, [])
+        if entries:
+            parts.append(f"{section} {sum(e.slug in done for e in entries)}/{len(entries)}")
+    open_core = [e for e in sections.get("core", []) if e.slug not in done and e.day]
+    for label, keep in (("today", lambda d: d == today), ("behind", lambda d: d < today)):
+        if ids := [str(e.id) for e in open_core if keep(e.day)]:
+            parts.append(f"{label}: {', '.join(ids)}")
+    return " · ".join(parts)
+
+
 SMOKE_PAUSE = 0.4  # seconds between LeetCode requests
 
 
@@ -685,6 +741,9 @@ def main(argv: list[str], root: Path | None = None) -> int:
     p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
     p = sub.add_parser("next", help="start the first unsolved problem in ROADMAP.md")
     p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
+    p = sub.add_parser("path", help="start the next problem on paths/<name>.txt (core, then stretch)")
+    p.add_argument("name", nargs="?", default="interview", help="path file under paths/ (default: interview)")
+    p.add_argument("--force", action="store_true", help="overwrite solve.py even if unsaved")
     sub.add_parser("test", help="run cases.txt against solve.py")
     sub.add_parser("add", help="append a case to cases.txt (interactive)")
     sub.add_parser("save", help="copy solve.py + cases.txt into problems/ and refresh README")
@@ -719,9 +778,18 @@ def announce_start(meta: Meta) -> None:
 
 
 def _dispatch(args, root: Path) -> int:
-    if args.cmd in ("start", "next"):
+    if args.cmd in ("start", "next", "path"):
+        if args.cmd == "path":
+            print(path_status(root, args.name, date.today()))
         while True:
-            problem = args.problem if args.cmd == "start" else next_unsolved(root)
+            if args.cmd == "path":
+                problem = path_next(root, args.name)
+                if problem is None:
+                    print(f"lc: paths/{args.name}.txt core and stretch are done; mock problems stay closed for mock days",
+                          file=sys.stderr)
+                    return 1
+            else:
+                problem = args.problem if args.cmd == "start" else next_unsolved(root)
             if problem is None:
                 print("lc: nothing left unticked in ROADMAP.md", file=sys.stderr)
                 return 1
@@ -732,7 +800,7 @@ def _dispatch(args, root: Path) -> int:
                 print(f"lc: {e}", file=sys.stderr)
                 return 1
             except Premium as e:
-                if args.cmd == "start":
+                if args.cmd != "next":
                     raise
                 # strike it out so the roadmap moves past it, then try the following problem
                 strike_roadmap(root, problem)

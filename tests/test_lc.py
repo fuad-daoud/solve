@@ -1,4 +1,5 @@
 import json
+from datetime import date
 
 import pytest
 
@@ -733,3 +734,73 @@ def test_rendered_node_solve_py_loads(tmp_path):
     (tmp_path / "solve.py").write_text(lc.render_solve(LINKED).replace("-> bool:", "-> bool:\n        return False"))
     (tmp_path / "cases.txt").write_text("[1]\n-1\n=> false\n")
     assert lc.load_solution(tmp_path).__name__ == "Solution"
+
+
+PATH_FILE = """# interview path
+[core]
+2026-11-17  121  best-time-to-buy-and-sell-stock
+2026-11-17  3    longest-substring-without-repeating-characters
+2026-11-18  875  koko-eating-bananas
+
+[stretch]
+981  time-based-key-value-store
+
+[mock]
+141  linked-list-cycle
+"""
+
+
+def _path_root(tmp_path, solved=()):
+    (tmp_path / "paths").mkdir()
+    (tmp_path / "paths" / "interview.txt").write_text(PATH_FILE)
+    (tmp_path / "problems").mkdir()
+    for stem in solved:
+        (tmp_path / "problems" / f"{stem}.py").write_text("")
+    return tmp_path
+
+
+def test_read_path_parses_sections_dates_and_numbers(tmp_path):
+    sections = lc.read_path(_path_root(tmp_path), "interview")
+    assert [e.slug for e in sections["core"]] == [
+        "best-time-to-buy-and-sell-stock", "longest-substring-without-repeating-characters", "koko-eating-bananas"]
+    assert sections["core"][2].day == date(2026, 11, 18) and sections["core"][2].id == 875
+    assert sections["stretch"][0].day is None and sections["mock"][0].slug == "linked-list-cycle"
+
+
+def test_path_next_walks_core_then_stretch_skipping_solved(tmp_path):
+    root = _path_root(tmp_path, solved=["0121-best-time-to-buy-and-sell-stock"])
+    assert lc.path_next(root, "interview") == "longest-substring-without-repeating-characters"
+    for stem in ("0003-longest-substring-without-repeating-characters", "0875-koko-eating-bananas"):
+        (root / "problems" / f"{stem}.py").write_text("")
+    assert lc.path_next(root, "interview") == "time-based-key-value-store"
+
+
+def test_path_next_never_hands_out_mock_problems(tmp_path):
+    root = _path_root(tmp_path, solved=["0121-best-time-to-buy-and-sell-stock",
+                                        "0003-longest-substring-without-repeating-characters",
+                                        "0875-koko-eating-bananas", "0981-time-based-key-value-store"])
+    assert lc.path_next(root, "interview") is None
+
+
+def test_path_status_counts_and_names_today_and_overdue(tmp_path):
+    root = _path_root(tmp_path, solved=["0121-best-time-to-buy-and-sell-stock"])
+    assert lc.path_status(root, "interview", date(2026, 11, 17)) == "core 1/3 · stretch 0/1 · today: 3"
+    assert lc.path_status(root, "interview", date(2026, 11, 18)) == "core 1/3 · stretch 0/1 · today: 875 · behind: 3"
+
+
+def test_main_path_starts_the_next_path_problem_and_prints_status(tmp_path, monkeypatch, capsys):
+    seen = []
+    monkeypatch.setattr(lc, "fetch", lambda slug: seen.append(slug) or FETCHED)
+    monkeypatch.setattr(lc, "announce_start", lambda meta: None)
+    assert lc.main(["path"], root=_path_root(tmp_path)) == 0
+    assert seen == ["best-time-to-buy-and-sell-stock"]
+    assert "core 0/3" in capsys.readouterr().out
+
+
+def test_main_path_reports_when_core_and_stretch_are_done(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(lc, "announce_start", lambda meta: None)
+    root = _path_root(tmp_path, solved=["0121-best-time-to-buy-and-sell-stock",
+                                        "0003-longest-substring-without-repeating-characters",
+                                        "0875-koko-eating-bananas", "0981-time-based-key-value-store"])
+    assert lc.main(["path"], root=root) == 1
+    assert "mock" in capsys.readouterr().err
