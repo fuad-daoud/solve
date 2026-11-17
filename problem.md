@@ -1,28 +1,29 @@
-# 739. Daily Temperatures [Medium]
+# 121. Best Time to Buy and Sell Stock [Easy]
 
-https://leetcode.com/problems/daily-temperatures/
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 
-Given an array of integers `temperatures` represents the daily temperatures, return *an array* `answer` *such that* `answer[i]` *is the number of days you have to wait after the* `i^th` *day to get a warmer temperature*. If there is no future day for which this is possible, keep `answer[i] == 0` instead.
+You are given an array `prices` where `prices[i]` is the price of a given stock on the `i^th` day.
+
+You want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.
+
+Return *the maximum profit you can achieve from this transaction*. If you cannot achieve any profit, return `0`.
 
 **Example 1:**
 ```
-Input: temperatures = [73,74,75,71,69,72,76,73]
-Output: [1,1,4,2,1,1,0,0]
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
 ```
 
 **Example 2:**
 ```
-Input: temperatures = [30,40,50,60]
-Output: [1,1,1,0]
-```
-
-**Example 3:**
-```
-Input: temperatures = [30,60,90]
-Output: [1,1,0]
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
 ```
 
 **Constraints:**
 
-- `1 <=temperatures.length <= 10^5`
-- `30 <=temperatures[i] <= 100`
+- `1 <= prices.length <= 10^5`
+- `0 <= prices[i] <= 10^4`

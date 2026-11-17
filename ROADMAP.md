@@ -121,7 +121,7 @@ graph TD
 
 ## 5. Sliding Window (6)
 
-- [ ] **121. Best Time to Buy and Sell Stock** (Easy) · [LC](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) · [Video](https://youtu.be/1pkOgXD63yU)
+- [x] **121. Best Time to Buy and Sell Stock** (Easy) · [LC](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) · [Video](https://youtu.be/1pkOgXD63yU) · [sol](problems/0121-best-time-to-buy-and-sell-stock.py)
 - [ ] **3. Longest Substring Without Repeating Characters** (Medium) · [LC](https://leetcode.com/problems/longest-substring-without-repeating-characters/) · [Video](https://youtu.be/wiGpQwVHdE0)
 - [ ] **424. Longest Repeating Character Replacement** (Medium) · [LC](https://leetcode.com/problems/longest-repeating-character-replacement/) · [Video](https://youtu.be/gqXU1UyA8pk)
 - [ ] **567. Permutation in String** (Medium) · [LC](https://leetcode.com/problems/permutation-in-string/) · [Video](https://youtu.be/UbyhOgBN834)

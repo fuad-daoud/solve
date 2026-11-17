@@ -100,6 +100,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 42 | [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/) | Hard | [0042-trapping-rain-water.py](problems/0042-trapping-rain-water.py) |
 | 49 | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | Medium | [0049-group-anagrams.py](problems/0049-group-anagrams.py) |
 | 66 | [Plus One](https://leetcode.com/problems/plus-one/) | Easy | [0066-plus-one.py](problems/0066-plus-one.py) |
+| 121 | [Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) | Easy | [0121-best-time-to-buy-and-sell-stock.py](problems/0121-best-time-to-buy-and-sell-stock.py) |
 | 122 | [Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/) | Medium | [0122-best-time-to-buy-and-sell-stock-ii.py](problems/0122-best-time-to-buy-and-sell-stock-ii.py) |
 | 125 | [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | [0125-valid-palindrome.py](problems/0125-valid-palindrome.py) |
 | 128 | [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/) | Medium | [0128-longest-consecutive-sequence.py](problems/0128-longest-consecutive-sequence.py) |
