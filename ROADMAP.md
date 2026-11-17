@@ -105,7 +105,7 @@ graph TD
 - [x] **155. Min Stack** (Medium) · [LC](https://leetcode.com/problems/min-stack/) · [Video](https://youtu.be/qkLl7nAwDPo) · [sol](problems/0155-min-stack.py)
 - [x] **150. Evaluate Reverse Polish Notation** (Medium) · [LC](https://leetcode.com/problems/evaluate-reverse-polish-notation/) · [Video](https://youtu.be/iu0082c4HDE) · [sol](problems/0150-evaluate-reverse-polish-notation.py)
 - [x] **22. Generate Parentheses** (Medium) · [LC](https://leetcode.com/problems/generate-parentheses/) · [Video](https://youtu.be/s9fokUqJ76A) · [sol](problems/0022-generate-parentheses.py)
-- [ ] **739. Daily Temperatures** (Medium) · [LC](https://leetcode.com/problems/daily-temperatures/) · [Video](https://youtu.be/cTBiBSnjO3c)
+- [x] **739. Daily Temperatures** (Medium) · [LC](https://leetcode.com/problems/daily-temperatures/) · [Video](https://youtu.be/cTBiBSnjO3c) · [sol](problems/0739-daily-temperatures.py)
 - [ ] **853. Car Fleet** (Medium) · [LC](https://leetcode.com/problems/car-fleet/) · [Video](https://youtu.be/Pr6T-3yB9RM)
 - [ ] **84. Largest Rectangle in Histogram** (Hard) · [LC](https://leetcode.com/problems/largest-rectangle-in-histogram/) · [Video](https://youtu.be/zx5Sw9130L0)
 

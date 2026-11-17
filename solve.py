@@ -1,27 +1,31 @@
-# 150. Evaluate Reverse Polish Notation [Medium]
-# https://leetcode.com/problems/evaluate-reverse-polish-notation/
-
-import operator
+# 739. Daily Temperatures [Medium]
+# https://leetcode.com/problems/daily-temperatures/
 
 
 class Solution:
-    def evalRPN(self, tokens: list[str]) -> int:
-        st = []
-        OPS = {
-            "+": operator.add,
-            "-": operator.sub,
-            "*": operator.mul,
-            "/": lambda a, b: int(a / b),
-        }
-        for t in tokens:
-            if t in OPS:
-                right = st.pop()
-                left = st.pop()
-                st.append(OPS[t](left, right))
+    def dailyTemperatures(self, temperatures: list[int]) -> list[int]:
+        answer = []
+        stack = []
+        n = len(temperatures)
+        for i, t in enumerate(reversed(temperatures)):
+            i = n - i - 1
+            if len(stack) == 0:
+                stack.append([t, i])
+                answer.append(0)
                 continue
-            st.append(int(t))
 
-        return st.pop()
+            while len(stack) != 0 and t >= stack[-1][0]:
+                stack.pop()
+
+            if len(stack) == 0:
+                stack.append([t, i])
+                answer.append(0)
+                continue
+
+            answer.append(stack[-1][1] - i)
+            stack.append([t, i])
+
+        return answer[::-1]
 
 
 if __name__ == "__main__":
