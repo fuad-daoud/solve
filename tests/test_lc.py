@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 import lc
 
 
@@ -597,3 +599,137 @@ def test_main_smoke_exit_code_reflects_issues(tmp_path, monkeypatch, capsys):
     assert "broken" in out and "2 of 4" in out
     (tmp_path / "ROADMAP.md").write_text(SMOKE_ROADMAP.split("- [ ] **252")[0])
     assert lc.main(["smoke"], root=tmp_path) == 0
+
+
+# --- linked lists and trees -------------------------------------------------------------------------------------
+
+
+def test_build_list_and_back():
+    head = lc.build_list([1, 2, 3])
+    assert (head.val, head.next.val, head.next.next.val, head.next.next.next) == (1, 2, 3, None)
+    assert lc.list_values(head) == [1, 2, 3]
+    assert lc.build_list([]) is None
+
+
+def test_build_list_links_the_tail_back_to_pos():
+    head = lc.build_list([3, 2, 0, -4], pos=1)
+    assert head.next.next.next.next is head.next
+    assert lc.build_list([1], pos=-1).next is None
+
+
+def test_list_values_refuses_a_cycle_instead_of_hanging():
+    with pytest.raises(ValueError, match="cycle"):
+        lc.list_values(lc.build_list([1, 2], pos=0))
+
+
+def test_build_tree_is_level_order_with_nulls_and_round_trips():
+    root = lc.build_tree([3, 9, 20, None, None, 15, 7])
+    assert (root.val, root.left.val, root.right.val, root.left.left, root.right.left.val) == (3, 9, 20, None, 15)
+    assert lc.tree_values(root) == [3, 9, 20, None, None, 15, 7]
+    assert lc.tree_values(lc.build_tree([1, None, 2])) == [1, None, 2]
+    assert lc.build_tree([]) is None
+    assert lc.tree_values(None) == []
+
+
+def test_run_cases_turns_list_params_into_linked_lists_and_returns_back():
+    class Solution:
+        def reverseList(self, head: "ListNode | None") -> "ListNode | None":
+            prev = None
+            while head:
+                head.next, prev, head = prev, head, head.next
+            return prev
+
+    results = lc.run_cases(Solution, lc.parse_cases("[1,2,3,4,5]\n=> [5,4,3,2,1]\n\n[]\n=> []\n"))
+    assert [r.status for r in results] == ["pass", "pass"]
+    assert results[0].actual == "[5,4,3,2,1]"
+
+
+def test_run_cases_reads_node_annotations_as_objects_too():
+    class Solution:
+        def mergeTwoLists(self, list1: lc.ListNode | None, list2: lc.ListNode | None) -> lc.ListNode | None:
+            dummy = tail = lc.ListNode()
+            while list1 and list2:
+                if list1.val <= list2.val:
+                    tail.next, list1 = list1, list1.next
+                else:
+                    tail.next, list2 = list2, list2.next
+                tail = tail.next
+            tail.next = list1 or list2
+            return dummy.next
+
+    results = lc.run_cases(Solution, lc.parse_cases("[1,2,4]\n[1,3,4]\n=> [1,1,2,3,4,4]\n\n[]\n[0]\n=> [0]\n"))
+    assert [r.status for r in results] == ["pass", "pass"]
+
+
+def test_run_cases_builds_a_cycle_from_the_extra_pos_input():
+    class Solution:
+        def hasCycle(self, head: "Optional[ListNode]") -> bool:
+            slow = fast = head
+            while fast and fast.next:
+                slow, fast = slow.next, fast.next.next
+                if slow is fast:
+                    return True
+            return False
+
+    results = lc.run_cases(Solution, lc.parse_cases("[3,2,0,-4]\n1\n=> true\n\n[1]\n-1\n=> false\n"))
+    assert [r.status for r in results] == ["pass", "pass"]
+
+
+def test_run_cases_trees_in_and_out():
+    class Solution:
+        def invertTree(self, root: "TreeNode | None") -> "TreeNode | None":
+            if root:
+                root.left, root.right = self.invertTree(root.right), self.invertTree(root.left)
+            return root
+
+    results = lc.run_cases(Solution, lc.parse_cases("[4,2,7,1,3,6,9]\n=> [4,7,2,9,6,3,1]\n\n[]\n=> []\n"))
+    assert [r.status for r in results] == ["pass", "pass"]
+
+
+def test_run_cases_tree_node_args_given_by_value_resolve_inside_root():
+    class Solution:
+        def lowestCommonAncestor(self, root: "TreeNode", p: "TreeNode", q: "TreeNode") -> "TreeNode":
+            assert isinstance(p, lc.TreeNode) and isinstance(q, lc.TreeNode)
+            while (p.val - root.val) * (q.val - root.val) > 0:
+                root = root.left if p.val < root.val else root.right
+            return root
+
+    cases = "[6,2,8,0,4,7,9,null,null,3,5]\n2\n8\n=> 6\n\n[6,2,8,0,4,7,9,null,null,3,5]\n2\n4\n=> 2\n"
+    results = lc.run_cases(Solution, lc.parse_cases(cases))
+    assert [r.status for r in results] == ["pass", "pass"]
+    assert results[0].actual == "6"
+
+
+def test_run_cases_list_of_linked_lists():
+    class Solution:
+        def mergeKLists(self, lists: "list[Optional[ListNode]]") -> "Optional[ListNode]":
+            values = sorted(v for head in lists for v in lc.list_values(head))
+            return lc.build_list(values)
+
+    results = lc.run_cases(Solution, lc.parse_cases("[[1,4,5],[1,3,4],[2,6]]\n=> [1,1,2,3,4,4,5,6]\n"))
+    assert results[0].status == "pass"
+
+
+LINKED = dict(FETCHED, codeSnippets=[{"langSlug": "python3", "code": (
+    "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n"
+    "#         self.val = val\n#         self.next = next\nclass Solution:\n"
+    "    def hasCycle(self, head: Optional[ListNode]) -> bool:\n        ")}])
+
+
+def test_render_solve_imports_the_node_classes_and_typing_names_the_snippet_uses():
+    text = lc.render_solve(LINKED)
+    assert "from lc import ListNode\n" in text
+    assert "from typing import Optional\n" in text
+    assert "TreeNode" not in text.split("# Definition")[0]
+    assert lc.parse_header(text).id == 22
+
+
+def test_render_solve_adds_no_imports_when_none_are_needed():
+    text = lc.render_solve(FETCHED)
+    assert "import" not in text.split('if __name__')[0]
+
+
+def test_rendered_node_solve_py_loads(tmp_path):
+    (tmp_path / "solve.py").write_text(lc.render_solve(LINKED).replace("-> bool:", "-> bool:\n        return False"))
+    (tmp_path / "cases.txt").write_text("[1]\n-1\n=> false\n")
+    assert lc.load_solution(tmp_path).__name__ == "Solution"

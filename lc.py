@@ -4,6 +4,7 @@
 import argparse
 import html
 import importlib.util
+import inspect
 import json
 import re
 import shutil
@@ -106,6 +107,142 @@ def replay(cls, ops: list[str], args: list[list]) -> list:
     return [None] + [getattr(obj, op)(*a) for op, a in zip(ops[1:], args[1:])]
 
 
+class ListNode:
+    """LeetCode's singly-linked list node; solve.py imports it when the snippet uses it."""
+
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+class TreeNode:
+    """LeetCode's binary tree node; solve.py imports it when the snippet uses it."""
+
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def build_list(values: list, pos: int = -1) -> ListNode | None:
+    """[1,2,3] → 1→2→3; `pos` ≥ 0 links the tail back to that node (LeetCode's cycle input)."""
+    nodes = [ListNode(v) for v in values]
+    for a, b in zip(nodes, nodes[1:]):
+        a.next = b
+    if nodes and 0 <= pos < len(nodes):
+        nodes[-1].next = nodes[pos]
+    return nodes[0] if nodes else None
+
+
+def list_values(head) -> list:
+    values, seen = [], set()
+    while head:
+        if id(head) in seen:
+            raise ValueError("the returned linked list has a cycle")
+        seen.add(id(head))
+        values.append(head.val)
+        head = head.next
+    return values
+
+
+def build_tree(values: list) -> TreeNode | None:
+    """LeetCode's level order, null = no child: [3,9,20,null,null,15,7]."""
+    if not values or values[0] is None:
+        return None
+    root = TreeNode(values[0])
+    queue, i = [root], 1
+    for node in queue:  # the list grows as we go
+        for side in ("left", "right"):
+            if i < len(values) and values[i] is not None:
+                child = TreeNode(values[i])
+                setattr(node, side, child)
+                queue.append(child)
+            i += 1
+        if i >= len(values):
+            break
+    return root
+
+
+def tree_values(root) -> list:
+    values, queue = [], [root]
+    for node in queue:
+        values.append(None if node is None else node.val)
+        if node is not None:
+            queue += [node.left, node.right]
+    while values and values[-1] is None:
+        values.pop()
+    return values
+
+
+def _node_kind(annotation) -> tuple[str, bool] | None:
+    """("ListNode" | "TreeNode", is-a-list-of-them) from an annotation, a string or an object; else None."""
+    text = annotation if isinstance(annotation, str) else str(annotation)
+    m = re.search(r"\b(ListNode|TreeNode)\b", text)
+    return (m.group(1), bool(re.match(r"(typing\.)?[Ll]ist\[", text))) if m else None
+
+
+def _find(root, val):
+    """The node holding `val` in the tree under `root`, or None."""
+    queue = [root]
+    for node in queue:
+        if node is not None:
+            if node.val == val:
+                return node
+            queue += [node.left, node.right]
+    return None
+
+
+def node_args(method, args: list) -> tuple[list, bool]:
+    """Turn JSON args into the ListNode / TreeNode params `method` is annotated with.
+
+    Returns (args, by_val): by_val is True when a TreeNode arg came as a value to look up inside the
+    first tree (LCA's p and q), in which case LeetCode expects a returned node's value, not its tree.
+    One extra trailing int after a single ListNode param is the cycle position (Linked List Cycle).
+    """
+    params = list(inspect.signature(method).parameters.values())[1:]
+    kinds = [_node_kind(p.annotation) for p in params]
+    pos = -1
+    if len(args) == len(params) + 1 and kinds and kinds[0] == ("ListNode", False) and isinstance(args[-1], int):
+        args, pos = args[:-1], args[-1]
+    out, root, by_val = list(args), None, False
+    for i, (kind, value) in enumerate(zip(kinds, args)):
+        if kind is None:
+            continue
+        name, many = kind
+        build = build_list if name == "ListNode" else build_tree
+        if many:
+            out[i] = [build(v) for v in value]
+        elif name == "TreeNode" and root is not None and not isinstance(value, list):
+            out[i], by_val = _find(root, value), True
+        else:
+            out[i] = build_list(value, pos) if name == "ListNode" else build_tree(value)
+            if name == "TreeNode" and root is None:
+                root = out[i]
+    return out, by_val
+
+
+def returns_node(method) -> bool:
+    """True when `method` is annotated to return a single ListNode / TreeNode."""
+    kind = _node_kind(inspect.signature(method).return_annotation)
+    return kind is not None and not kind[1]
+
+
+def plain(value, by_val: bool = False, node: bool = False):
+    """A returned value as JSON-able data: linked lists and trees serialized the way LeetCode prints them.
+
+    `node`: the method returns a ListNode / TreeNode, so None is the empty one, printed as [].
+    """
+    if value is None and node and not by_val:
+        return []
+    if isinstance(value, list):
+        return [plain(v, by_val) for v in value]
+    if hasattr(value, "val") and hasattr(value, "next"):
+        return list_values(value)
+    if hasattr(value, "val") and hasattr(value, "left"):
+        return value.val if by_val else tree_values(value)
+    return value
+
+
 def run_cases(cls, cases: list[Case]) -> list[Result]:
     design = bool(cases) and design_ops(cases[0]) is not None
     method = None if design else find_method(cls)
@@ -115,8 +252,8 @@ def run_cases(cls, cases: list[Case]) -> list[Result]:
             if design:
                 value = replay(cls, *design_ops(case))
             else:
-                args = [json.loads(a) for a in case.inputs]
-                value = method(cls(), *args)
+                args, by_val = node_args(method, [json.loads(a) for a in case.inputs])
+                value = plain(method(cls(), *args), by_val, returns_node(method))
         except Exception:
             results.append(Result(case, "error", traceback.format_exc().rstrip()))
             continue
@@ -169,12 +306,22 @@ def _classname(data: dict) -> str | None:
     return json.loads(data["metaData"]).get("classname")
 
 
+def _snippet_imports(snippet: str) -> str:
+    """Only what the snippet's code needs to load: typing names and lc's node classes (its comments don't count)."""
+    code = "\n".join(line for line in snippet.splitlines() if not line.lstrip().startswith("#"))
+    lines = [f"from typing import {name}" for name in ("List", "Optional") if re.search(rf"\b{name}\[", code)]
+    if nodes := [name for name in ("ListNode", "TreeNode") if re.search(rf"\b{name}\b", code)]:
+        lines.append(f"from lc import {', '.join(nodes)}")
+    return "".join(line + "\n" for line in lines)
+
+
 def render_solve(data: dict) -> str:
     meta = _meta(data)
     snippet = next(s["code"] for s in data["codeSnippets"] if s["langSlug"] == "python3").rstrip()
     return (
         f"# {meta.id}. {meta.title} [{meta.difficulty}]\n"
         f"# {meta.url}\n"
+        f"{_snippet_imports(snippet)}"
         "\n\n"
         f"{snippet}\n"
         "\n\n"
