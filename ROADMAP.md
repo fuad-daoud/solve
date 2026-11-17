@@ -123,7 +123,7 @@ graph TD
 
 - [x] **121. Best Time to Buy and Sell Stock** (Easy) · [LC](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) · [Video](https://youtu.be/1pkOgXD63yU) · [sol](problems/0121-best-time-to-buy-and-sell-stock.py)
 - [x] **3. Longest Substring Without Repeating Characters** (Medium) · [LC](https://leetcode.com/problems/longest-substring-without-repeating-characters/) · [Video](https://youtu.be/wiGpQwVHdE0) · [sol](problems/0003-longest-substring-without-repeating-characters.py)
-- [ ] **424. Longest Repeating Character Replacement** (Medium) · [LC](https://leetcode.com/problems/longest-repeating-character-replacement/) · [Video](https://youtu.be/gqXU1UyA8pk)
+- [x] **424. Longest Repeating Character Replacement** (Medium) · [LC](https://leetcode.com/problems/longest-repeating-character-replacement/) · [Video](https://youtu.be/gqXU1UyA8pk) · [sol](problems/0424-longest-repeating-character-replacement.py)
 - [ ] **567. Permutation in String** (Medium) · [LC](https://leetcode.com/problems/permutation-in-string/) · [Video](https://youtu.be/UbyhOgBN834)
 - [ ] **76. Minimum Window Substring** (Hard) · [LC](https://leetcode.com/problems/minimum-window-substring/) · [Video](https://youtu.be/jSto0O4AJbM)
 - [ ] **239. Sliding Window Maximum** (Hard) · [LC](https://leetcode.com/problems/sliding-window-maximum/) · [Video](https://youtu.be/DfljaUwZsOk)

@@ -1,20 +1,16 @@
-"abcabcbb"
-=> 3
-
-"bbbbb"
-=> 1
-
-"pwwkew"
-=> 3
-
-"mq"
-=> 2
-
-"<Dx"
-=> 3
-
-"1R1T7"
+"ABAB"
+2
 => 4
 
-"abba"
+"AABABBA"
+1
+=> 4
+
+"AAB"
+0
 => 2
+
+"AABBB"
+1
+=> 4
+
