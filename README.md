@@ -12,7 +12,7 @@ make setup   # once per clone: installs the pre-commit hook
 
 ```sh
 make next                                             # first unticked problem in ROADMAP.md → solve.py, cases.txt, problem.md (premium ones get struck through and skipped)
-make start P=https://leetcode.com/problems/two-sum/   # …or any problem by URL / slug
+make start P=https://leetcode.com/problems/two-sum/   # …or any problem by URL / slug / number (make start P=53)
 make path                                             # …or the next problem on paths/interview.txt (core by day, then stretch; never the mock six)
 make test                                             # run every case, LeetCode-style report
 make commit                                           # "feat: solved 1. Two Sum [Easy]"; hook saves to problems/ + updates tables
@@ -99,6 +99,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 36 | [Valid Sudoku](https://leetcode.com/problems/valid-sudoku/) | Medium | [0036-valid-sudoku.py](problems/0036-valid-sudoku.py) |
 | 42 | [Trapping Rain Water](https://leetcode.com/problems/trapping-rain-water/) | Hard | [0042-trapping-rain-water.py](problems/0042-trapping-rain-water.py) |
 | 49 | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | Medium | [0049-group-anagrams.py](problems/0049-group-anagrams.py) |
+| 53 | [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/) | Medium | [0053-maximum-subarray.py](problems/0053-maximum-subarray.py) |
 | 66 | [Plus One](https://leetcode.com/problems/plus-one/) | Easy | [0066-plus-one.py](problems/0066-plus-one.py) |
 | 121 | [Best Time to Buy and Sell Stock](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/) | Easy | [0121-best-time-to-buy-and-sell-stock.py](problems/0121-best-time-to-buy-and-sell-stock.py) |
 | 122 | [Best Time to Buy and Sell Stock II](https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/) | Medium | [0122-best-time-to-buy-and-sell-stock-ii.py](problems/0122-best-time-to-buy-and-sell-stock-ii.py) |

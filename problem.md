@@ -1,29 +1,33 @@
-# 121. Best Time to Buy and Sell Stock [Easy]
+# 53. Maximum Subarray [Medium]
 
-https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+https://leetcode.com/problems/maximum-subarray/
 
-You are given an array `prices` where `prices[i]` is the price of a given stock on the `i^th` day.
-
-You want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.
-
-Return *the maximum profit you can achieve from this transaction*. If you cannot achieve any profit, return `0`.
+Given an integer array `nums`, find the subarray with the largest sum, and return *its sum*.
 
 **Example 1:**
 ```
-Input: prices = [7,1,5,3,6,4]
-Output: 5
-Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
-Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
+Output: 6
+Explanation: The subarray [4,-1,2,1] has the largest sum 6.
 ```
 
 **Example 2:**
 ```
-Input: prices = [7,6,4,3,1]
-Output: 0
-Explanation: In this case, no transactions are done and the max profit = 0.
+Input: nums = [1]
+Output: 1
+Explanation: The subarray [1] has the largest sum 1.
+```
+
+**Example 3:**
+```
+Input: nums = [5,4,-1,7,8]
+Output: 23
+Explanation: The subarray [5,4,-1,7,8] has the largest sum 23.
 ```
 
 **Constraints:**
 
-- `1 <= prices.length <= 10^5`
-- `0 <= prices[i] <= 10^4`
+- `1 <= nums.length <= 10^5`
+- `-10^4 <= nums[i] <= 10^4`
+
+**Follow up:** If you have figured out the `O(n)` solution, try coding another solution using the **divide and conquer** approach, which is more subtle.

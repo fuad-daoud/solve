@@ -244,7 +244,7 @@ graph TD
 
 ## 15. Greedy (8)
 
-- [ ] **53. Maximum Subarray** (Medium) · [LC](https://leetcode.com/problems/maximum-subarray/) · [Video](https://youtu.be/5WZl3MMT0Eg)
+- [x] **53. Maximum Subarray** (Medium) · [LC](https://leetcode.com/problems/maximum-subarray/) · [Video](https://youtu.be/5WZl3MMT0Eg) · [sol](problems/0053-maximum-subarray.py)
 - [ ] **55. Jump Game** (Medium) · [LC](https://leetcode.com/problems/jump-game/) · [Video](https://youtu.be/Yan0cv2cLy8)
 - [ ] **45. Jump Game II** (Medium) · [LC](https://leetcode.com/problems/jump-game-ii/) · [Video](https://youtu.be/dJ7sWiOoK7g)
 - [ ] **134. Gas Station** (Medium) · [LC](https://leetcode.com/problems/gas-station/) · [Video](https://youtu.be/lJwbPZGo05A)

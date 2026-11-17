@@ -1,24 +1,21 @@
-# 121. Best Time to Buy and Sell Stock [Easy]
-# https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+# 53. Maximum Subarray [Medium]
+# https://leetcode.com/problems/maximum-subarray/
 
 
-# Kadane's algorithmKadane's algorithm
+# Kadane's algorithm
 
 
 class Solution:
-    def maxProfit(self, prices: list[int]) -> int:
-        answer = 0
-        sm = 0
-        for i in range(len(prices) - 1):
-            if i == len(prices) - 1:
-                break
-            d = prices[i + 1] - prices[i]
-            if sm < 0:
+    def maxSubArray(self, nums: list[int]) -> int:
+        sm = nums[0]
+        answer = sm
+        for i in range(1, len(nums)):
+            d = nums[i]
+            if sm + d < d:
                 sm = d
             else:
                 sm += d
             answer = max(answer, sm)
-
         return answer
 
 
