@@ -9,7 +9,7 @@ class Solution:
     def maxProfit(self, prices: list[int]) -> int:
         answer = 0
         sm = 0
-        for i in range(0, len(prices) - 1):
+        for i in range(len(prices) - 1):
             if i == len(prices) - 1:
                 break
             d = prices[i + 1] - prices[i]
