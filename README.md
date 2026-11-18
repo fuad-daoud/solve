@@ -108,6 +108,7 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 128 | [Longest Consecutive Sequence](https://leetcode.com/problems/longest-consecutive-sequence/) | Medium | [0128-longest-consecutive-sequence.py](problems/0128-longest-consecutive-sequence.py) |
 | 136 | [Single Number](https://leetcode.com/problems/single-number/) | Easy | [0136-single-number.py](problems/0136-single-number.py) |
 | 150 | [Evaluate Reverse Polish Notation](https://leetcode.com/problems/evaluate-reverse-polish-notation/) | Medium | [0150-evaluate-reverse-polish-notation.py](problems/0150-evaluate-reverse-polish-notation.py) |
+| 153 | [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) | Medium | [0153-find-minimum-in-rotated-sorted-array.py](problems/0153-find-minimum-in-rotated-sorted-array.py) |
 | 155 | [Min Stack](https://leetcode.com/problems/min-stack/) | Medium | [0155-min-stack.py](problems/0155-min-stack.py) |
 | 167 | [Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/) | Medium | [0167-two-sum-ii-input-array-is-sorted.py](problems/0167-two-sum-ii-input-array-is-sorted.py) |
 | 189 | [Rotate Array](https://leetcode.com/problems/rotate-array/) | Medium | [0189-rotate-array.py](problems/0189-rotate-array.py) |

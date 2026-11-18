@@ -1,17 +1,10 @@
-# 875. Koko Eating Bananas [Medium]
-# https://leetcode.com/problems/koko-eating-bananas/
+# 153. Find Minimum in Rotated Sorted Array [Medium]
+# https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/
 
 
 class Solution:
-    def minEatingSpeed(self, piles: list[int], h: int) -> int:
-        lo, hi = 1, max(piles)
-        while lo < hi:
-            k = (lo + hi) // 2
-            if sum((p + k - 1) // k for p in piles) <= h:
-                hi = k
-            else:
-                lo = k + 1
-        return lo
+    def findMin(self, nums: list[int]) -> int:
+        return min(nums)
 
 
 if __name__ == "__main__":
