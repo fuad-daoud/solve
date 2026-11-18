@@ -120,4 +120,5 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 424 | [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) | Medium | [0424-longest-repeating-character-replacement.py](problems/0424-longest-repeating-character-replacement.py) |
 | 567 | [Permutation in String](https://leetcode.com/problems/permutation-in-string/) | Medium | [0567-permutation-in-string.py](problems/0567-permutation-in-string.py) |
 | 739 | [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | [0739-daily-temperatures.py](problems/0739-daily-temperatures.py) |
+| 875 | [Koko Eating Bananas](https://leetcode.com/problems/koko-eating-bananas/) | Medium | [0875-koko-eating-bananas.py](problems/0875-koko-eating-bananas.py) |
 <!-- /problems -->

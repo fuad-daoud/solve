@@ -113,7 +113,7 @@ graph TD
 
 - [ ] **704. Binary Search** (Easy) · [LC](https://leetcode.com/problems/binary-search/) · [Video](https://youtu.be/s4DPM8ct1pI)
 - [ ] **74. Search a 2D Matrix** (Medium) · [LC](https://leetcode.com/problems/search-a-2d-matrix/) · [Video](https://youtu.be/Ber2pi2C0j0)
-- [ ] **875. Koko Eating Bananas** (Medium) · [LC](https://leetcode.com/problems/koko-eating-bananas/) · [Video](https://youtu.be/U2SozAs9RzA)
+- [x] **875. Koko Eating Bananas** (Medium) · [LC](https://leetcode.com/problems/koko-eating-bananas/) · [Video](https://youtu.be/U2SozAs9RzA) · [sol](problems/0875-koko-eating-bananas.py)
 - [ ] **153. Find Minimum in Rotated Sorted Array** (Medium) · [LC](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/) · [Video](https://youtu.be/nIVW4P8b1VA)
 - [ ] **33. Search in Rotated Sorted Array** (Medium) · [LC](https://leetcode.com/problems/search-in-rotated-sorted-array/) · [Video](https://youtu.be/U8XENwh8Oy8)
 - [ ] **981. Time Based Key-Value Store** (Medium) · [LC](https://leetcode.com/problems/time-based-key-value-store/) · [Video](https://youtu.be/fu2cD_6E8Hw)
