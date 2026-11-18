@@ -81,6 +81,46 @@ def test_run_cases_captures_exceptions_as_error():
     assert "boom" in results[0].actual
 
 
+class Loops:
+    def f(self, x):
+        while x == 0:
+            pass
+        return x
+
+
+def test_run_cases_stops_an_infinite_loop_and_keeps_going():
+    results = lc.run_cases(Loops, lc.parse_cases("0\n=> 0\n\n1\n=> 1\n"), timeout=0.2)
+    assert [r.status for r in results] == ["timeout", "pass"]
+    assert results[0].actual == "timed out after 0.2s"
+
+
+def test_run_cases_timeout_survives_a_bare_except_in_the_solution():
+    class Swallows:
+        def f(self, x):
+            while True:
+                try:
+                    while True:
+                        pass
+                except Exception:
+                    pass
+
+    assert lc.run_cases(Swallows, lc.parse_cases("0\n"), timeout=0.2)[0].status == "timeout"
+
+
+def test_format_report_shows_a_timeout():
+    report = lc.format_report(lc.run_cases(Loops, lc.parse_cases("0\n=> 0\n"), timeout=0.2))
+    assert "Case 1  ⏱" in report
+    assert "  timed out after 0.2s" in report
+    assert report.rstrip().endswith("1 timeout")
+
+
+def test_main_test_fails_when_a_case_times_out(tmp_path, monkeypatch):
+    (tmp_path / "solve.py").write_text("class Solution:\n    def f(self, x):\n        while True:\n            pass\n")
+    (tmp_path / "cases.txt").write_text("0\n=> 0\n")
+    monkeypatch.setattr(lc, "TIMEOUT", 0.2)
+    assert lc.main(["test"], root=tmp_path) == 1
+
+
 HEADER = "# 22. Generate Parentheses [Medium]\n# https://leetcode.com/problems/generate-parentheses/\n\nclass Solution: ...\n"
 
 
@@ -804,3 +844,54 @@ def test_main_path_reports_when_core_and_stretch_are_done(tmp_path, monkeypatch,
                                         "0875-koko-eating-bananas", "0981-time-based-key-value-store"])
     assert lc.main(["path"], root=root) == 1
     assert "mock" in capsys.readouterr().err
+
+
+def test_test_caps_print_output_from_the_solution(tmp_path, capsys, monkeypatch):
+    class Chatty:
+        def f(self, x):
+            for _ in range(10_000):
+                print("debug line")
+            return x
+
+    (tmp_path / "cases.txt").write_text("1\n=> 1\n")
+    monkeypatch.setattr(lc, "OUTPUT_LIMIT", 100)
+    assert lc.test(Chatty, tmp_path) == 0
+    out = capsys.readouterr().out
+    assert out.count("debug line") <= 10
+    assert "print output cut at 100 chars" in out
+    assert out.rstrip().endswith("1 passed")
+
+
+def test_test_says_output_was_cut_when_the_cap_is_hit_exactly(tmp_path, capsys, monkeypatch):
+    class Chatty:
+        def f(self, x):
+            for _ in range(100):
+                print("=" * 15)  # 16 chars per line with the newline; the cap is a multiple of 16
+            return x
+
+    (tmp_path / "cases.txt").write_text("1\n=> 1\n")
+    monkeypatch.setattr(lc, "OUTPUT_LIMIT", 160)
+    lc.test(Chatty, tmp_path)
+    out = capsys.readouterr().out
+    assert out.count("=" * 15) == 10
+    assert "print output cut at 160 chars" in out
+
+
+def test_test_streams_each_case_result_after_its_own_prints(tmp_path, capsys):
+    class Chatty:
+        def f(self, x):
+            print(f"working on {x}")
+            return x
+
+    (tmp_path / "cases.txt").write_text("1\n=> 1\n\n2\n=> 3\n")
+    lc.test(Chatty, tmp_path)
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[:3] == ["working on 1", "Case 1  ✓", "working on 2"]
+    assert lines[3] == "Case 2  ✗"
+    assert lines[-2:] == ["", "1 passed, 1 failed"]
+
+
+def test_run_cases_reports_each_result_as_it_finishes():
+    seen = []
+    lc.run_cases(Solution, lc.parse_cases("[3,3]\n6\n=> [0,1]\n\n[3,2,4]\n6\n"), on_result=lambda i, r: seen.append((i, r.status)))
+    assert seen == [(1, "pass"), (2, "unchecked")]

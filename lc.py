@@ -2,12 +2,15 @@
 """LeetCode workbench: fetch a problem into solve.py, run cases.txt against it, save solutions."""
 
 import argparse
+import contextlib
 import html
 import importlib.util
 import inspect
+import io
 import json
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -83,7 +86,7 @@ def find_method(cls):
 @dataclass
 class Result:
     case: Case
-    status: str  # pass | fail | unchecked | error
+    status: str  # pass | fail | unchecked | error | timeout
     actual: str
 
 
@@ -244,26 +247,56 @@ def plain(value, by_val: bool = False, node: bool = False):
     return value
 
 
-def run_cases(cls, cases: list[Case]) -> list[Result]:
+TIMEOUT = 2.0  # seconds per case before it's reported as a timeout (an infinite loop, usually)
+
+
+class TimedOut(BaseException):
+    """Raised by the per-case alarm; a BaseException so an `except Exception` in solve.py can't swallow it."""
+
+
+def _alarm(signum, frame):
+    raise TimedOut
+
+
+def with_timeout(fn, seconds: float):
+    """Call `fn()`, raising TimedOut if it runs longer than `seconds` (SIGALRM, so main thread only)."""
+    previous = signal.signal(signal.SIGALRM, _alarm)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        return fn()
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous)
+
+
+def run_cases(cls, cases: list[Case], timeout: float | None = None, on_result=lambda i, result: None) -> list[Result]:
+    """Run every case; `on_result(i, result)` is called as each one finishes (1-based i), for streaming."""
+    timeout = TIMEOUT if timeout is None else timeout
     design = bool(cases) and design_ops(cases[0]) is not None
     method = None if design else find_method(cls)
-    results = []
-    for case in cases:
+
+    def run(case: Case):
+        if design:
+            return replay(cls, *design_ops(case))
+        args, by_val = node_args(method, [json.loads(a) for a in case.inputs])
+        return plain(method(cls(), *args), by_val, returns_node(method))
+
+    def result(case: Case) -> Result:
         try:
-            if design:
-                value = replay(cls, *design_ops(case))
-            else:
-                args, by_val = node_args(method, [json.loads(a) for a in case.inputs])
-                value = plain(method(cls(), *args), by_val, returns_node(method))
+            value = with_timeout(lambda: run(case), timeout)
+        except TimedOut:
+            return Result(case, "timeout", f"timed out after {timeout:g}s")
         except Exception:
-            results.append(Result(case, "error", traceback.format_exc().rstrip()))
-            continue
+            return Result(case, "error", traceback.format_exc().rstrip())
         actual = json.dumps(value, separators=(",", ":"))
         if case.expected is None:
-            status = "unchecked"
-        else:
-            status = "pass" if matches(case.expected, value, case.unordered) else "fail"
-        results.append(Result(case, status, actual))
+            return Result(case, "unchecked", actual)
+        return Result(case, "pass" if matches(case.expected, value, case.unordered) else "fail", actual)
+
+    results = []
+    for case in cases:
+        results.append(result(case))
+        on_result(len(results), results[-1])
     return results
 
 
@@ -352,26 +385,30 @@ def render_cases(data: dict) -> str:
     return "\n".join(blocks)
 
 
-MARK = {"pass": "✓", "fail": "✗", "unchecked": "·", "error": "!"}
+MARK = {"pass": "✓", "fail": "✗", "unchecked": "·", "error": "!", "timeout": "⏱"}
+
+
+def format_case(i: int, r: Result) -> str:
+    lines = [f"Case {i}  {MARK[r.status]}"]
+    if r.status != "pass":
+        lines.append("  input:    " + " | ".join(r.case.inputs))
+        if r.case.expected is not None:
+            lines.append(f"  expected: {r.case.expected}")
+        if r.status in ("error", "timeout"):
+            lines.append("  " + r.actual.replace("\n", "\n  "))
+        else:
+            lines.append(f"  got:      {r.actual}")
+    return "\n".join(lines) + "\n"
+
+
+def format_summary(results: list[Result]) -> str:
+    counts = Counter(r.status for r in results)
+    summary = ", ".join(f"{counts[s]} {s}" for s in ("pass", "fail", "unchecked", "error", "timeout") if counts[s])
+    return "\n" + (summary.replace(" pass", " passed").replace(" fail", " failed") or "no cases") + "\n"
 
 
 def format_report(results: list[Result]) -> str:
-    lines = []
-    for i, r in enumerate(results, 1):
-        lines.append(f"Case {i}  {MARK[r.status]}")
-        if r.status != "pass":
-            lines.append("  input:    " + " | ".join(r.case.inputs))
-            if r.case.expected is not None:
-                lines.append(f"  expected: {r.case.expected}")
-            if r.status == "error":
-                lines.append("  " + r.actual.replace("\n", "\n  "))
-            else:
-                lines.append(f"  got:      {r.actual}")
-    counts = Counter(r.status for r in results)
-    summary = ", ".join(f"{counts[s]} {s}" for s in ("pass", "fail", "unchecked", "error") if counts[s])
-    summary = summary.replace(" pass", " passed").replace(" fail", " failed")
-    lines += ["", summary or "no cases"]
-    return "\n".join(lines) + "\n"
+    return "".join(format_case(i, r) for i, r in enumerate(results, 1)) + format_summary(results)
 
 
 def _problem_row(path: Path) -> tuple[int, str]:
@@ -700,12 +737,40 @@ def load_solution(root: Path):
     raise ValueError("solve.py defines no Solution class (nor the class cases.txt constructs)")
 
 
+OUTPUT_LIMIT = 50_000  # chars of solve.py's own print() output per run; a printing infinite loop makes megabytes
+
+
+class _Capped(io.TextIOBase):
+    """Passes writes through to `stream` until `limit` chars, then drops the rest after one notice."""
+
+    def __init__(self, stream, limit: int):
+        self.stream, self.limit, self.left, self.cut = stream, limit, limit, False
+
+    def write(self, s: str) -> int:
+        self.stream.write(s[: self.left])
+        if len(s) > self.left and not self.cut:  # some of `s` is dropped, including all of it once the cap is hit
+            self.cut = True
+            self.stream.write(f"\n... print output cut at {self.limit} chars\n")
+        self.left = max(0, self.left - len(s))
+        return len(s)
+
+    def flush(self) -> None:
+        self.stream.flush()
+
+
 def test(cls, root: Path | None = None) -> int:
     """Run cases.txt against `cls`, print the report; returns the number of non-passing checked cases."""
     root = root or ROOT
-    results = run_cases(cls, parse_cases((root / "cases.txt").read_text()))
-    print(format_report(results), end="")
-    return sum(r.status in ("fail", "error") for r in results)
+    out = sys.stdout  # case results bypass the cap on solve.py's prints, and go out as each case finishes
+
+    def show(i: int, result: Result) -> None:
+        out.write(format_case(i, result))
+        out.flush()
+
+    with contextlib.redirect_stdout(_Capped(out, OUTPUT_LIMIT)):
+        results = run_cases(cls, parse_cases((root / "cases.txt").read_text()), on_result=show)
+    print(format_summary(results), end="", flush=True)
+    return sum(r.status in ("fail", "error", "timeout") for r in results)
 
 
 WORKING_FILES = ("solve.py", "cases.txt", "problem.md")
