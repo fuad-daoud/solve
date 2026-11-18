@@ -2,27 +2,16 @@
 # https://leetcode.com/problems/koko-eating-bananas/
 
 
-import math
-
-
 class Solution:
     def minEatingSpeed(self, piles: list[int], h: int) -> int:
-        lo = 1
-        hi = best = max(piles)
-        while lo <= hi:
-            rate = (lo + hi) // 2
-            tmp = h
-            for p in piles:
-                if tmp < 0:
-                    break
-                tmp -= math.ceil(p / rate)
-            if tmp >= 0:
-                best = min(best, rate)
-                hi = rate - 1
+        lo, hi = 1, max(piles)
+        while lo < hi:
+            k = (lo + hi) // 2
+            if sum((p + k - 1) // k for p in piles) <= h:
+                hi = k
             else:
-                lo = rate + 1
-
-        return best
+                lo = k + 1
+        return lo
 
 
 if __name__ == "__main__":
