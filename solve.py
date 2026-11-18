@@ -6,25 +6,28 @@ class Solution:
     def checkInclusion(self, s1: str, s2: str) -> bool:
         if len(s1) > len(s2):
             return False
-        left = 0
-        s1Freqs = {}
-        for s in s1:
-            s1Freqs[s] = s1Freqs.get(s, 0) + 1
-        permFreqs = {}
-        for right in range(len(s2)):
-            permFreqs[s2[right]] = permFreqs.get(s2[right], 0) + 1
-            if (right - left) < len(s1) - 1:
-                continue
-
-            if (right - left) > len(s1) - 1:
-                permFreqs[s2[left]] -= 1
-                if permFreqs[s2[left]] == 0:
-                    permFreqs.pop(s2[left])
-                left += 1
-            if s1Freqs == permFreqs:
+        need, have = [0] * 26, [0] * 26
+        for i in range(len(s1)):
+            need[ord(s1[i]) - 97] += 1
+            have[ord(s2[i]) - 97] += 1
+        matches = sum(need[c] == have[c] for c in range(26))
+        for r in range(len(s1), len(s2)):
+            if matches == 26:
                 return True
+            c = ord(s2[r]) - 97
+            have[c] += 1
+            if have[c] == need[c]:
+                matches += 1
+            elif have[c] == need[c] + 1:
+                matches -= 1
+            c = ord(s2[r - len(s1)]) - 97
+            have[c] -= 1
+            if have[c] == need[c]:
+                matches += 1
+            elif have[c] == need[c] - 1:
+                matches -= 1
 
-        return False
+        return matches == 26
 
 
 if __name__ == "__main__":
