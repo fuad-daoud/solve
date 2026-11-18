@@ -1,0 +1,11 @@
+"ab"
+"eidbaooo"
+=> true
+
+"ab"
+"eidboaoo"
+=> false
+
+"adc"
+"dcda"
+=> true

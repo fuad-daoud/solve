@@ -1,29 +1,25 @@
-# 424. Longest Repeating Character Replacement [Medium]
+# 567. Permutation in String [Medium]
 
-https://leetcode.com/problems/longest-repeating-character-replacement/
+https://leetcode.com/problems/permutation-in-string/
 
-You are given a string `s` and an integer `k`. You can choose any character of the string and change it to any other uppercase English character. You can perform this operation at most `k` times.
+Given two strings `s1` and `s2`, return `true` if `s2` contains a permutation of `s1`, or `false` otherwise.
 
-Return *the length of the longest substring containing the same letter you can get after performing the above operations*.
+In other words, return `true` if one of `s1`'s permutations is the substring of `s2`.
 
 **Example 1:**
 ```
-Input: s = "ABAB", k = 2
-Output: 4
-Explanation: Replace the two 'A's with two 'B's or vice versa.
+Input: s1 = "ab", s2 = "eidbaooo"
+Output: true
+Explanation: s2 contains one permutation of s1 ("ba").
 ```
 
 **Example 2:**
 ```
-Input: s = "AABABBA", k = 1
-Output: 4
-Explanation: Replace the one 'A' in the middle with 'B' and form "AABBBBA".
-The substring "BBBB" has the longest repeating letters, which is 4.
-There may exists other ways to achieve this answer too.
+Input: s1 = "ab", s2 = "eidboaoo"
+Output: false
 ```
 
 **Constraints:**
 
-- `1 <= s.length <= 10^5`
-- `s` consists of only uppercase English letters.
-- `0 <= k <= s.length`
+- `1 <= s1.length, s2.length <= 10^4`
+- `s1` and `s2` consist of lowercase English letters.

@@ -1,16 +1,11 @@
-"ABAB"
-2
-=> 4
+"ab"
+"eidbaooo"
+=> true
 
-"AABABBA"
-1
-=> 4
+"ab"
+"eidboaoo"
+=> false
 
-"AAB"
-0
-=> 2
-
-"AABBB"
-1
-=> 4
-
+"adc"
+"dcda"
+=> true

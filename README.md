@@ -118,5 +118,6 @@ archive/              pre-2026 Codeforces / AtCoder / C++ / Elixir era (see arch
 | 347 | [Top K Frequent Elements](https://leetcode.com/problems/top-k-frequent-elements/) | Medium | [0347-top-k-frequent-elements.py](problems/0347-top-k-frequent-elements.py) |
 | 350 | [Intersection of Two Arrays II](https://leetcode.com/problems/intersection-of-two-arrays-ii/) | Easy | [0350-intersection-of-two-arrays-ii.py](problems/0350-intersection-of-two-arrays-ii.py) |
 | 424 | [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) | Medium | [0424-longest-repeating-character-replacement.py](problems/0424-longest-repeating-character-replacement.py) |
+| 567 | [Permutation in String](https://leetcode.com/problems/permutation-in-string/) | Medium | [0567-permutation-in-string.py](problems/0567-permutation-in-string.py) |
 | 739 | [Daily Temperatures](https://leetcode.com/problems/daily-temperatures/) | Medium | [0739-daily-temperatures.py](problems/0739-daily-temperatures.py) |
 <!-- /problems -->
